@@ -46,12 +46,19 @@ public class ChessPiece {
     }
 
     private boolean checkPosition(ChessBoard board, ChessPosition position) {
-        if(board[position.getRow()][position.getColumn()].getTeamColor() != this.getTeamColor() & position.getRow() != 9 & position.getRow() != 0 & position.getColumn() != 9 & position.getColumn() != 0){
-            return true;
-        } else {
-            return false;
+        int row = position.getRow();
+        int col = position.getColumn();
+
+        if (row > 0 && row < 9 && col > 0 && col < 9) {
+            ChessPiece piece = board.getPiece(position);
+
+            if (piece != null && piece.getTeamColor() != this.getTeamColor()) {
+                return true;
+            }
         }
+        return false;
     }
+
 
     private HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> endPositionsSet = new HashSet<>();
