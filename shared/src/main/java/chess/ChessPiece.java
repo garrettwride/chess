@@ -46,6 +46,12 @@ public class ChessPiece {
         return type;
     }
 
+    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> endPositionsSet = new HashSet<>();
+
+        return endPositionsSet;
+    }
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -54,7 +60,14 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        HashSet<String> endPositionsSet = new HashSet<>();
-        return new HashSet<>();
+        //create new hash set
+        HashSet<ChessMove> endPositionsSet = new HashSet<>();
+
+        //check piece type
+        if (this.getPieceType() == PieceType.KING){
+            endPositionsSet = kingMoves(ChessBoard board, ChessPosition myPosition);
+        }
+
+        return endPositionsSet;
     }
 }
