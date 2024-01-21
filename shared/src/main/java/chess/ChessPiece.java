@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -46,9 +45,19 @@ public class ChessPiece {
         return type;
     }
 
-    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
-        HashSet<ChessMove> endPositionsSet = new HashSet<>();
+    private boolean checkPosition(ChessBoard board, ChessPosition position) {
+        if(board[position.getRow()][position.getColumn()].getTeamColor() != this.getTeamColor() & position.getRow() != 9 & position.getRow() != 0 & position.getColumn() != 9 & position.getColumn() != 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    private HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> endPositionsSet = new HashSet<>();
+        if (checkPosition(board, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1))){
+
+        }
         return endPositionsSet;
     }
 
@@ -65,7 +74,7 @@ public class ChessPiece {
 
         //check piece type
         if (this.getPieceType() == PieceType.KING){
-            endPositionsSet = kingMoves(ChessBoard board, ChessPosition myPosition);
+            endPositionsSet = kingMoves(board, myPosition);
         }
 
         return endPositionsSet;
