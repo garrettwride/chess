@@ -62,9 +62,38 @@ public class ChessPiece {
 
     private HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> endPositionsSet = new HashSet<>();
-        if (checkPosition(board, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1))){
+        if (checkPosition(board, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1))) {
             endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1)));
         }
+
+        if (checkPosition(board, new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1))) {
+            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1)));
+        }
+
+        if (checkPosition(board, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()))) {
+            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn())));
+        }
+
+        if (checkPosition(board, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()))) {
+            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn())));
+        }
+
+        if (checkPosition(board, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1))) {
+            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1)));
+        }
+
+        if (checkPosition(board, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1))) {
+            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1)));
+        }
+
+        if (checkPosition(board, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1))) {
+            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1)));
+        }
+
+        if (checkPosition(board, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1))) {
+            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1)));
+        }
+
         return endPositionsSet;
     }
 
