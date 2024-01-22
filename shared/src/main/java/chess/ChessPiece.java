@@ -101,6 +101,71 @@ public class ChessPiece {
         return positionsSet;
     }
 
+    private HashSet<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> positionsSet = new HashSet<>();
+
+        int i = 1;
+        int j;
+
+        while (checkPosition(board, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i))) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i)));
+            ++i;
+        }
+
+        i = -1;
+        while (checkPosition(board, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i))) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i)));
+            --i;
+        }
+
+        i = 1;
+        while (checkPosition(board, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn()))) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn())));
+            ++i;
+        }
+
+        i = -1;
+        while (checkPosition(board, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn()))) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn())));
+            --i;
+        }
+
+        i = 1;
+        j = 1;
+        while (checkPosition(board, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j))) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            ++i;
+            ++j;
+        }
+
+        i = -1;
+        j = -1;
+        while (checkPosition(board, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j))) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            --i;
+            --j;
+        }
+
+        i = 1;
+        j = -1;
+        while (checkPosition(board, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j))) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            ++i;
+            --j;
+        }
+
+        i = -1;
+        j = 1;
+        while (checkPosition(board, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j))) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            --i;
+            ++j;
+        }
+
+        return positionsSet;
+    }
+
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -115,6 +180,9 @@ public class ChessPiece {
         //check piece type
         if (this.getPieceType() == PieceType.KING){
             positionsSet = kingMoves(board, myPosition);
+        }
+        if (this.getPieceType() == PieceType.QUEEN){
+            positionsSet = queenMoves(board, myPosition);
         }
 
         return positionsSet;
