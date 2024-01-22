@@ -282,6 +282,43 @@ public class ChessPiece {
         return positionsSet;
     }
 
+    private HashSet<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> positionsSet = new HashSet<>();
+        if ((checkPosition(board, myPosition.getRow() - 2, myPosition.getColumn() + 1)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() + 1)));
+        }
+
+        if ((checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn() + 2)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 2)));
+        }
+
+        if ((checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn() + 2)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 2)));
+        }
+
+        if ((checkPosition(board, myPosition.getRow() + 2, myPosition.getColumn() + 1)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() + 1)));
+        }
+
+        if ((checkPosition(board, myPosition.getRow() + 2, myPosition.getColumn() - 1)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() - 1)));
+        }
+
+        if ((checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn() - 2)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 2)));
+        }
+
+        if ((checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn() - 2)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 2)));
+        }
+
+        if ((checkPosition(board, myPosition.getRow() - 2, myPosition.getColumn() - 1)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() - 1)));
+        }
+
+        return positionsSet;
+    }
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -302,6 +339,8 @@ public class ChessPiece {
             positionsSet = bishopMoves(board, myPosition);
         } else if (this.getPieceType() == PieceType.ROOK){
             positionsSet = rookMoves(board, myPosition);
+        } else if (this.getPieceType() == PieceType.KNIGHT){
+            positionsSet = knightMoves(board, myPosition);
         }
 
         return positionsSet;
