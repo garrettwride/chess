@@ -46,55 +46,55 @@ public class ChessPiece {
         return type;
     }
 
-    private boolean checkPosition(ChessBoard board, int row, int col) {
+    private int checkPosition(ChessBoard board, int row, int col) {
 
-        if (row >=0 && row <= 7 && col >= 0 && col <= 7) {
+        if (row > 0 && row < 9 && col > 0 && col < 9) {
             ChessPosition position;
             position = new ChessPosition(row, col);
             ChessPiece piece = board.getPiece(position);
 
             if (piece != null && piece.getTeamColor() != this.getTeamColor()) {
-                return true;
+                return 2;
             }
             if (piece == null) {
-                return true;
+                return 1;
             }
         }
-        return false;
+        return 0;
     }
 
 
     private HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> positionsSet = new HashSet<>();
-        if (checkPosition(board, myPosition.getRow(), myPosition.getColumn() + 1)) {
+        if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + 1)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1)));
         }
 
-        if (checkPosition(board, myPosition.getRow(), myPosition.getColumn() - 1)) {
+        if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() - 1)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1)));
         }
 
-        if (checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn())) {
+        if ((checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn())) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn())));
         }
 
-        if (checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn())) {
+        if ((checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn())) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn())));
         }
 
-        if (checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn() + 1)) {
+        if ((checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn() + 1)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1)));
         }
 
-        if (checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn() - 1)) {
+        if ((checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn() - 1)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1)));
         }
 
-        if (checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn() - 1)) {
+        if ((checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn() - 1)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1)));
         }
 
-        if (checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn() + 1)) {
+        if ((checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn() + 1)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1)));
         }
 
@@ -107,57 +107,81 @@ public class ChessPiece {
         int i = 1;
         int j;
 
-        while (checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) {
+        while ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i)));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+                break;
+            }
             ++i;
         }
 
         i = -1;
-        while (checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) {
+        while ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i)));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+                break;
+            }
             --i;
         }
 
         i = 1;
-        while (checkPosition(board,myPosition.getRow() + i, myPosition.getColumn())) {
+        while ((checkPosition(board,myPosition.getRow() + i, myPosition.getColumn())) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn())));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+                break;
+            }
             ++i;
         }
 
         i = -1;
-        while (checkPosition(board,myPosition.getRow() + i, myPosition.getColumn())) {
+        while ((checkPosition(board,myPosition.getRow() + i, myPosition.getColumn())) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn())));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+                break;
+            }
             --i;
         }
 
         i = 1;
         j = 1;
-        while (checkPosition(board,myPosition.getRow() + i, myPosition.getColumn() + j)) {
+        while ((checkPosition(board,myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+                break;
+            }
             ++i;
             ++j;
         }
 
         i = -1;
         j = -1;
-        while (checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) {
+        while ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+                break;
+            }
             --i;
             --j;
         }
 
         i = 1;
         j = -1;
-        while (checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) {
+        while ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+                break;
+            }
             ++i;
             --j;
         }
 
         i = -1;
         j = 1;
-        while (checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) {
+        while ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+                break;
+            }
             --i;
             ++j;
         }
