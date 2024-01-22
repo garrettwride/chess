@@ -109,7 +109,7 @@ public class ChessPiece {
 
         while ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i)));
-            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) == 2) {
                 break;
             }
             ++i;
@@ -118,7 +118,7 @@ public class ChessPiece {
         i = -1;
         while ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i)));
-            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) == 2) {
                 break;
             }
             --i;
@@ -127,7 +127,7 @@ public class ChessPiece {
         i = 1;
         while ((checkPosition(board,myPosition.getRow() + i, myPosition.getColumn())) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn())));
-            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn())) == 2) {
                 break;
             }
             ++i;
@@ -136,7 +136,7 @@ public class ChessPiece {
         i = -1;
         while ((checkPosition(board,myPosition.getRow() + i, myPosition.getColumn())) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn())));
-            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn())) == 2) {
                 break;
             }
             --i;
@@ -146,7 +146,7 @@ public class ChessPiece {
         j = 1;
         while ((checkPosition(board,myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
-            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) == 2) {
                 break;
             }
             ++i;
@@ -157,7 +157,7 @@ public class ChessPiece {
         j = -1;
         while ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
-            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) == 2) {
                 break;
             }
             --i;
@@ -168,7 +168,7 @@ public class ChessPiece {
         j = -1;
         while ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
-            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) == 2) {
                 break;
             }
             ++i;
@@ -179,7 +179,7 @@ public class ChessPiece {
         j = 1;
         while ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
             positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
-            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 2) {
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) == 2) {
                 break;
             }
             --i;
