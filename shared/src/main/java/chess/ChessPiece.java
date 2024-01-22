@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -55,46 +56,49 @@ public class ChessPiece {
             if (piece != null && piece.getTeamColor() != this.getTeamColor()) {
                 return true;
             }
+            if (piece == null) {
+                return true;
+            }
         }
         return false;
     }
 
 
     private HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
-        HashSet<ChessMove> endPositionsSet = new HashSet<>();
+        HashSet<ChessMove> positionsSet = new HashSet<>();
         if (checkPosition(board, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1))) {
-            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1)));
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1)));
         }
 
         if (checkPosition(board, new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1))) {
-            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1)));
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1)));
         }
 
         if (checkPosition(board, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()))) {
-            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn())));
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn())));
         }
 
         if (checkPosition(board, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()))) {
-            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn())));
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn())));
         }
 
         if (checkPosition(board, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1))) {
-            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1)));
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1)));
         }
 
         if (checkPosition(board, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1))) {
-            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1)));
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1)));
         }
 
         if (checkPosition(board, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1))) {
-            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1)));
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1)));
         }
 
         if (checkPosition(board, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1))) {
-            endPositionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1)));
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1)));
         }
 
-        return endPositionsSet;
+        return positionsSet;
     }
 
     /**
@@ -106,13 +110,34 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         //create new hash set
-        HashSet<ChessMove> endPositionsSet = new HashSet<>();
+        HashSet<ChessMove> positionsSet = new HashSet<>();
 
         //check piece type
         if (this.getPieceType() == PieceType.KING){
-            endPositionsSet = kingMoves(board, myPosition);
+            positionsSet = kingMoves(board, myPosition);
         }
 
-        return endPositionsSet;
+        return positionsSet;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return type == that.type && pieceColor == that.pieceColor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, pieceColor);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "type=" + type +
+                ", pieceColor=" + pieceColor +
+                '}';
     }
 }
