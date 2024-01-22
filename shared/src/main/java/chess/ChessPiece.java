@@ -436,7 +436,7 @@ public class ChessPiece {
                 if (piece != null && piece.getTeamColor() != this.getTeamColor()) {
                     positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1)));
                 }
-            } else if (myPosition.getColumn() + 1 < 9){
+            } else if (myPosition.getColumn() + 1 < 9) {
                 ChessPosition position;
                 position = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
                 ChessPiece piece = board.getPiece(position);
@@ -447,6 +447,7 @@ public class ChessPiece {
                     positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), PieceType.BISHOP));
                     positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), PieceType.ROOK));
                 }
+            }
         }
 
         return positionsSet;
@@ -476,7 +477,7 @@ public class ChessPiece {
             positionsSet = knightMoves(board, myPosition);
         } else if (this.getPieceType() == PieceType.PAWN){
             positionsSet = pawnMoves(board, myPosition);
-    }
+        }
 
         return positionsSet;
     }
