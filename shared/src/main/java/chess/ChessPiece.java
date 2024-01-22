@@ -239,6 +239,48 @@ public class ChessPiece {
         return positionsSet;
     }
 
+    private HashSet<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> positionsSet = new HashSet<>();
+
+        int i = 1;
+
+        while ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i)));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) == 2) {
+                break;
+            }
+            ++i;
+        }
+
+        i = -1;
+        while ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + i)));
+            if ((checkPosition(board, myPosition.getRow(), myPosition.getColumn() + i)) == 2) {
+                break;
+            }
+            --i;
+        }
+
+        i = 1;
+        while ((checkPosition(board,myPosition.getRow() + i, myPosition.getColumn())) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn())));
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn())) == 2) {
+                break;
+            }
+            ++i;
+        }
+
+        i = -1;
+        while ((checkPosition(board,myPosition.getRow() + i, myPosition.getColumn())) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn())));
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn())) == 2) {
+                break;
+            }
+            --i;
+        }
+
+        return positionsSet;
+    }
 
     /**
      * Calculates all the positions a chess piece can move to
@@ -258,6 +300,8 @@ public class ChessPiece {
             positionsSet = queenMoves(board, myPosition);
         } else if (this.getPieceType() == PieceType.BISHOP){
             positionsSet = bishopMoves(board, myPosition);
+        } else if (this.getPieceType() == PieceType.ROOK){
+            positionsSet = rookMoves(board, myPosition);
         }
 
         return positionsSet;
