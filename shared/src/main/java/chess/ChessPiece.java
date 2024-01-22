@@ -189,6 +189,56 @@ public class ChessPiece {
         return positionsSet;
     }
 
+    private HashSet<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> positionsSet = new HashSet<>();
+
+        int i = 1;
+        int j = 1;
+        while ((checkPosition(board,myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) == 2) {
+                break;
+            }
+            ++i;
+            ++j;
+        }
+
+        i = -1;
+        j = -1;
+        while ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) == 2) {
+                break;
+            }
+            --i;
+            --j;
+        }
+
+        i = 1;
+        j = -1;
+        while ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) == 2) {
+                break;
+            }
+            ++i;
+            --j;
+        }
+
+        i = -1;
+        j = 1;
+        while ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) != 0) {
+            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + j)));
+            if ((checkPosition(board, myPosition.getRow() + i, myPosition.getColumn() + j)) == 2) {
+                break;
+            }
+            --i;
+            ++j;
+        }
+
+        return positionsSet;
+    }
+
 
     /**
      * Calculates all the positions a chess piece can move to
@@ -204,9 +254,10 @@ public class ChessPiece {
         //check piece type
         if (this.getPieceType() == PieceType.KING){
             positionsSet = kingMoves(board, myPosition);
-        }
-        if (this.getPieceType() == PieceType.QUEEN){
+        } else if (this.getPieceType() == PieceType.QUEEN){
             positionsSet = queenMoves(board, myPosition);
+        } else if (this.getPieceType() == PieceType.BISHOP){
+            positionsSet = bishopMoves(board, myPosition);
         }
 
         return positionsSet;
