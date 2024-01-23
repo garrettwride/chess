@@ -31,7 +31,6 @@ public class QueenMoveTests {
         );
     }
 
-
     @Test
     public void queenCaptureEnemy() {
         validateMoves("""
