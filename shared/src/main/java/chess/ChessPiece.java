@@ -192,37 +192,15 @@ public class ChessPiece {
 
     private HashSet<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> positionsSet = new HashSet<>();
-        if ((checkPosition(board, myPosition.getRow() - 2, myPosition.getColumn() + 1)) != 0) {
-            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() + 1)));
-        }
 
-        if ((checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn() + 2)) != 0) {
-            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 2)));
-        }
-
-        if ((checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn() + 2)) != 0) {
-            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 2)));
-        }
-
-        if ((checkPosition(board, myPosition.getRow() + 2, myPosition.getColumn() + 1)) != 0) {
-            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() + 1)));
-        }
-
-        if ((checkPosition(board, myPosition.getRow() + 2, myPosition.getColumn() - 1)) != 0) {
-            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() - 1)));
-        }
-
-        if ((checkPosition(board, myPosition.getRow() + 1, myPosition.getColumn() - 2)) != 0) {
-            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 2)));
-        }
-
-        if ((checkPosition(board, myPosition.getRow() - 1, myPosition.getColumn() - 2)) != 0) {
-            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 2)));
-        }
-
-        if ((checkPosition(board, myPosition.getRow() - 2, myPosition.getColumn() - 1)) != 0) {
-            positionsSet.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() - 1)));
-        }
+        positionsSet.add(move(board, myPosition, 1, -2));
+        positionsSet.add(move(board, myPosition, 1, 2));
+        positionsSet.add(move(board, myPosition, -1, -2));
+        positionsSet.add(move(board, myPosition, -1, 2));
+        positionsSet.add(move(board, myPosition, 2, 1));
+        positionsSet.add(move(board, myPosition, 2, -1));
+        positionsSet.add(move(board, myPosition, -2, 1));
+        positionsSet.add(move(board, myPosition, -2, -1));
 
         return positionsSet;
     }
