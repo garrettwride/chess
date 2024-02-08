@@ -116,9 +116,22 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (isInCheck(teamColor) && ) {
-
+        if (isInCheck(teamColor)) {
+            // Check if there are any valid moves left for the team
+            for (int i = 1; i < 9; ++i) {
+                for (int j = 1; j < 9; ++j) {
+                    ChessPosition startPosition = new ChessPosition(i, j);
+                    ChessPiece currentPiece = gameBoard.getPiece(startPosition);
+                    if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
+                        if (!validMoves(startPosition).isEmpty()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
+        return false;
     }
 
     /**
