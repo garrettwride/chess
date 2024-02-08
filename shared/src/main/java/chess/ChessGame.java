@@ -42,6 +42,20 @@ public class ChessGame {
         BLACK
     }
 
+    private Collection<ChessMove> allMoves(TeamColor teamColor) {
+        HashSet<ChessMove> positionsSet = new HashSet<>();
+        for (int i = 1; i < 9; ++i) {
+            for (int j = 1; j < 9; ++j) {
+                ChessPosition piecePosition = new ChessPosition(i, j);
+                ChessPiece currentPiece = gameBoard.getPiece(piecePosition);
+                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
+                    positionsSet.addAll(currentPiece.pieceMoves(gameBoard, piecePosition));
+                }
+            }
+        }
+        return positionsSet;
+    }
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -83,12 +97,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         if(teamColor == TeamColor.WHITE){
-            for (int i = 1; i < 9; ++i) {
-                for (int j = 1; j < 9; ++j) {
-                    HashSet<ChessMove> positionsSet = new HashSet<>();
-                    ChessPosition piecePosition = new ChessPosition(i, j);
-                    ChessPiece currentPiece = gameBoard.getPiece(piecePosition);
-                    positionsSet = (HashSet<ChessMove>) currentPiece.pieceMoves(gameBoard, piecePosition);
+
                     for(ChessMove move : positionsSet) {
                         if(gameBoard.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING){
                             return true;
@@ -97,7 +106,7 @@ public class ChessGame {
                 }
             }
         }
-            return false;
+        return false;
     }
 
     /**
@@ -107,7 +116,9 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor) && ) {
+
+        }
     }
 
     /**
@@ -139,3 +150,5 @@ public class ChessGame {
         throw new RuntimeException("Not implemented");
     }
 }
+
+
