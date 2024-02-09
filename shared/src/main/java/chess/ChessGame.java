@@ -143,7 +143,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        ChessPosition kingPosition = gameBoard.findKing(teamColor);
+        ChessPosition kingPosition = findKing(teamColor);
         TeamColor opponentColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
         Collection<ChessMove> opponentMoves = allMoves(opponentColor);
         for (ChessMove move : opponentMoves) {
