@@ -132,7 +132,7 @@ public class ChessGame {
         }
 
         ChessBoard clonedBoard = gameBoard.clone();
-        applyMove(move, gameBoard);
+        applyMove(move, clonedBoard);
 
         if (isInCheck(teamTurn, clonedBoard)) {
             throw new InvalidMoveException("Invalid move: puts own king in check");
@@ -140,13 +140,11 @@ public class ChessGame {
 
         applyMove(move, gameBoard);
 
-
         if (getTeamTurn() == TeamColor.WHITE) {
             setTeamTurn(TeamColor.BLACK);
         } else {
             setTeamTurn(TeamColor.WHITE);
         }
-
     }
 
 
@@ -183,7 +181,7 @@ public class ChessGame {
         TeamColor opponentColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
         Collection<ChessMove> opponentMoves = allMoves(opponentColor);
         for (ChessMove move : opponentMoves) {
-            if (move.getEndPosition().equals(kingPosition)) {
+            if (move.getEndPosition() == kingPosition) {
                 return true;
             }
         }
