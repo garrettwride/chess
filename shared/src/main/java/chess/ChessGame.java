@@ -215,13 +215,12 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (isInCheckmate(teamColor) && allMoves(teamColor) != null){
+        if (!isInCheck(teamColor) && allMoves(teamColor).isEmpty()) {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
+
 
     /**
      * Sets this game's chessboard with a given board
