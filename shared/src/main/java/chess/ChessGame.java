@@ -34,25 +34,8 @@ public class ChessGame {
         this.teamTurn = team;
     }
 
-    @Override
-    public ChessBoard clone() {
-        try {
-            ChessBoard clonedBoard = (ChessBoard) super.clone();
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    ChessPosition position = new ChessPosition(i, j);
-                    if (gameBoard.getPiece(position) != null) {
-                        ChessPiece piece = new ChessPiece(gameBoard.getPiece(position).getTeamColor(),
-                                gameBoard.getPiece(position).getPieceType());
-                        clonedBoard.addPiece(position, piece);
-                    }
-                }
-            }
-            return clonedBoard;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
-    }
+    //ChessPiece clonedPiece = new ChessPiece(originalPiece.getTeamColor(), originalPiece.getPieceType());
+               //         clonedBoard.addPiece(position, clonedPiece);
 
     @Override
     public int hashCode() {
