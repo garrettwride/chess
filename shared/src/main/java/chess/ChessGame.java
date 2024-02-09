@@ -16,6 +16,7 @@ public class ChessGame {
     private ChessBoard gameBoard = new ChessBoard();
 
     public ChessGame() {
+        setBoard(gameBoard);
         this.teamTurn = TeamColor.WHITE;
     }
 
@@ -150,7 +151,7 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid move: puts own king in check");
         }
 
-        applyMove(move, gameBoard);
+        applyMove(move);
 
         if (getTeamTurn() == TeamColor.WHITE) {
             setTeamTurn(TeamColor.BLACK);
@@ -161,13 +162,22 @@ public class ChessGame {
 
 
     public void applyMove(ChessMove move, ChessBoard board) {
-        if (move.getPromotionPiece() != null) {
+        if (move.getPromotionPiece() == null) {
             board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
         }
         else {
             board.addPiece(move.getEndPosition(), new ChessPiece(getTeamTurn(), move.getPromotionPiece()));
         }
         board.removePiece(move.getStartPosition());
+    }
+    public void applyMove(ChessMove move) {
+        if (move.getPromotionPiece() == null) {
+            gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
+        }
+        else {
+            gameBoard.addPiece(move.getEndPosition(), new ChessPiece(getTeamTurn(), move.getPromotionPiece()));
+        }
+        gameBoard.removePiece(move.getStartPosition());
     }
 
     /**
@@ -232,7 +242,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (!isInCheck(teamColor) && allMoves(teamColor).isEmpty()) {
+        if (allMoves(teamColor) == null) {
             return true;
         }
         return false;
