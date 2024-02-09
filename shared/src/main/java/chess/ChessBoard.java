@@ -87,11 +87,11 @@ public class ChessBoard implements Cloneable {
     public ChessBoard clone() {
         try {
             ChessBoard clonedBoard = (ChessBoard) super.clone();
-            squares = new ChessPiece[SIZE][SIZE];
+            clonedBoard.squares = new ChessPiece[SIZE][SIZE];
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
-                    if (squares[i][j] != null) {
-                        squares[i][j] = (ChessPiece) squares[i][j].clone();
+                    if (this.squares[i][j] != null) {
+                        clonedBoard.squares[i][j] = (ChessPiece) this.squares[i][j].clone();
                     }
                 }
             }
