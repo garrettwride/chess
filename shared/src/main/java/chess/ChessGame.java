@@ -35,6 +35,26 @@ public class ChessGame {
     }
 
     @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard clonedBoard = (ChessBoard) super.clone();
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    ChessPosition position = new ChessPosition(i, j);
+                    if (gameBoard.getPiece(position) != null) {
+                        ChessPiece piece = new ChessPiece(gameBoard.getPiece(position).getTeamColor(),
+                                gameBoard.getPiece(position).getPieceType());
+                        clonedBoard.addPiece(position, piece);
+                    }
+                }
+            }
+            return clonedBoard;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Override
     public int hashCode() {
         return super.hashCode();
     }
@@ -92,14 +112,14 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException {
         HashSet<ChessMove> validMoves = new HashSet<>();
         ChessPiece currentPiece = gameBoard.getPiece(startPosition);
         if (currentPiece != null) {
             Collection<ChessMove> allMoves = currentPiece.pieceMoves(gameBoard, startPosition);
             for (ChessMove move : allMoves) {
                 ChessBoard clonedBoard = gameBoard.clone();
-                makeMove(move, clonedBoard);
+                applyMove(move, clonedBoard);
                 if (!isInCheck(teamTurn, clonedBoard)) {
                     validMoves.add(move);
                 }
@@ -123,24 +143,22 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid move: " + move);
         }
 
-        ChessBoard clonedBoard = gameBoard.clone(); // Clone the current board
-        applyMove(move, gameBoard); // Apply the move to the cloned board
+        ChessBoard clonedBoard = gameBoard.clone();
+        applyMove(move, gameBoard);
 
         if (isInCheck(teamTurn, clonedBoard)) {
             throw new InvalidMoveException("Invalid move: puts own king in check");
         }
 
-        applyMove(move, gameBoard); // Apply the move to the actual game board
+        applyMove(move, gameBoard);
 
-        // Update the turn to the next player's turn
-        teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
 
-        // Optionally, check for checkmate and stalemate conditions
-        if (isInCheckmate(teamTurn)) {
-            // Handle checkmate condition
-        } else if (isInStalemate(teamTurn)) {
-            // Handle stalemate condition
+        if (getTeamTurn() == TeamColor.WHITE) {
+            setTeamTurn(TeamColor.BLACK);
+        } else {
+            setTeamTurn(TeamColor.WHITE);
         }
+
     }
 
 
@@ -230,7 +248,6 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return this.getBoard();
     }
-
 }
 
 
