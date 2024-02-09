@@ -95,20 +95,25 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException {
-        HashSet<ChessMove> validMoves = new HashSet<>();
-        ChessPiece currentPiece = gameBoard.getPiece(startPosition);
-        if (currentPiece != null) {
-            Collection<ChessMove> allMoves = currentPiece.pieceMoves(gameBoard, startPosition);
-            for (ChessMove move : allMoves) {
-                ChessBoard clonedBoard = gameBoard.clone();
-                applyMove(move, clonedBoard);
-                if (!isInCheck(teamTurn, clonedBoard)) {
-                    validMoves.add(move);
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        if(gameBoard.getPiece(startPosition) != null){
+            HashSet<ChessMove> validMoves = new HashSet<>();
+            ChessPiece currentPiece = gameBoard.getPiece(startPosition);
+            if (currentPiece != null) {
+                Collection<ChessMove> allMoves = currentPiece.pieceMoves(gameBoard, startPosition);
+                for (ChessMove move : allMoves) {
+                    ChessBoard clonedBoard = gameBoard.clone();
+                    applyMove(move, clonedBoard);
+                    if (!isInCheck(teamTurn, clonedBoard)) {
+                        validMoves.add(move);
+                    }
                 }
             }
+            return validMoves;
+        } else {
+            return null;
         }
-        return validMoves;
+
     }
 
     /**
@@ -145,7 +150,7 @@ public class ChessGame {
     }
 
 
-    public void applyMove(ChessMove move, ChessBoard board) throws InvalidMoveException {
+    public void applyMove(ChessMove move, ChessBoard board) {
         if (move.getPromotionPiece() != null) {
             board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
         }
