@@ -146,7 +146,13 @@ public class ChessGame {
 
 
     public void applyMove(ChessMove move, ChessBoard board) throws InvalidMoveException {
-
+        if (move.getPromotionPiece() != null) {
+            board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+        }
+        else {
+            board.addPiece(move.getEndPosition(), new ChessPiece(getTeamTurn(), move.getPromotionPiece()));
+        }
+        board.removePiece(move.getStartPosition());
     }
 
     /**
