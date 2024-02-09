@@ -117,7 +117,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor)) {
-            // Check if there are any valid moves left for the team
+
             for (int i = 1; i < 9; ++i) {
                 for (int j = 1; j < 9; ++j) {
                     ChessPosition startPosition = new ChessPosition(i, j);
@@ -162,6 +162,26 @@ public class ChessGame {
     public ChessBoard getBoard() {
         throw new RuntimeException("Not implemented");
     }
+
+    }
+
+@Override
+public int hashCode() {
+    return super.hashCode();
+}
+
+@Override
+public boolean equals(Object obj) {
+    return super.equals(obj);
+}
+
+
+@Override
+public String toString() {
+    return "$classname{}";
+} {
+} {
+} {
 }
 
 
