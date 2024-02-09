@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -34,22 +35,26 @@ public class ChessGame {
         this.teamTurn = team;
     }
 
-    //ChessPiece clonedPiece = new ChessPiece(originalPiece.getTeamColor(), originalPiece.getPieceType());
-               //         clonedBoard.addPiece(position, clonedPiece);
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return teamTurn == chessGame.teamTurn && Objects.equals(gameBoard, chessGame.gameBoard);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public int hashCode() {
+        return Objects.hash(teamTurn, gameBoard);
     }
 
     @Override
     public String toString() {
-        return "$classname{}";
+        return "ChessGame{" +
+                "teamTurn=" + teamTurn +
+                ", gameBoard=" + gameBoard +
+                '}';
     }
 
     /**
@@ -67,7 +72,10 @@ public class ChessGame {
                 ChessPosition piecePosition = new ChessPosition(i, j);
                 ChessPiece currentPiece = gameBoard.getPiece(piecePosition);
                 if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
-                    positionsSet.addAll(currentPiece.pieceMoves(gameBoard, piecePosition));
+                    Collection<ChessMove> validMoves = validMoves(piecePosition);
+                    if (validMoves != null) {
+                        positionsSet.addAll(validMoves);
+                    }
                 }
             }
         }
@@ -107,14 +115,14 @@ public class ChessGame {
         for (ChessMove move : allMoves) {
             ChessBoard clonedBoard = gameBoard.clone();
             applyMove(move, clonedBoard);
-            // Clone the current team's turn
+
             TeamColor originalTeamTurn = teamTurn;
-            // Update the team turn for cloned board
+
             teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
             if (!isInCheck(teamTurn, clonedBoard)) {
                 validMoves.add(move);
             }
-            // Restore the original team turn
+
             teamTurn = originalTeamTurn;
         }
         return validMoves;
@@ -171,7 +179,7 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = findKing(teamColor, gameBoard);
         TeamColor opponentColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
-        Collection<ChessMove> opponentMoves = allMoves(opponentColor); // Corrected: Get moves for the opponent team
+        Collection<ChessMove> opponentMoves = allMoves(opponentColor);
         for (ChessMove move : opponentMoves) {
             if (move.getEndPosition().equals(kingPosition)) {
                 return true;
@@ -246,6 +254,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return this.getBoard();
+        return this.gameBoard;
     }
 }
