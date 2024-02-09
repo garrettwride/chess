@@ -96,24 +96,22 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if(gameBoard.getPiece(startPosition) != null){
-            HashSet<ChessMove> validMoves = new HashSet<>();
-            ChessPiece currentPiece = gameBoard.getPiece(startPosition);
-            if (currentPiece != null) {
-                Collection<ChessMove> allMoves = currentPiece.pieceMoves(gameBoard, startPosition);
-                for (ChessMove move : allMoves) {
-                    ChessBoard clonedBoard = gameBoard.clone();
-                    applyMove(move, clonedBoard);
-                    if (!isInCheck(teamTurn, clonedBoard)) {
-                        validMoves.add(move);
-                    }
-                }
-            }
-            return validMoves;
-        } else {
+        ChessPiece currentPiece = gameBoard.getPiece(startPosition);
+        if (currentPiece == null) {
             return null;
         }
 
+        HashSet<ChessMove> validMoves = new HashSet<>();
+        Collection<ChessMove> allMoves = currentPiece.pieceMoves(gameBoard, startPosition);
+
+        for (ChessMove move : allMoves) {
+            ChessBoard clonedBoard = gameBoard.clone();
+            applyMove(move, clonedBoard);
+            if (!isInCheck(teamTurn, clonedBoard)) {
+                validMoves.add(move);
+            }
+        }
+        return validMoves;
     }
 
     /**
