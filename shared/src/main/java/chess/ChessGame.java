@@ -34,6 +34,21 @@ public class ChessGame {
         this.teamTurn = team;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return "$classname{}";
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -56,17 +71,17 @@ public class ChessGame {
         return positionsSet;
     }
 
-    public ChessPosition findKing(TeamColor teamColor) {
-        for (int i = 1; i <= ChessBoard.SIZE; i++) {
-            for (int j = 1; j <= ChessBoard.SIZE; j++) {
+    public ChessPosition findKing(TeamColor color) {
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
                 ChessPosition position = new ChessPosition(i, j);
-                ChessPiece piece = getPiece(position);
-                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                ChessPiece piece = gameBoard.getPiece(position);
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == color) {
                     return position;
                 }
             }
         }
-        return null; // King not found
+        return null;
     }
 
 
@@ -110,14 +125,12 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        if(teamColor == TeamColor.WHITE){
-
-                    for(ChessMove move : positionsSet) {
-                        if(gameBoard.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING){
-                            return true;
-                        }
-                    }
-                }
+        ChessPosition kingPosition = findKing(teamColor);
+        TeamColor opponentColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+        Collection<ChessMove> opponentMoves = allMoves(opponentColor);
+        for (ChessMove move : opponentMoves) {
+            if (move.getEndPosition().equals(kingPosition)) {
+                return true;
             }
         }
         return false;
@@ -171,24 +184,5 @@ public class ChessGame {
     }
 
     }
-
-@Override
-public int hashCode() {
-    return super.hashCode();
-}
-
-@Override
-public boolean equals(Object obj) {
-    return super.equals(obj);
-}
-
-
-@Override
-public String toString() {
-    return "$classname{}";
-} {
-} {
-} {
-}
 
 
