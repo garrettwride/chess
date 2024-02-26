@@ -16,6 +16,8 @@ public class RegistrationService {
             User existingUser = userDataAccess.getUser(newUser.getUsername());
             if (existingUser != null) {
                 throw new RegistrationException("Username already exists");
+            } else {
+                userDataAccess.addUser(newUser);
             }
 
             // Serialize the new user to JSON
