@@ -24,9 +24,9 @@ public class AuthDataAccess {
     }
 
     // Method to delete authToken by username
-    public void deleteAuthToken(String username) {
-        dataMemory.deleteAuthToken(username);
-    }
+//    public void deleteAuthToken(String username) {
+//        dataMemory.deleteAuthToken(username);
+//    }
 
     // Method to create a new authToken
     private String createAuthToken() {
