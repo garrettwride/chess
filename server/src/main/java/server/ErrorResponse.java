@@ -1,4 +1,4 @@
-package service;
+package server;
 
 class ErrorResponse {
     private final String message;
