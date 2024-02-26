@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataModels.User;
 import spark.*;
 import service.RegistrationService;
 
@@ -25,14 +26,8 @@ public class Server {
     }
 
     private String handleRegistration(Request request, Response response) {
-        // Get the value of the "username" parameter from the request
-        var pet = new Gson().fromJson(request.body(), Pet.class);
+        var user = new Gson().fromJson(request.body(), User.class);
 
-// Get the value of the "password" parameter from the request
-        String password = request.queryParams("password");
-
-// Get the value of the "email" parameter from the request
-        String email = request.queryParams("email");
-        return registrationService.register(username, password, email);
+        return registrationService.register(user.getUsername(), user.getPassword(), user.getEmail());
     }
 }
