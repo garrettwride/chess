@@ -63,6 +63,7 @@ public class Server {
         try {
             applicationService.clear();
             response.status(200); // Success
+            return gson.toJson(new SuccessResponse("Data cleared successfully"));
 
         } catch (Exception e) {
             response.status(500); // Internal server error
