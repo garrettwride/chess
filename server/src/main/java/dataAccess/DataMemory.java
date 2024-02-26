@@ -27,6 +27,10 @@ public class DataMemory {
         return users.get(username);
     }
 
+    public void clearUsers() {
+        users.clear();
+    }
+
     // AuthToken-related methods
     public void addAuthToken(AuthData authToken) {
         authTokens.put(authToken.getUsername(), authToken);

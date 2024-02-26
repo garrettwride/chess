@@ -11,13 +11,9 @@ public class ApplicationService {
         this.userDataAccess = userDataAccess;
     }
 
-    public String clear(User newUser) throws RegistrationException {
+    public void clear() throws RegistrationException {
         // Clear authTokens
-        userDataAccess.addUser(newUser);
+        userDataAccess.clear();
 
-
-        // Serialize the new user to JSON
-        Gson gson = new Gson();
-        return gson.toJson(newUser);
     }
 }

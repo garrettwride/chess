@@ -19,4 +19,8 @@ public class UserDataAccess {
         return dataMemory.getUser(username);
     }
 
+    public void clear() {
+        dataMemory.clearUsers();
+    }
+
 }

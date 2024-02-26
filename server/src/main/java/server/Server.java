@@ -10,13 +10,14 @@ import spark.*;
 public class Server {
 
     private RegistrationService registrationService;
+    private ApplicationService applicationService;
     final Gson gson;
 
     public Server(){
         DataMemory dataMemory = new DataMemory();
         UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
         registrationService = new RegistrationService(userDataAccess);
-        applicationService = new ApplicationService();
+        applicationService = new ApplicationService(userDataAccess);
         this.gson = new Gson();
     }
 
@@ -60,9 +61,9 @@ public class Server {
 
     private String handleClear(Request request, Response response) {
         try {
-            String result = registrationService.clear();
+            applicationService.clear();
             response.status(200); // Success
-            return result;
+
         } catch (Exception e) {
             response.status(500); // Internal server error
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
