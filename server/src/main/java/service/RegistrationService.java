@@ -1,6 +1,7 @@
 package service;
 
 import com.google.gson.Gson;
+import spark.Response;
 
 public class RegistrationService {
 
@@ -26,7 +27,7 @@ public class RegistrationService {
             String authToken = createAuthToken(username);
 
             // Return the authorization token
-            return new Gson().toJson(new Response(200, authToken));
+            return new Gson().toJson(new Response(200, authToken, username));
         } catch (RegistrationException e) {
             // Handle registration exception
             return new Gson().toJson(new Response(400, e.getMessage()));
