@@ -7,7 +7,7 @@ import dataModels.*;
 public class DataMemory {
     // Data structures for storing Users, AuthTokens, and Games
     private Map<String, User> users;
-    private Map<String, AuthToken> authTokens;
+    private Map<String, AuthData> authTokens;
 //    private Map<String, Game> games;
 
     public DataMemory() {
@@ -28,11 +28,11 @@ public class DataMemory {
     }
 
     // AuthToken-related methods
-    public void addAuthToken(String authToken, User user) {
-        authTokens.put(authToken, new AuthToken(authToken, user));
+    public void addAuthToken(AuthData authToken) {
+        authTokens.put(authToken.getUsername(), authToken);
     }
 
-    public AuthToken getAuthToken(String authToken) {
+    public AuthData getAuthToken(String authToken) {
         return authTokens.get(authToken);
     }
 
