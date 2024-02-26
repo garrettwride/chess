@@ -7,10 +7,6 @@ public class Server {
 
     private RegistrationService registrationService;
 
-    public Server(RegistrationService registrationService) {
-        this.registrationService = registrationService;
-    }
-
     public void run(int desiredPort) {
         Spark.port(desiredPort);
 
