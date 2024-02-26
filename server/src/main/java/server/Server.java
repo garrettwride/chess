@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataModels.User;
+import service.RegistrationException;
 import spark.*;
 import service.RegistrationService;
 
@@ -25,7 +26,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private String handleRegistration(Request request, Response response) {
+    private String handleRegistration(Request request, Response response) throws RegistrationException {
         var user = new Gson().fromJson(request.body(), User.class);
 
         return registrationService.register(user);

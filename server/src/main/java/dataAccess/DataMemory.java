@@ -7,13 +7,13 @@ import dataModels.*;
 public class DataMemory {
     // Data structures for storing Users, AuthTokens, and Games
     private Map<String, User> users;
-//    private Map<String, AuthToken> authTokens;
+    private Map<String, AuthToken> authTokens;
 //    private Map<String, Game> games;
 
     public DataMemory() {
         // Initialize the data structures
         users = new HashMap<>();
-//        authTokens = new HashMap<>();
+        authTokens = new HashMap<>();
 //        games = new HashMap<>();
     }
 
@@ -27,15 +27,15 @@ public class DataMemory {
         return users.get(username);
     }
 
-//    // AuthToken-related methods
-//    public void addAuthToken(String authToken, User user) {
-//        authTokens.put(authToken, new AuthToken(authToken, user));
-//    }
-//
-//    public AuthToken getAuthToken(String authToken) {
-//        return authTokens.get(authToken);
-//    }
-//
+    // AuthToken-related methods
+    public void addAuthToken(String authToken, User user) {
+        authTokens.put(authToken, new AuthToken(authToken, user));
+    }
+
+    public AuthToken getAuthToken(String authToken) {
+        return authTokens.get(authToken);
+    }
+
 //    // Game-related methods
 //    public void addGame(Game game) {
 //        games.put(game.getGameID(), game);

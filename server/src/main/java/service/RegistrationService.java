@@ -23,9 +23,5 @@ public class RegistrationService {
             Gson gson = new Gson();
             return gson.toJson(newUser);
         }
-
-        private String createAuthToken() {
-            return UUID.randomUUID().toString();
-        }
 }
 
