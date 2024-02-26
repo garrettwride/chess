@@ -28,6 +28,6 @@ public class Server {
     private String handleRegistration(Request request, Response response) {
         var user = new Gson().fromJson(request.body(), User.class);
 
-        return registrationService.register(user.getUsername(), user.getPassword(), user.getEmail());
+        return registrationService.register(user);
     }
 }

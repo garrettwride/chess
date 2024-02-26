@@ -1,46 +1,35 @@
 package service;
 
 import com.google.gson.Gson;
-import spark.Response;
 import dataAccess.*;
+import dataModels.*;
 import java.util.UUID;
 
 public class RegistrationService {
+        private final UserDataAccess userDataAccess;
 
-    private final UserDataAccess userDataAccess;
-    private final AuthDataAccess authDataAccess;
+        public RegistrationService(UserDataAccess userDataAccess) {
+            this.userDataAccess = userDataAccess;
+        }
 
-    public RegistrationService(UserDataAccess userDataAccess, AuthDataAccess authDataAccess) {
-        this.userDataAccess = userDataAccess;
-        this.authDataAccess = authDataAccess;
-    }
-
-    public String register(String username, String password, String email) {
-        try {
+        public String register(String username, String password, String email) throws RegistrationException {
             // Check if the username already exists
-            if (userDataAccess.getUser(username) != null) {
-                throw new RegistrationException("Username already exists.");
+            User existingUser = userDataAccess.getUser(username);
+            if (existingUser != null) {
+                throw new RegistrationException("Username already exists");
             }
 
             // Create a new user
-            userDataAccess.createUser(username, password, email);
+            User newUser = new User(username, password, email);
+            userDataAccess.addUser(newUser);
 
-            // Create an authorization token
-            String authToken = createAuthToken();
-
-            // Return the authorization token
-            return new Gson().toJson(new Response(200, authToken, username));
-        } catch (RegistrationException e) {
-            // Handle registration exception
-            return new Gson().toJson(new Response(400, e.getMessage()));
-        } catch (Exception e) {
-            // Handle other unexpected exceptions
-            return new Gson().toJson(new Response(500, "Internal Server Error"));
+            // Serialize the new user to JSON
+            Gson gson = new Gson();
+            return gson.toJson(newUser);
         }
-    }
 
-    private String createAuthToken() {
-        return UUID.randomUUID().toString();
-    }
+        private String createAuthToken() {
+            return UUID.randomUUID().toString();
+        }
 }
 
