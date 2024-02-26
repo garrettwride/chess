@@ -10,11 +10,13 @@ import spark.*;
 public class Server {
 
     private RegistrationService registrationService;
+    final Gson gson;
 
     public Server(){
         DataMemory dataMemory = new DataMemory();
         UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
         registrationService = new RegistrationService(userDataAccess);
+        this.gson = new Gson();
     }
 
     public int run(int desiredPort) {
@@ -37,19 +39,19 @@ public class Server {
 
     private String handleRegistration(Request request, Response response) {
         try {
-            User user = Gson.fromJson(request.body(), User.class);
+            User user = gson.fromJson(request.body(), User.class);
             String result = registrationService.register(user);
             response.status(200); // Success
             return result;
         } catch (IllegalArgumentException e) {
             response.status(400); // Bad request
-            return Gson.toJson(new ErrorResponse("Error: bad request"));
+            return gson.toJson(new ErrorResponse("Error: bad request"));
         } catch (IllegalStateException e) {
             response.status(403); // Already taken
-            return Gson.toJson(new ErrorResponse("Error: already taken"));
+            return gson.toJson(new ErrorResponse("Error: already taken"));
         } catch (Exception e) {
             response.status(500); // Internal server error
-            return Gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
+            return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         }
     }
 }
