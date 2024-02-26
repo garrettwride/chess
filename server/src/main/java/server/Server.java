@@ -19,7 +19,7 @@ public class Server {
 
     }
 
-    public void run(int desiredPort) {
+    public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
@@ -28,6 +28,8 @@ public class Server {
         Spark.post("/user", this::handleRegistration);
 
         Spark.awaitInitialization();
+
+        return desiredPort;
     }
 
     public void stop() {
