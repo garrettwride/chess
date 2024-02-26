@@ -3,7 +3,6 @@ package service;
 import com.google.gson.Gson;
 import dataAccess.*;
 import dataModels.*;
-import java.util.UUID;
 
 public class RegistrationService {
         private final UserDataAccess userDataAccess;

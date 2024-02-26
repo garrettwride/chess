@@ -16,7 +16,6 @@ public class Server {
         DataMemory dataMemory = new DataMemory();
         UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
         registrationService = new RegistrationService(userDataAccess);
-
     }
 
     public int run(int desiredPort) {
