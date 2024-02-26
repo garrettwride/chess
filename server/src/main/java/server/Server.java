@@ -16,6 +16,7 @@ public class Server {
         DataMemory dataMemory = new DataMemory();
         UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
         registrationService = new RegistrationService(userDataAccess);
+        applicationService = new ApplicationService();
         this.gson = new Gson();
     }
 
@@ -24,8 +25,10 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Define routes
+        // Define endpoints
         Spark.post("/user", this::handleRegistration);
+        Spark.delete("/db", this::handleClear);
+
 
         Spark.awaitInitialization();
 
@@ -49,6 +52,17 @@ public class Server {
         } catch (IllegalStateException e) {
             response.status(403); // Already taken
             return gson.toJson(new ErrorResponse("Error: already taken"));
+        } catch (Exception e) {
+            response.status(500); // Internal server error
+            return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
+        }
+    }
+
+    private String handleClear(Request request, Response response) {
+        try {
+            String result = registrationService.clear();
+            response.status(200); // Success
+            return result;
         } catch (Exception e) {
             response.status(500); // Internal server error
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
