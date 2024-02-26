@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import spark.*;
 import service.RegistrationService;
 
@@ -10,10 +11,10 @@ public class Server {
     public void run(int desiredPort) {
         Spark.port(desiredPort);
 
+        Spark.staticFiles.location("web");
+
         // Define routes
         Spark.post("/user", this::handleRegistration);
-
-        Spark.staticFiles.location("web");
 
         Spark.awaitInitialization();
     }
@@ -25,7 +26,7 @@ public class Server {
 
     private String handleRegistration(Request request, Response response) {
         // Get the value of the "username" parameter from the request
-        String username = request.queryParams("username");
+        var pet = new Gson().fromJson(request.body(), Pet.class);
 
 // Get the value of the "password" parameter from the request
         String password = request.queryParams("password");
