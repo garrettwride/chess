@@ -12,16 +12,12 @@ public class RegistrationService {
             this.userDataAccess = userDataAccess;
         }
 
-        public String register(String username, String password, String email) throws RegistrationException {
+        public String register(User newUser) throws RegistrationException {
             // Check if the username already exists
-            User existingUser = userDataAccess.getUser(username);
+            User existingUser = userDataAccess.getUser(newUser.getUsername());
             if (existingUser != null) {
                 throw new RegistrationException("Username already exists");
             }
-
-            // Create a new user
-            User newUser = new User(username, password, email);
-            userDataAccess.addUser(newUser);
 
             // Serialize the new user to JSON
             Gson gson = new Gson();
