@@ -1,37 +1,56 @@
-//package serviceTests;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//import org.junit.jupiter.api.Test;
-//import dataAccess.*;
-//import dataModels.Game;
-//import service.*;
-//
-//public class CreateGameTest {
-//
-//    private JoinGameService joinGameService;
-//
-//    CreateGameTest() {
-//        DataMemory dataMemory = new DataMemory();
-//        GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
-//        this.joinGameService = new JoinGameService(gameDataAccess);
-//    }
-//
-//    @Test
-//    public void testCreateGameSuccess() {
-//        // Create a new game
-//        Game newGame = new Game(1, "whitePlayer", null, "Chess Game 1", new ChessGame());
-//        assertDoesNotThrow(() -> joinGameService.createGame(newGame));
-//    }
-//
-//    @Test
-//    public void testCreateGameFailureDuplicateID() {
-//        // Create a game with duplicate ID
-//        Game newGame = new Game(1, "whitePlayer", null, "Chess Game 1", new ChessGame());
-//        joinGameService.createGame(newGame);
-//
-//        // Attempt to create another game with the same ID
-//        assertThrows(GameIDAlreadyExistsException.class, () -> joinGameService.createGame(newGame));
-//    }
-//}
+package serviceTests;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import model.UserData;
+import org.junit.jupiter.api.Test;
+import dataAccess.*;
+import model.GameData;
+import chess.ChessGame;
+import service.*;
+
+public class CreateGameTest {
+
+    private JoinGameService joinGameService;
+    private RegistrationService registrationService;
+    private LoginService loginService;
+
+    CreateGameTest() {
+        DataMemory dataMemory = new DataMemory();
+        GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
+        AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
+        UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
+        this.joinGameService = new JoinGameService(gameDataAccess, authDataAccess);
+        this.registrationService = new RegistrationService(userDataAccess, authDataAccess);
+        this.loginService = new LoginService(authDataAccess, userDataAccess);
+    }
+
+    @Test
+    public void testCreateGameSuccess() throws RegistrationException, AuthenticationException {
+        UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
+        registrationService.register(newUser);
+
+        // Login to obtain an authToken
+        String authToken = loginService.authenticate("testuser", "password123");
+        // Create a new game
+        String gameName = "MyGame";
+        assertDoesNotThrow(() -> joinGameService.createGame(gameName, authToken));
+    }
+
+    @Test
+    public void testCreateGameFailureDuplicateID() throws RegistrationException, AuthenticationException {
+        UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
+        registrationService.register(newUser);
+
+        // Login to obtain an authToken
+        String authToken = loginService.authenticate("testuser", "password123");
+        // Create a new game
+        String gameName = "MyGame";
+        assertDoesNotThrow(() -> joinGameService.createGame(gameName, authToken));
+
+        String badAuthToken = "";
+
+        assertThrows(AuthenticationException.class, () -> joinGameService.createGame(gameName, badAuthToken));
+    }
+}
 

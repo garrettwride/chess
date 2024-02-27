@@ -40,6 +40,16 @@ public class JoinGameService {
 
     }
 
+    public GameData getGameByID(int gameID) throws IllegalArgumentException {
+        // Retrieve the game by its ID
+        GameData game = gameDataAccess.getGame(gameID);
+        if (game != null) {
+            return game;
+        } else {
+            throw new IllegalArgumentException("Error: Game not found");
+        }
+    }
+
     // Method to join an existing game
     public void joinGame(String authToken, String teamColor, int gameID) throws AuthenticationException {
         // Retrieve the game by gameID
