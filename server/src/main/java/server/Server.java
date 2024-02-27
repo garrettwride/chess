@@ -15,6 +15,8 @@ public class Server {
 
     private RegistrationService registrationService;
     private LoginService loginService;
+
+    private JoinGameService joinGameService;
     private ApplicationService applicationService;
     final Gson gson;
 
@@ -25,6 +27,7 @@ public class Server {
         AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
         registrationService = new RegistrationService(userDataAccess, authDataAccess);
         loginService = new LoginService(authDataAccess, userDataAccess);
+        joinGameService = new JoinGameService(authDataAccess, gameDataAccess);
         applicationService = new ApplicationService(userDataAccess, gameDataAccess, authDataAccess);
         this.gson = new Gson();
     }
