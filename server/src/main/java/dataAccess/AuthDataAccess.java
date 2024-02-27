@@ -22,6 +22,11 @@ public class AuthDataAccess {
         AuthData authData = dataMemory.getAuthToken(username);
         return authData != null ? authData.getAuthToken() : null;
     }
+
+    public AuthData getAuthData(String username) {
+        AuthData authData = dataMemory.getAuthToken(username);
+        return authData;
+    }
     public String getUsername(String authToken){
         return dataMemory.getUsernameByAuthToken(authToken);
     }

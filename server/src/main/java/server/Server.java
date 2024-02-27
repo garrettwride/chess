@@ -38,6 +38,7 @@ public class Server {
         Spark.post("/user", this::handleRegistration);
         Spark.delete("/db", this::handleClear);
         Spark.post("/session", this::handleLogin);
+        Spark.delete("/session", this::handleLogout);
 
 
         Spark.awaitInitialization();
@@ -53,9 +54,9 @@ public class Server {
     private String handleRegistration(Request request, Response response) {
         try {
             User user = gson.fromJson(request.body(), User.class);
-            String result = registrationService.register(user);
+            AuthData result = registrationService.register(user);
             response.status(200); // Success
-            return result;
+            return gson.toJson(result, AuthData.class);
         } catch (IllegalArgumentException e) {
             response.status(400); // Bad request
             return gson.toJson(new ErrorResponse("Error: bad request"));
@@ -91,7 +92,7 @@ public class Server {
 
     public String handleLogout(Request request, Response response) {
         try {
-            String authToken = gson.fromJson((Reader) request.headers(), String.class);
+            String authToken = request.headers("authorization");
             loginService.logout(authToken);
             response.status(200); // Success
             return gson.toJson(new SuccessResponse("logged out successfully"));

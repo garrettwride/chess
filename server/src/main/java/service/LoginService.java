@@ -33,7 +33,7 @@ public class LoginService {
         String username = authDataAccess.getUsername(authToken);
 
         if (username == null) {
-            throw new AuthenticationException("Invalid username or password");
+            throw new IllegalStateException("Error: Unauthorized");
         }
         else {
             // delete an authToken

@@ -13,7 +13,7 @@ public class RegistrationService {
             this.authDataAccess = authDataAccess;
         }
 
-        public String register(User newUser) throws RegistrationException {
+        public AuthData register(User newUser) throws RegistrationException {
             // Check if the username already exists
             User existingUser = userDataAccess.getUser(newUser.getUsername());
             if (existingUser != null) {
@@ -22,8 +22,7 @@ public class RegistrationService {
                 userDataAccess.addUser(newUser);
                 authDataAccess.addAuthToken(newUser.getUsername());
 
-                Gson gson = new Gson();
-                return gson.toJson(newUser);
+                return authDataAccess.getAuthData(newUser.getUsername());
             }
 
         }
