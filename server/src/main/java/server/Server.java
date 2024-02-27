@@ -2,7 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataAccess.*;
-import dataModels.User;
+import dataModels.*;
 import service.RegistrationException;
 import service.*;
 import spark.*;
@@ -16,8 +16,9 @@ public class Server {
     public Server(){
         DataMemory dataMemory = new DataMemory();
         UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
+        GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
         registrationService = new RegistrationService(userDataAccess);
-        applicationService = new ApplicationService(userDataAccess);
+        applicationService = new ApplicationService(userDataAccess, gameDataAccess);
         this.gson = new Gson();
     }
 
