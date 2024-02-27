@@ -93,15 +93,18 @@ public class Server {
     public String handleLogout(Request request, Response response) {
         try {
             String authToken = request.headers("authorization");
-            loginService.logout(authToken);
+            if (authToken == null) {
+                throw new AuthenticationException("Error: Unauthorized");
+            }
+            loginService.deauthenticate(authToken);
             response.status(200); // Success
             return gson.toJson(new SuccessResponse("logged out successfully"));
         } catch (IllegalArgumentException e) {
             response.status(400); // Bad request
             return gson.toJson(new ErrorResponse("Error: bad request"));
-        } catch (IllegalStateException e) {
+        } catch (AuthenticationException e) {
             response.status(401); // Unauthorized
-            return gson.toJson(new ErrorResponse("Error: unauthorized"));
+            return gson.toJson(new ErrorResponse("Error: Unauthorized"));
         } catch (Exception e) {
             response.status(500); // Internal server error
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));

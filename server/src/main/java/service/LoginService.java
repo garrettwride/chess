@@ -28,12 +28,12 @@ public class LoginService {
 
     }
 
-    public void logout(String authToken) throws AuthenticationException {
+    public void deauthenticate(String authToken) throws AuthenticationException {
         // Check if the authToken is valid
         String username = authDataAccess.getUsername(authToken);
 
         if (username == null) {
-            throw new IllegalStateException("Error: Unauthorized");
+            throw new AuthenticationException("Error: Unauthorized");
         }
         else {
             // delete an authToken
