@@ -139,12 +139,27 @@ public class Server {
 
     // Handler for creating a new game
     private String handleCreateGame(Request request, Response response) {
-        // Extract necessary information from the request
-        User user = gson.fromJson(request.body(), User.class);
-        // Call the JoinGameService method to create a new game
-        String result = joinGameService.createGame(request);
-        response.status(200);
-        return result;
+        try {
+            String authToken = request.headers("authorization");
+            if (authToken == null) {
+                throw new AuthenticationException("Error: Unauthorized");
+            }
+            // Extract necessary information from the request
+            String gameName = gson.fromJson(request.body(), String.class);
+            // Call the JoinGameService method to create a new game
+            String result = joinGameService.createGame(gameName);
+            response.status(200); // Success
+            return gson.toJson(new SuccessResponse("logged out successfully"));
+        } catch (IllegalArgumentException e) {
+            response.status(400); // Bad request
+            return gson.toJson(new ErrorResponse("Error: bad request"));
+        } catch (AuthenticationException e) {
+            response.status(401); // Unauthorized
+            return gson.toJson(new ErrorResponse("Error: Unauthorized"));
+        } catch (Exception e) {
+            response.status(500); // Internal server error
+            return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
+        }
     }
 
     // Handler for joining an existing game
