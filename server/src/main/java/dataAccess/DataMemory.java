@@ -1,8 +1,10 @@
 package dataAccess;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import dataModels.*;
+import java.util.List;
 import chess.ChessGame;
 
 public class DataMemory {
@@ -64,8 +66,17 @@ public class DataMemory {
         games.put(game.getGameID(), game);
     }
 
-    public Game getGame(String gameID) {
+    public Game getGame(int gameID) {
         return games.get(gameID);
+    }
+    // Method to update a game
+    public void updateGame(int gameId, Game updatedGame) {
+        games.put(gameId, updatedGame);
+    }
+
+    // Method to get all games
+    public List<Game> getAllGames() {
+        return new ArrayList<>(games.values());
     }
     public void clearGames() {
         games.clear();

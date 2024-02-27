@@ -9,6 +9,7 @@ import service.*;
 import spark.*;
 
 import java.io.Reader;
+import java.util.List;
 import java.util.Objects;
 
 public class Server {
@@ -27,7 +28,7 @@ public class Server {
         AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
         registrationService = new RegistrationService(userDataAccess, authDataAccess);
         loginService = new LoginService(authDataAccess, userDataAccess);
-        joinGameService = new JoinGameService(authDataAccess, gameDataAccess);
+        joinGameService = new JoinGameService(gameDataAccess, authDataAccess);
         applicationService = new ApplicationService(userDataAccess, gameDataAccess, authDataAccess);
         this.gson = new Gson();
     }
@@ -42,7 +43,9 @@ public class Server {
         Spark.delete("/db", this::handleClear);
         Spark.post("/session", this::handleLogin);
         Spark.delete("/session", this::handleLogout);
-
+        Spark.post("/game", this::handleCreateGame);
+        Spark.put("/game", this::handleJoinGame);
+        Spark.get("/game", this::handleListGames);
 
         Spark.awaitInitialization();
 
@@ -112,6 +115,45 @@ public class Server {
             response.status(500); // Internal server error
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         }
+    }
+
+    // Handler for listing all available games
+    private String handleListGames(Request request, Response response) {
+        try {
+            String authToken = request.headers("authorization");
+            if (authToken == null) {
+                throw new AuthenticationException("Error: Unauthorized");
+            }
+            // Call the JoinGameService method to get all available games
+            List result = joinGameService.listGames(authToken);
+            response.status(200); // Success
+            return gson.toJson(response);
+        } catch (AuthenticationException e) {
+            response.status(401); // Unauthorized
+            return gson.toJson(new ErrorResponse("Error: Unauthorized"));
+        } catch (Exception e) {
+            response.status(500); // Internal server error
+            return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
+        }
+    }
+
+    // Handler for creating a new game
+    private String handleCreateGame(Request request, Response response) {
+        // Extract necessary information from the request
+        User user = gson.fromJson(request.body(), User.class);
+        // Call the JoinGameService method to create a new game
+        String result = joinGameService.createGame(request);
+        response.status(200);
+        return result;
+    }
+
+    // Handler for joining an existing game
+    private String handleJoinGame(Request request, Response response) {
+        // Extract necessary information from the request
+        // Call the JoinGameService method to join an existing game
+        String result = joinGameService.joinGame(request);
+        response.status(200);
+        return result;
     }
 
     private String handleClear(Request request, Response response) {

@@ -1,14 +1,18 @@
 package service;
 
+import dataAccess.AuthDataAccess;
 import dataAccess.GameDataAccess;
 import dataModels.Game;
 import java.util.List;
+import java.util.Random;
 
 public class JoinGameService {
     private final GameDataAccess gameDataAccess;
+    private final AuthDataAccess authDataAccess;
 
-    public JoinGameService(GameDataAccess gameDataAccess) {
+    public JoinGameService(GameDataAccess gameDataAccess, AuthDataAccess authDataAccess) {
         this.gameDataAccess = gameDataAccess;
+        this.authDataAccess = authDataAccess;
     }
 
     // Method to create a new game
@@ -41,14 +45,26 @@ public class JoinGameService {
     }
 
     // Method to list available games
-    public List<Game> listGames() {
-        return gameDataAccess.getAllGames();
+    public List<Game> listGames(String authToken) throws AuthenticationException {
+        // Check if the authToken is valid
+        String username = authDataAccess.getUsername(authToken);
+
+        if (username == null) {
+            throw new AuthenticationException("Error: Unauthorized");
+        } else {
+            // delete an authToken
+            authDataAccess.deleteAuthToken(username);
+            return gameDataAccess.getAllGames();
+        }
     }
 
     // Method to generate a unique game ID (you can implement this logic)
     private int generateUniqueGameID() {
-        // Your implementation here
-        return 0;
+            Random random = new Random();
+            // Generate a random integer between 1 and 1000
+            int randomNumber = random.nextInt(1000) + 1;
+            return randomNumber;
+
     }
 }
 
