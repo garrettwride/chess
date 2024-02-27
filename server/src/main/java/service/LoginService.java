@@ -22,7 +22,8 @@ public class LoginService {
         }
         else {
             // Generate an authToken and return it
-
+            authDataAccess.addAuthToken(username);
+            return authDataAccess.getAuthToken(username);
         }
 
     }

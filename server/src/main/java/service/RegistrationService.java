@@ -20,6 +20,7 @@ public class RegistrationService {
                 throw new IllegalStateException("Username already exists");
             } else {
                 userDataAccess.addUser(newUser);
+                authDataAccess.addAuthToken(newUser.getUsername());
 
                 Gson gson = new Gson();
                 return gson.toJson(newUser);

@@ -1,4 +1,4 @@
-package serviceTests;
+package service;
 
 public class JoinGameServices {
 }

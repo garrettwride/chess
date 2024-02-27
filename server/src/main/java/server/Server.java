@@ -1,17 +1,19 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dataAccess.*;
 import dataModels.*;
-import org.eclipse.jetty.security.LoginService;
 import service.RegistrationException;
 import service.*;
 import spark.*;
 
+import java.util.Objects;
+
 public class Server {
 
     private RegistrationService registrationService;
-    private final LoginService loginService;
+    private LoginService loginService;
     private ApplicationService applicationService;
     final Gson gson;
 
@@ -21,7 +23,7 @@ public class Server {
         GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
         AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
         registrationService = new RegistrationService(userDataAccess, authDataAccess);
-        loginService = new LoginService();
+        loginService = new LoginService(authDataAccess, userDataAccess);
         applicationService = new ApplicationService(userDataAccess, gameDataAccess, authDataAccess);
         this.gson = new Gson();
     }
@@ -65,12 +67,15 @@ public class Server {
         }
     }
 
-    public String loginHandler(Request request, Response response) {
+    public String handleLogin(Request request, Response response) {
         try {
             User user = gson.fromJson(request.body(), User.class);
             String authToken = loginService.authenticate(user.getUsername(), user.getPassword());
             response.status(200); // Success
-            return gson.toJson(new SuccessResponse(user.getUsername(), authToken));
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("username", user.getUsername());
+            jsonObject.addProperty("authToken", authToken);
+            return gson.toJson(jsonObject);
         } catch (IllegalArgumentException e) {
             response.status(400); // Bad request
             return gson.toJson(new ErrorResponse("Error: bad request"));
@@ -93,5 +98,28 @@ public class Server {
             response.status(500); // Internal server error
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Server server = (Server) o;
+        return Objects.equals(registrationService, server.registrationService) && Objects.equals(loginService, server.loginService) && Objects.equals(applicationService, server.applicationService) && Objects.equals(gson, server.gson);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(registrationService, loginService, applicationService, gson);
+    }
+
+    @Override
+    public String toString() {
+        return "Server{" +
+                "registrationService=" + registrationService +
+                ", loginService=" + loginService +
+                ", applicationService=" + applicationService +
+                ", gson=" + gson +
+                '}';
     }
 }
