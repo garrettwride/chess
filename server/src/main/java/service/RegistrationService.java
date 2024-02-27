@@ -1,8 +1,7 @@
 package service;
 
-import com.google.gson.Gson;
 import dataAccess.*;
-import dataModels.*;
+import model.*;
 
 public class RegistrationService {
         private final UserDataAccess userDataAccess;
@@ -13,9 +12,9 @@ public class RegistrationService {
             this.authDataAccess = authDataAccess;
         }
 
-        public AuthData register(User newUser) throws RegistrationException {
+        public AuthData register(UserData newUser) throws RegistrationException {
             // Check if the username already exists
-            User existingUser = userDataAccess.getUser(newUser.getUsername());
+            UserData existingUser = userDataAccess.getUser(newUser.getUsername());
             if (existingUser != null) {
                 throw new IllegalStateException("Username already exists");
             } else {

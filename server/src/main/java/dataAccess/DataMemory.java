@@ -3,15 +3,17 @@ package dataAccess;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import dataModels.*;
+
+import model.*;
+
+
 import java.util.List;
-import chess.ChessGame;
 
 public class DataMemory {
     // Data structures for storing Users, AuthTokens, and Games
-    private Map<String, User> users;
+    private Map<String, UserData> users;
     private Map<String, AuthData> authTokens;
-    private Map<Integer, Game> games;
+    private Map<Integer, GameData> games;
 
     public DataMemory() {
         // Initialize the data structures
@@ -22,11 +24,11 @@ public class DataMemory {
 
     // Methods for adding, retrieving, updating, and deleting data objects
     // User-related methods
-    public void addUser(User user) {
+    public void addUser(UserData user) {
         users.put(user.getUsername(), user);
     }
 
-    public User getUser(String username) {
+    public UserData getUser(String username) {
         return users.get(username);
     }
 
@@ -62,20 +64,20 @@ public class DataMemory {
     }
 
     // Game-related methods
-    public void addGame(Game game) {
+    public void addGame(GameData game) {
         games.put(game.getGameID(), game);
     }
 
-    public Game getGame(int gameID) {
+    public GameData getGame(int gameID) {
         return games.get(gameID);
     }
     // Method to update a game
-    public void updateGame(int gameId, Game updatedGame) {
+    public void updateGame(int gameId, GameData updatedGame) {
         games.put(gameId, updatedGame);
     }
 
     // Method to get all games
-    public List<Game> getAllGames() {
+    public List<GameData> getAllGames() {
         return new ArrayList<>(games.values());
     }
     public void clearGames() {

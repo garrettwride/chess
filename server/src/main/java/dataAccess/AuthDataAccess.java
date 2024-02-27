@@ -1,6 +1,6 @@
 package dataAccess;
 
-import dataModels.AuthData;
+import model.AuthData;
 import java.util.UUID;
 
 public class AuthDataAccess {

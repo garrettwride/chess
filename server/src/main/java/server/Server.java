@@ -3,8 +3,7 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataAccess.*;
-import dataModels.*;
-import service.RegistrationException;
+import model.*;
 import service.*;
 import spark.*;
 
@@ -37,13 +36,17 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
+        Spark.before("/db", (request, response)->{
+            System.out.println("hello");
+        });
+
         // Define endpoints
         Spark.post("/user", this::handleRegistration);
         Spark.delete("/db", this::handleClear);
         Spark.post("/session", this::handleLogin);
         Spark.delete("/session", this::handleLogout);
         Spark.post("/game", this::handleCreateGame);
-      Spark.put("/game", this::handleJoinGame);
+        Spark.put("/game", this::handleJoinGame);
         Spark.get("/game", this::handleListGames);
 
         Spark.awaitInitialization();
@@ -58,7 +61,7 @@ public class Server {
 
     private String handleRegistration(Request request, Response response) {
         try {
-            User user = gson.fromJson(request.body(), User.class);
+            UserData user = gson.fromJson(request.body(), UserData.class);
             AuthData result = registrationService.register(user);
             response.status(200); // Success
             return gson.toJson(result, AuthData.class);
@@ -76,7 +79,7 @@ public class Server {
 
     public String handleLogin(Request request, Response response) {
         try {
-            User user = gson.fromJson(request.body(), User.class);
+            UserData user = gson.fromJson(request.body(), UserData.class);
             String authToken = loginService.authenticate(user.getUsername(), user.getPassword());
             response.status(200); // Success
             JsonObject jsonObject = new JsonObject();
@@ -148,7 +151,7 @@ public class Server {
             // Call the JoinGameService method to create a new game
             int result = joinGameService.createGame(gameName, authToken);
             response.status(200); // Success
-            return gson.toJson(response);
+            return gson.toJson(result);
         } catch (IllegalArgumentException e) {
             response.status(400); // Bad request
             return gson.toJson(new ErrorResponse("Error: bad request"));
@@ -173,8 +176,13 @@ public class Server {
 
             String playerColor = gameInfo.getPlayerColor();
             int gameID = gameInfo.getGameID();
-            // Call the JoinGameService method to join an existing game
-            joinGameService.joinGame(playerColor, gameID);
+            if(playerColor != null){
+                // Call the JoinGameService method to join an existing game
+                joinGameService.joinGame(authToken, playerColor, gameID);
+            } else {
+                joinGameService.observeGame(gameID);
+            }
+
             response.status(200);
             return gson.toJson(new SuccessResponse("Game successfully joined"));
         } catch (IllegalArgumentException e) {
@@ -183,10 +191,14 @@ public class Server {
         } catch (AuthenticationException e) {
             response.status(401); // Unauthorized
             return gson.toJson(new ErrorResponse("Error: Unauthorized"));
+        } catch (IllegalStateException e) {
+            response.status(403); // Forbidden
+            return gson.toJson(new ErrorResponse("Error: already taken"));
         } catch (Exception e) {
             response.status(500); // Internal server error
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         }
+
     }
 
     private String handleClear(Request request, Response response) {

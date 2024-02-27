@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import dataAccess.*;
-import dataModels.User;
+import model.UserData;
 import service.*;
 
 public class LogoutTests {
@@ -25,7 +25,7 @@ public class LogoutTests {
     @Test
     public void testLogoutSuccess() throws AuthenticationException, RegistrationException {
         // Register a user
-        User newUser = new User("testuser", "password123", "testuser@example.com");
+        UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
         registrationService.register(newUser);
 
         // Login to obtain an authToken

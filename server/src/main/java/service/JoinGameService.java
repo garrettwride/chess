@@ -3,7 +3,7 @@ package service;
 import chess.ChessGame;
 import dataAccess.AuthDataAccess;
 import dataAccess.GameDataAccess;
-import dataModels.Game;
+import model.GameData;
 import java.util.List;
 import java.util.Random;
 
@@ -30,7 +30,7 @@ public class JoinGameService {
             ChessGame chessGame = new ChessGame();
 
             // Create a new game object
-            Game game = new Game(gameID, username, null, gameName, chessGame);
+            GameData game = new GameData(gameID, null, null, gameName, chessGame);
 
             // Add the game to the data store
             gameDataAccess.addGame(game);
@@ -41,22 +41,56 @@ public class JoinGameService {
     }
 
     // Method to join an existing game
-    public boolean joinGame(String username, int gameID) {
+    public void joinGame(String authToken, String teamColor, int gameID) throws AuthenticationException {
         // Retrieve the game by gameID
-        Game game = gameDataAccess.getGame(gameID);
+        GameData game = gameDataAccess.getGame(gameID);
 
-        // Check if the game exists and has an empty slot for black player
-        if (game != null && game.getBlackUsername() == null) {
-            // Update the game with black player username
-            gameDataAccess.updateGame(gameID, username);
-            return true;
+        // Check if the authToken is valid
+        String username = authDataAccess.getUsername(authToken);
+
+        if (username == null) {
+            throw new AuthenticationException("Error: Unauthorized");
         } else {
-            return false; // Game not found or already full
+            // Check if the game exists
+            if (game != null) {
+                // Check if the teamColor is WHITE or BLACK
+                if (teamColor.equalsIgnoreCase("WHITE")) {
+                    // Check if the whiteUsername is null
+                    if (game.getWhiteUsername() == null) {
+                        // Update the game with white player username
+                        gameDataAccess.updateGame(gameID, username, teamColor);
+                    } else {
+                        throw new IllegalStateException("Error: already taken");
+                    }
+                } else if (teamColor.equalsIgnoreCase("BLACK")) {
+                    // Check if the blackUsername is null
+                    if (game.getBlackUsername() == null) {
+                        // Update the game with black player username
+                        gameDataAccess.updateGame(gameID, username, teamColor);
+                    } else {
+                        throw new IllegalStateException("Error: already taken");
+                    }
+                } else {
+                    throw new IllegalArgumentException("Error: Invalid team color");
+                }
+            } else {
+                throw new IllegalArgumentException("Error: Game not found");
+            }
         }
     }
 
+    public void observeGame(int gameID)throws AuthenticationException {
+        // Retrieve the game by gameID
+        GameData game = gameDataAccess.getGame(gameID);
+        if (game == null){
+            throw new IllegalArgumentException("Error: Game not found");
+
+        }
+    }
+
+
     // Method to list available games
-    public List<Game> listGames(String authToken) throws AuthenticationException {
+    public List<GameData> listGames(String authToken) throws AuthenticationException {
         // Check if the authToken is valid
         String username = authDataAccess.getUsername(authToken);
 

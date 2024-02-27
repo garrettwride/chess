@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import dataAccess.AuthDataAccess;
 import org.junit.jupiter.api.Test;
-import dataModels.User;
+import model.UserData;
 import service.*;
 import dataAccess.*;
 
@@ -24,7 +24,7 @@ public class LoginTests {
     @Test
     public void testLoginSuccess() {
         // Register a user
-        User newUser = new User("testuser", "password123", "testuser@example.com");
+        UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
         assertDoesNotThrow(() -> registrationService.register(newUser));
 
         // Login with correct credentials

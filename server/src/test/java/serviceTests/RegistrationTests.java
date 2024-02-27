@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import dataAccess.UserDataAccess;
 import org.junit.jupiter.api.Test;
-import dataModels.User;
+import model.UserData;
 import service.*;
 import dataAccess.*;
 
@@ -23,7 +23,7 @@ public class RegistrationTests {
     public void testRegistrationSuccess() {
 
         // Create a new user
-        User newUser = new User("newuser", "password123", "newuser@example.com");
+        UserData newUser = new UserData("newuser", "password123", "newuser@example.com");
 
         // Call the register method and verify success
         assertDoesNotThrow(() -> registrationService.register(newUser));
@@ -33,11 +33,11 @@ public class RegistrationTests {
     public void testRegistrationFailureUsernameTaken() throws RegistrationException {
 
         // Register an existing user
-        User existingUser = new User("existinguser", "password123", "existing@example.com");
+        UserData existingUser = new UserData("existinguser", "password123", "existing@example.com");
         registrationService.register(existingUser);
 
         // Attempt to register the same username again
-        User newUser = new User("existinguser", "password123", "newuser@example.com");
+        UserData newUser = new UserData("existinguser", "password123", "newuser@example.com");
 
         // Call the register method and verify that it fails
         assertThrows(IllegalStateException.class, () -> registrationService.register(newUser));

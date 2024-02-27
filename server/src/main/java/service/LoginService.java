@@ -2,7 +2,7 @@ package service;
 
 import dataAccess.AuthDataAccess;
 import dataAccess.UserDataAccess;
-import dataModels.User;
+import model.UserData;
 
 import java.util.Objects;
 
@@ -43,7 +43,7 @@ public class LoginService {
     }
 
     private boolean isValidCredentials(String username, String password) {
-        User checkUser = userDataAccess.getUser(username);
+        UserData checkUser = userDataAccess.getUser(username);
         return checkUser != null && Objects.equals(password, checkUser.getPassword());
     }
 }

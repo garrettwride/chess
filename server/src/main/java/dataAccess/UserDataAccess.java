@@ -1,6 +1,6 @@
 package dataAccess;
 
-import dataModels.User;
+import model.UserData;
 
 public class UserDataAccess {
     private final DataMemory dataMemory;
@@ -10,12 +10,12 @@ public class UserDataAccess {
     }
 
     // Method to add a new user
-    public void addUser(User user) {
+    public void addUser(UserData user) {
         dataMemory.addUser(user);
     }
 
     // Method to retrieve a user by username
-    public User getUser(String username) {
+    public UserData getUser(String username) {
         return dataMemory.getUser(username);
     }
 
