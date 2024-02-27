@@ -7,14 +7,41 @@ public class GameInfo {
     private String playerColor;
 
     @SerializedName("gameID")
-    private int gameID;
+    private Integer gameID; // Use Integer instead of int to allow null values
 
-    // Getters for playerColor and gameID
+    @SerializedName("gameName")
+    private String gameName;
+
+    // Getters and setters for playerColor, gameID, and gameName
     public String getPlayerColor() {
         return playerColor;
     }
 
-    public int getGameID() {
+    public void setPlayerColor(String playerColor) {
+        this.playerColor = playerColor;
+    }
+
+    public Integer getGameID() {
         return gameID;
     }
+
+    public void setGameID(Integer gameID) {
+        this.gameID = gameID;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    // Constructor to handle null values
+    public GameInfo() {
+        this.playerColor = null;
+        this.gameID = null;
+        this.gameName = null;
+    }
 }
+

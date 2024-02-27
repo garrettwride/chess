@@ -146,12 +146,20 @@ public class Server {
             if (authToken == null) {
                 throw new AuthenticationException("Error: Unauthorized");
             }
-            // Extract necessary information from the request
-            String gameName = gson.fromJson(request.body(), String.class);
-            // Call the JoinGameService method to create a new game
-            int result = joinGameService.createGame(gameName, authToken);
+            // Parse the JSON request body into GameInfo object
+            GameInfo gameInfo = gson.fromJson(request.body(), GameInfo.class);
+
+            // Extract the game name from the GameInfo object
+            String gameName = gameInfo.getGameName();
+            // Call the createGame method and get the game ID
+            int gameID = joinGameService.createGame(gameName, authToken);
+
+            // Create a JSON object with the game ID
+            JsonObject jsonResponse = new JsonObject();
+            jsonResponse.addProperty("gameID", gameID);
+
             response.status(200); // Success
-            return gson.toJson(result);
+            return gson.toJson(jsonResponse);
         } catch (IllegalArgumentException e) {
             response.status(400); // Bad request
             return gson.toJson(new ErrorResponse("Error: bad request"));
