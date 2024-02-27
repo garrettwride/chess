@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dataAccess.*;
 import model.*;
@@ -126,10 +127,27 @@ public class Server {
             if (authToken == null) {
                 throw new AuthenticationException("Error: Unauthorized");
             }
+
             // Call the JoinGameService method to get all available games
-            List result = joinGameService.listGames(authToken);
+            List<GameData> games = joinGameService.listGames(authToken);
+
+            // Create a JSON array to store game information
+            JsonArray gamesArray = new JsonArray();
+            for (GameData game : games) {
+                JsonObject gameObject = new JsonObject();
+                gameObject.addProperty("gameID", game.getGameID());
+                gameObject.addProperty("whiteUsername", game.getWhiteUsername());
+                gameObject.addProperty("blackUsername", game.getBlackUsername());
+                gameObject.addProperty("gameName", game.getGameName());
+                gamesArray.add(gameObject);
+            }
+
+            // Create a JSON object to wrap the games array
+            JsonObject jsonResponse = new JsonObject();
+            jsonResponse.add("games", gamesArray);
+
             response.status(200); // Success
-            return gson.toJson(response);
+            return gson.toJson(jsonResponse);
         } catch (AuthenticationException e) {
             response.status(401); // Unauthorized
             return gson.toJson(new ErrorResponse("Error: Unauthorized"));
@@ -138,6 +156,7 @@ public class Server {
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         }
     }
+
 
     // Handler for creating a new game
     private String handleCreateGame(Request request, Response response) {
