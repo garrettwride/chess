@@ -20,7 +20,7 @@ public class ClearTest {
         UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
         GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
         AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
-        applicationService = new ApplicationService(userDataAccess, gameDataAccess, authDataAccess);
+        this.applicationService = new ApplicationService(userDataAccess, gameDataAccess, authDataAccess);
     }
 
     @Test

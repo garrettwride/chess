@@ -20,6 +20,6 @@ public class ApplicationService {
         gameDataAccess.clear();
         authDataAccess.clear();
 
-        return false;
+        return true;
     }
 }
