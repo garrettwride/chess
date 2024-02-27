@@ -38,14 +38,14 @@ public class JoinGameTests {
 
         // Create a game
         String gameName = "Chess Game 1";
-        joinGameService.createGame(gameName, whiteAuthToken);
+        int gameID = joinGameService.createGame(gameName, whiteAuthToken);
 
         // Join the game as black player
-        joinGameService.joinGame("blackPlayer", "BLACK", 1);
+        joinGameService.joinGame(whiteAuthToken, "White", gameID);
 
-        GameData game = joinGameService.getGameByID(1); // Assuming there's a method to retrieve game by ID
+        GameData game = joinGameService.getGameByID(gameID); // Assuming there's a method to retrieve game by ID
         assertNotNull(game);
-        assertEquals("blackPlayer", game.getBlackUsername());
+        assertEquals("whitePlayer", game.getWhiteUsername());
     }
 
 
@@ -59,7 +59,7 @@ public class JoinGameTests {
         String blackAuthToken = loginService.authenticate("blackPlayer", "password456");
 
         // Attempt to join a non-existing game
-        assertThrows(RegistrationException.class, () -> joinGameService.joinGame(blackAuthToken, "BLACK", 1000));
+        assertThrows(IllegalArgumentException.class, () -> joinGameService.joinGame(blackAuthToken, "BLACK", 1000));
     }
 }
 
