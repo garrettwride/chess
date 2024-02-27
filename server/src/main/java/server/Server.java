@@ -17,8 +17,9 @@ public class Server {
         DataMemory dataMemory = new DataMemory();
         UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
         GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
+        AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
         registrationService = new RegistrationService(userDataAccess);
-        applicationService = new ApplicationService(userDataAccess, gameDataAccess);
+        applicationService = new ApplicationService(userDataAccess, gameDataAccess, authDataAccess);
         this.gson = new Gson();
     }
 

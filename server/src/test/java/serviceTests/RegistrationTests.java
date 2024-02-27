@@ -6,10 +6,7 @@ import dataAccess.UserDataAccess;
 import org.junit.jupiter.api.Test;
 import dataModels.User;
 import service.*;
-import dataModels.*;
 import dataAccess.*;
-import spark.Request;
-import spark.Response;
 
 public class RegistrationTests {
 

@@ -15,14 +15,15 @@ public class RegistrationService {
             // Check if the username already exists
             User existingUser = userDataAccess.getUser(newUser.getUsername());
             if (existingUser != null) {
-                throw new RegistrationException("Username already exists");
+                throw new IllegalStateException("Username already exists");
             } else {
                 userDataAccess.addUser(newUser);
+                Gson gson = new Gson();
+                return gson.toJson(newUser);
             }
 
             // Serialize the new user to JSON
-            Gson gson = new Gson();
-            return gson.toJson(newUser);
+
         }
 }
 

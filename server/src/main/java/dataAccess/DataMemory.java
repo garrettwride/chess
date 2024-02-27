@@ -5,7 +5,6 @@ import java.util.Map;
 import dataModels.*;
 import chess.ChessGame;
 
-
 public class DataMemory {
     // Data structures for storing Users, AuthTokens, and Games
     private Map<String, User> users;
@@ -61,7 +60,6 @@ public class DataMemory {
     public void clearGames() {
         games.clear();
     }
-
 
 }
 
