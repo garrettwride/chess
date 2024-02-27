@@ -49,6 +49,16 @@ public class DataMemory {
         authTokens.clear();
     }
 
+    // Method to get username by authToken
+    public String getUsernameByAuthToken(String authToken) {
+        for (AuthData authData : authTokens.values()) {
+            if (authData.getAuthToken().equals(authToken)) {
+                return authData.getUsername(); // Return the username if authToken matches
+            }
+        }
+        return null; // Return null if authToken not found
+    }
+
     // Game-related methods
     public void addGame(Game game) {
         games.put(game.getGameID(), game);

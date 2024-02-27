@@ -22,6 +22,9 @@ public class AuthDataAccess {
         AuthData authData = dataMemory.getAuthToken(username);
         return authData != null ? authData.getAuthToken() : null;
     }
+    public String getUsername(String authToken){
+        return dataMemory.getUsernameByAuthToken(authToken);
+    }
 
      // Method to delete authToken by username
     public void deleteAuthToken(String username) {

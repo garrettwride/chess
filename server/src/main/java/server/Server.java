@@ -8,6 +8,7 @@ import service.RegistrationException;
 import service.*;
 import spark.*;
 
+import java.io.Reader;
 import java.util.Objects;
 
 public class Server {
@@ -76,6 +77,24 @@ public class Server {
             jsonObject.addProperty("username", user.getUsername());
             jsonObject.addProperty("authToken", authToken);
             return gson.toJson(jsonObject);
+        } catch (IllegalArgumentException e) {
+            response.status(400); // Bad request
+            return gson.toJson(new ErrorResponse("Error: bad request"));
+        } catch (IllegalStateException e) {
+            response.status(401); // Unauthorized
+            return gson.toJson(new ErrorResponse("Error: unauthorized"));
+        } catch (Exception e) {
+            response.status(500); // Internal server error
+            return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
+        }
+    }
+
+    public String handleLogout(Request request, Response response) {
+        try {
+            String authToken = gson.fromJson((Reader) request.headers(), String.class);
+            loginService.logout(authToken);
+            response.status(200); // Success
+            return gson.toJson(new SuccessResponse("logged out successfully"));
         } catch (IllegalArgumentException e) {
             response.status(400); // Bad request
             return gson.toJson(new ErrorResponse("Error: bad request"));

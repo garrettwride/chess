@@ -28,6 +28,20 @@ public class LoginService {
 
     }
 
+    public void logout(String authToken) throws AuthenticationException {
+        // Check if the authToken is valid
+        String username = authDataAccess.getUsername(authToken);
+
+        if (username == null) {
+            throw new AuthenticationException("Invalid username or password");
+        }
+        else {
+            // delete an authToken
+            authDataAccess.deleteAuthToken(username);
+        }
+
+    }
+
     private boolean isValidCredentials(String username, String password) {
         User checkUser = userDataAccess.getUser(username);
         return checkUser != null && Objects.equals(password, checkUser.getPassword());
