@@ -15,7 +15,8 @@ public class RegistrationTests {
     RegistrationTests() {
         DataMemory dataMemory = new DataMemory();
         UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
-        this.registrationService = new RegistrationService(userDataAccess);
+        AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
+        this.registrationService = new RegistrationService(userDataAccess, authDataAccess);
     }
 
     @Test

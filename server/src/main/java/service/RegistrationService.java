@@ -6,9 +6,11 @@ import dataModels.*;
 
 public class RegistrationService {
         private final UserDataAccess userDataAccess;
+        private final AuthDataAccess authDataAccess;
 
-        public RegistrationService(UserDataAccess userDataAccess) {
+        public RegistrationService(UserDataAccess userDataAccess, AuthDataAccess authDataAccess) {
             this.userDataAccess = userDataAccess;
+            this.authDataAccess = authDataAccess;
         }
 
         public String register(User newUser) throws RegistrationException {
@@ -18,11 +20,10 @@ public class RegistrationService {
                 throw new IllegalStateException("Username already exists");
             } else {
                 userDataAccess.addUser(newUser);
+
                 Gson gson = new Gson();
                 return gson.toJson(newUser);
             }
-
-            // Serialize the new user to JSON
 
         }
 }
