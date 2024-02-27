@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataAccess.AuthDataAccess;
 import dataAccess.GameDataAccess;
 import dataModels.Game;
@@ -16,21 +17,31 @@ public class JoinGameService {
     }
 
     // Method to create a new game
-    public int createGame(String gameName, String username) {
-        // Generate a unique gameID (you can implement this logic)
-        int gameID = generateUniqueGameID();
+    public int createGame(String gameName, String authToken) throws AuthenticationException {
+        String username = authDataAccess.getUsername(authToken);
 
-        // Create a new game object
-        Game game = new Game(gameID, username, null, gameName, null);
+        if (username == null) {
+            throw new AuthenticationException("Error: Unauthorized");
+        } else {
+            // Generate a unique gameID (you can implement this logic)
+            int gameID = generateUniqueGameID();
 
-        // Add the game to the data store
-        gameDataAccess.addGame(game);
+            //Create new chess game
+            ChessGame chessGame = new ChessGame();
 
-        return gameID;
+            // Create a new game object
+            Game game = new Game(gameID, username, null, gameName, chessGame);
+
+            // Add the game to the data store
+            gameDataAccess.addGame(game);
+
+            return gameID;
+        }
+
     }
 
     // Method to join an existing game
-    public boolean joinGame(int gameID, String username) {
+    public boolean joinGame(String username, int gameID) {
         // Retrieve the game by gameID
         Game game = gameDataAccess.getGame(gameID);
 
@@ -52,8 +63,7 @@ public class JoinGameService {
         if (username == null) {
             throw new AuthenticationException("Error: Unauthorized");
         } else {
-            // delete an authToken
-            authDataAccess.deleteAuthToken(username);
+
             return gameDataAccess.getAllGames();
         }
     }

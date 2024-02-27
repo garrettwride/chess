@@ -24,7 +24,9 @@ public class GameDataAccess {
 
     // Method to update a game
     public void updateGame(int gameID, String username) {
-        dataMemory.updateGame(gameID, username);
+        Game updatedGame = getGame(gameID);
+        updatedGame.setBlackUsername(username);
+        dataMemory.updateGame(gameID, updatedGame);
     }
 
     // Method to retrieve all games
