@@ -42,6 +42,14 @@ public class DataMemory {
         return authTokens.get(authToken);
     }
 
+    public void deleteAuthToken(String username) {
+        authTokens.remove(username);
+    }
+
+    public void clearAuthTokens(){
+        authTokens.clear();
+    }
+
     // Game-related methods
     public void addGame(Game game) {
         games.put(game.getGameID(), game);
