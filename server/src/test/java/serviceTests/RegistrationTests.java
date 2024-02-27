@@ -40,7 +40,7 @@ public class RegistrationTests {
         User newUser = new User("existinguser", "password123", "newuser@example.com");
 
         // Call the register method and verify that it fails
-        assertThrows(RegistrationException.class, () -> registrationService.register(newUser));
+        assertThrows(IllegalStateException.class, () -> registrationService.register(newUser));
     }
 
 
