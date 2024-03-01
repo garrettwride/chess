@@ -61,6 +61,7 @@ public class JoinGameService {
         if (username == null) {
             throw new AuthenticationException("Error: Unauthorized");
         } else {
+            //username = username.substring(0, username.length() - 1);
             // Check if the game exists
             if (game != null) {
                 // Check if the teamColor is WHITE or BLACK
@@ -89,7 +90,14 @@ public class JoinGameService {
         }
     }
 
-    public void observeGame(int gameID)throws AuthenticationException {
+    public void observeGame(int gameID, String authToken)throws AuthenticationException {
+
+        // Check if the authToken is valid
+        String username = authDataAccess.getUsername(authToken);
+
+        if (username == null) {
+            throw new AuthenticationException("Error: Unauthorized");
+        }
         // Retrieve the game by gameID
         GameData game = gameDataAccess.getGame(gameID);
         if (game == null){

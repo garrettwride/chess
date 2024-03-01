@@ -37,10 +37,6 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        Spark.before("/db", (request, response)->{
-            System.out.println("hello");
-        });
-
         // Define endpoints
         Spark.post("/user", this::handleRegistration);
         Spark.delete("/db", this::handleClear);
@@ -52,7 +48,7 @@ public class Server {
 
         Spark.awaitInitialization();
 
-        return desiredPort;
+        return Spark.port();
     }
 
     public void stop() {
@@ -63,6 +59,9 @@ public class Server {
     private String handleRegistration(Request request, Response response) {
         try {
             UserData user = gson.fromJson(request.body(), UserData.class);
+            if (user.getUsername() == null || user.getPassword() == null){
+                throw new IllegalArgumentException("Error: bad request");
+            }
             AuthData result = registrationService.register(user);
             response.status(200); // Success
             return gson.toJson(result, AuthData.class);
@@ -90,7 +89,7 @@ public class Server {
         } catch (IllegalArgumentException e) {
             response.status(400); // Bad request
             return gson.toJson(new ErrorResponse("Error: bad request"));
-        } catch (IllegalStateException e) {
+        } catch (AuthenticationException e) {
             response.status(401); // Unauthorized
             return gson.toJson(new ErrorResponse("Error: unauthorized"));
         } catch (Exception e) {
@@ -98,6 +97,7 @@ public class Server {
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         }
     }
+
 
     public String handleLogout(Request request, Response response) {
         try {
@@ -113,12 +113,13 @@ public class Server {
             return gson.toJson(new ErrorResponse("Error: bad request"));
         } catch (AuthenticationException e) {
             response.status(401); // Unauthorized
-            return gson.toJson(new ErrorResponse("Error: Unauthorized"));
+            return gson.toJson(new ErrorResponse("Error: unauthorized"));
         } catch (Exception e) {
             response.status(500); // Internal server error
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         }
     }
+
 
     // Handler for listing all available games
     private String handleListGames(Request request, Response response) {
@@ -162,9 +163,7 @@ public class Server {
     private String handleCreateGame(Request request, Response response) {
         try {
             String authToken = request.headers("authorization");
-            if (authToken == null) {
-                throw new AuthenticationException("Error: Unauthorized");
-            }
+
             // Parse the JSON request body into GameInfo object
             GameInfo gameInfo = gson.fromJson(request.body(), GameInfo.class);
 
@@ -207,7 +206,7 @@ public class Server {
                 // Call the JoinGameService method to join an existing game
                 joinGameService.joinGame(authToken, playerColor, gameID);
             } else {
-                joinGameService.observeGame(gameID);
+                joinGameService.observeGame(gameID, authToken);
             }
 
             response.status(200);
