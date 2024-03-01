@@ -101,24 +101,89 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
+
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        // Get the piece at the specified position
         ChessPiece currentPiece = gameBoard.getPiece(startPosition);
+
+        // Check if the position is empty
         if (currentPiece == null) {
             return null;
         }
 
-        HashSet<ChessMove> validMoves = new HashSet<>();
+        // Get all possible moves for the piece
         Collection<ChessMove> allMoves = currentPiece.pieceMoves(gameBoard, startPosition);
+        HashSet<ChessMove> validMoves = new HashSet<>();
 
+        // Iterate through each move
         for (ChessMove move : allMoves) {
+            // Clone the board and apply the move
             ChessBoard clonedBoard = gameBoard.clone();
             applyMove(move, clonedBoard);
 
-            if (!isInCheck(currentPiece.getTeamColor(), clonedBoard)) {
+            // Check if the move results in the team not being in check
+            if (!isInCheck(teamTurn, clonedBoard)) {
+                // Add the move to the set of valid moves
                 validMoves.add(move);
             }
         }
         return validMoves;
+    }
+    private Collection<ChessMove> validMovesForTeam(TeamColor teamColor) {
+        // HashSet to store valid moves
+        HashSet<ChessMove> validMoves = new HashSet<>();
+
+        // Iterate through each position on the board
+        for (int i = 1; i <= 8; ++i) {
+            for (int j = 1; j <= 8; ++j) {
+                ChessPosition piecePosition = new ChessPosition(i, j);
+                ChessPiece currentPiece = gameBoard.getPiece(piecePosition);
+
+                // Check if the piece exists and belongs to the specified team
+                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
+                    // Get valid moves for the current piece
+                    Collection<ChessMove> pieceMoves = currentPiece.pieceMoves(gameBoard, piecePosition);
+
+                    // Iterate through each move
+                    for (ChessMove move : pieceMoves) {
+                        // Clone the board and apply the move
+                        ChessBoard clonedBoard = gameBoard.clone();
+                        applyMove(move, clonedBoard);
+
+                        // Check if the move results in the team not being in check
+                        if (!isInCheck(teamColor, clonedBoard)) {
+                            // Add the move to the set of valid moves
+                            validMoves.add(move);
+                        }
+                    }
+                }
+            }
+        }
+        return validMoves;
+    }
+
+
+    private Collection<ChessMove> allMoves(TeamColor teamColor) {
+        // HashSet to store all possible moves
+        HashSet<ChessMove> positionsSet = new HashSet<>();
+
+        // Iterate through each position on the board
+        for (int i = 1; i <= 8; ++i) {
+            for (int j = 1; j <= 8; ++j) {
+                ChessPosition piecePosition = new ChessPosition(i, j);
+                ChessPiece currentPiece = gameBoard.getPiece(piecePosition);
+
+                // Check if the piece exists and belongs to the specified team
+                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
+                    // Get valid moves for the current piece
+                    Collection<ChessMove> validMoves = currentPiece.pieceMoves(gameBoard, piecePosition);
+
+                    // Add the valid moves to the set of all moves
+                    positionsSet.addAll(validMoves);
+                }
+            }
+        }
+        return positionsSet;
     }
 
     /**
@@ -218,20 +283,7 @@ public class ChessGame {
             return false;
         }
 
-        for (int i = 1; i < 9; ++i) {
-            for (int j = 1; j < 9; ++j) {
-                ChessPosition piecePosition = new ChessPosition(i, j);
-                ChessPiece currentPiece = gameBoard.getPiece(piecePosition);
-                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> validMoves = validMoves(piecePosition);
-                    if (!validMoves.isEmpty()){
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
+        return loopBoard(teamColor);
     }
 
     /**
@@ -246,6 +298,10 @@ public class ChessGame {
             return false;
         }
 
+        return loopBoard(teamColor);
+    }
+
+    private boolean loopBoard(TeamColor teamColor) {
         for (int i = 1; i < 9; ++i) {
             for (int j = 1; j < 9; ++j) {
                 ChessPosition piecePosition = new ChessPosition(i, j);
