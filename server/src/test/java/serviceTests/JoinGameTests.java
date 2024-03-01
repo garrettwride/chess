@@ -7,6 +7,9 @@ import dataAccess.*;
 import model.*;
 import service.*;
 
+import java.util.List;
+import java.util.Optional;
+
 public class JoinGameTests {
 
     private JoinGameService joinGameService;
@@ -43,8 +46,16 @@ public class JoinGameTests {
         // Join the game as black player
         joinGameService.joinGame(whiteAuthToken, "White", gameID);
 
-        GameData game = joinGameService.getGameByID(gameID); // Assuming there's a method to retrieve game by ID
-        assertNotNull(game);
+        // List all games
+        List<GameData> games = joinGameService.listGames(whiteAuthToken);
+        assertFalse(games.isEmpty());
+
+        // Find the game by ID
+        Optional<GameData> optionalGame = games.stream().filter(g -> g.getGameID() == gameID).findFirst();
+        assertTrue(optionalGame.isPresent());
+
+        // Assert properties of the game
+        GameData game = optionalGame.get();
         assertEquals("whitePlayer", game.getWhiteUsername());
     }
 
