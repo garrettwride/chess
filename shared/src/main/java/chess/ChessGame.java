@@ -65,21 +65,6 @@ public class ChessGame {
         BLACK
     }
 
-    private Collection<ChessMove> allMoves(TeamColor teamColor, ChessBoard board) {
-        HashSet<ChessMove> positionsSet = new HashSet<>();
-        for (int i = 1; i < 9; ++i) {
-            for (int j = 1; j < 9; ++j) {
-                ChessPosition piecePosition = new ChessPosition(i, j);
-                ChessPiece currentPiece = board.getPiece(piecePosition);
-                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> validMoves = currentPiece.pieceMoves(board, piecePosition);
-                    positionsSet.addAll(validMoves);
-                }
-            }
-        }
-        return positionsSet;
-    }
-
     public ChessPosition findKing(TeamColor color, ChessBoard board) {
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
@@ -129,6 +114,30 @@ public class ChessGame {
         }
         return validMoves;
     }
+
+    private Collection<ChessMove> allMoves(TeamColor teamColor, ChessBoard board) {
+        // HashSet to store all possible moves
+        HashSet<ChessMove> positionsSet = new HashSet<>();
+
+        // Iterate through each position on the board
+        for (int i = 1; i <= 8; ++i) {
+            for (int j = 1; j <= 8; ++j) {
+                ChessPosition piecePosition = new ChessPosition(i, j);
+                ChessPiece currentPiece = gameBoard.getPiece(piecePosition);
+
+                // Check if the piece exists and belongs to the specified team
+                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
+                    // Get valid moves for the current piece
+                    Collection<ChessMove> validMoves = currentPiece.pieceMoves(gameBoard, piecePosition);
+
+                    // Add the valid moves to the set of all moves
+                    positionsSet.addAll(validMoves);
+                }
+            }
+        }
+        return positionsSet;
+    }
+
     private Collection<ChessMove> validMovesForTeam(TeamColor teamColor) {
         // HashSet to store valid moves
         HashSet<ChessMove> validMoves = new HashSet<>();
@@ -160,30 +169,6 @@ public class ChessGame {
             }
         }
         return validMoves;
-    }
-
-
-    private Collection<ChessMove> allMoves(TeamColor teamColor) {
-        // HashSet to store all possible moves
-        HashSet<ChessMove> positionsSet = new HashSet<>();
-
-        // Iterate through each position on the board
-        for (int i = 1; i <= 8; ++i) {
-            for (int j = 1; j <= 8; ++j) {
-                ChessPosition piecePosition = new ChessPosition(i, j);
-                ChessPiece currentPiece = gameBoard.getPiece(piecePosition);
-
-                // Check if the piece exists and belongs to the specified team
-                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
-                    // Get valid moves for the current piece
-                    Collection<ChessMove> validMoves = currentPiece.pieceMoves(gameBoard, piecePosition);
-
-                    // Add the valid moves to the set of all moves
-                    positionsSet.addAll(validMoves);
-                }
-            }
-        }
-        return positionsSet;
     }
 
     /**
@@ -248,18 +233,14 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition kingPosition = findKing(teamColor, gameBoard);
-        TeamColor opponentColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
-        Collection<ChessMove> opponentMoves = allMoves(opponentColor, gameBoard);
-        for (ChessMove move : opponentMoves) {
-            if (move.getEndPosition().equals(kingPosition)) {
-                return true;
-            }
-        }
-        return false;
+        return kingPosition(teamColor, gameBoard);
     }
 
     public boolean isInCheck(TeamColor teamColor, ChessBoard board) {
+        return kingPosition(teamColor, board);
+    }
+
+    private boolean kingPosition(TeamColor teamColor, ChessBoard board) {
         ChessPosition kingPosition = findKing(teamColor, board);
         TeamColor opponentColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
         Collection<ChessMove> opponentMoves = allMoves(opponentColor, board);
