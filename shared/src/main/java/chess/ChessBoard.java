@@ -44,44 +44,54 @@ public class ChessBoard implements Cloneable {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        for (ChessPiece[] col : squares) {
-            for (ChessPiece piece : col) {
-                piece = null;
-            }
-        }
+        // Clear the board
+        squares = new ChessPiece[SIZE][SIZE];
 
-        addPiece(new ChessPosition(1, 5), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
-        addPiece(new ChessPosition(8, 5), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
+        // Define the piece types and their initial positions
+        ChessPiece.PieceType[] whitePieces = {
+                ChessPiece.PieceType.KING,
+                ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.ROOK,
+                ChessPiece.PieceType.ROOK
+        };
+        ChessPiece.PieceType[] blackPieces = {
+                ChessPiece.PieceType.KING,
+                ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.ROOK,
+                ChessPiece.PieceType.ROOK
+        };
 
-        addPiece(new ChessPosition(1, 4), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN));
-        addPiece(new ChessPosition(8, 4), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN));
+        // Set up white pieces
+        placePieces(1, ChessGame.TeamColor.WHITE, whitePieces);
+        // Set up black pieces
+        placePieces(8, ChessGame.TeamColor.BLACK, blackPieces);
 
-        addPiece(new ChessPosition(1, 6), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));
-        addPiece(new ChessPosition(8, 3), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
+        // Set up white pawns
+        placePawns(2, ChessGame.TeamColor.WHITE);
+        // Set up black pawns
+        placePawns(7, ChessGame.TeamColor.BLACK);
+    }
 
-        addPiece(new ChessPosition(1, 3), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));
-        addPiece(new ChessPosition(8, 6), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
-
-        addPiece(new ChessPosition(1, 7), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
-        addPiece(new ChessPosition(8, 2), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
-
-        addPiece(new ChessPosition(1, 2), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
-        addPiece(new ChessPosition(8, 7), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
-
-        addPiece(new ChessPosition(1, 8), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
-        addPiece(new ChessPosition(8, 1), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
-
-        addPiece(new ChessPosition(1, 1), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
-        addPiece(new ChessPosition(8, 8), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
-
-        for (int i = 1; i < 9; i++) {
-            addPiece(new ChessPosition(2, i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-        }
-
-        for (int i = 1; i < 9; i++) {
-            addPiece(new ChessPosition(7, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
+    private void placePieces(int row, ChessGame.TeamColor color, ChessPiece.PieceType[] pieces) {
+        for (int i = 1; i <= pieces.length; i++) {
+            addPiece(new ChessPosition(row, i), new ChessPiece(color, pieces[i - 1]));
         }
     }
+
+    private void placePawns(int row, ChessGame.TeamColor color) {
+        for (int i = 1; i <= SIZE; i++) {
+            addPiece(new ChessPosition(row, i), new ChessPiece(color, ChessPiece.PieceType.PAWN));
+        }
+    }
+
 
     @Override
     public ChessBoard clone() {
