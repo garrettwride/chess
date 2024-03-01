@@ -17,24 +17,12 @@ public class GameInfo {
         return playerColor;
     }
 
-    public void setPlayerColor(String playerColor) {
-        this.playerColor = playerColor;
-    }
-
     public Integer getGameID() {
         return gameID;
     }
 
-    public void setGameID(Integer gameID) {
-        this.gameID = gameID;
-    }
-
     public String getGameName() {
         return gameName;
-    }
-
-    public void setGameName(String gameName) {
-        this.gameName = gameName;
     }
 
     // Constructor to handle null values
