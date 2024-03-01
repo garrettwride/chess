@@ -11,24 +11,25 @@ public class AuthDataAccess {
     }
 
     // Method to add a new authToken for a user
-    public void addAuthToken(String username) {
+    public String addAuthToken(String username) {
         String authToken = createAuthToken();
         AuthData authData = new AuthData(username, authToken);
         dataMemory.addAuthToken(authData);
+        return authToken;
     }
 
     // Method to retrieve authToken by username
-    public String getAuthToken(String username) {
-        AuthData authData = dataMemory.getAuthToken(username);
+    public String getAuthToken(String authToken) {
+        AuthData authData = dataMemory.getAuthToken(authToken);
         return authData != null ? authData.getAuthToken() : null;
     }
 
-    public AuthData getAuthData(String username) {
-        AuthData authData = dataMemory.getAuthToken(username);
+    public AuthData getAuthData(String authToken) {
+        AuthData authData = dataMemory.getAuthToken(authToken);
         return authData;
     }
     public String getUsername(String authToken){
-        return dataMemory.getUsernameByAuthToken(authToken);
+        return dataMemory.getUsername(authToken);
     }
 
      // Method to delete authToken by username

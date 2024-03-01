@@ -61,7 +61,6 @@ public class JoinGameService {
         if (username == null) {
             throw new AuthenticationException("Error: Unauthorized");
         } else {
-            //username = username.substring(0, username.length() - 1);
             // Check if the game exists
             if (game != null) {
                 // Check if the teamColor is WHITE or BLACK

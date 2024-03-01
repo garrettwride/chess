@@ -19,13 +19,9 @@ public class LoginService {
         // Check if the username and password are valid
         if (!isValidCredentials(username, password)) {
             throw new AuthenticationException("Invalid username or password");
-        } else if (authDataAccess.getAuthToken(username) != null) {
-            authDataAccess.addAuthToken(username + "2");
-            return authDataAccess.getAuthToken(username + "2");
         } else {
             // Generate an authToken and return it
-            authDataAccess.addAuthToken(username);
-            return authDataAccess.getAuthToken(username);
+            return authDataAccess.addAuthToken(username);
         }
 
     }
@@ -39,7 +35,7 @@ public class LoginService {
         }
         else {
             // delete an authToken
-            authDataAccess.deleteAuthToken(username);
+            authDataAccess.deleteAuthToken(authToken);
         }
 
     }
@@ -49,4 +45,3 @@ public class LoginService {
         return checkUser != null && Objects.equals(password, checkUser.getPassword());
     }
 }
-

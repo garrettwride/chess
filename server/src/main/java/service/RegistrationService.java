@@ -19,9 +19,9 @@ public class RegistrationService {
                 throw new IllegalStateException("Username already exists");
             } else {
                 userDataAccess.addUser(newUser);
-                authDataAccess.addAuthToken(newUser.getUsername());
+                String authToken = authDataAccess.addAuthToken(newUser.getUsername());
 
-                return authDataAccess.getAuthData(newUser.getUsername());
+                return authDataAccess.getAuthData(authToken);
             }
 
         }

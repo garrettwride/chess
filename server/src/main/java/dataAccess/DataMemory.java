@@ -38,15 +38,15 @@ public class DataMemory {
 
     // AuthToken-related methods
     public void addAuthToken(AuthData authToken) {
-        authTokens.put(authToken.getUsername(), authToken);
+        authTokens.put(authToken.getAuthToken(), authToken);
     }
 
     public AuthData getAuthToken(String authToken) {
         return authTokens.get(authToken);
     }
 
-    public void deleteAuthToken(String username) {
-        authTokens.remove(username);
+    public void deleteAuthToken(String authToken) {
+        authTokens.remove(authToken);
     }
 
     public void clearAuthTokens(){
@@ -54,14 +54,11 @@ public class DataMemory {
     }
 
     // Method to get username by authToken
-    public String getUsernameByAuthToken(String authToken) {
-        for (AuthData authData : authTokens.values()) {
-            if (authData.getAuthToken().equals(authToken)) {
-                return authData.getUsername(); // Return the username if authToken matches
-            }
-        }
-        return null; // Return null if authToken not found
+    public String getUsername(String authToken) {
+        AuthData authData = authTokens.get(authToken);
+        return authData != null ? authData.getUsername() : null;
     }
+
 
     // Game-related methods
     public void addGame(GameData game) {
