@@ -38,6 +38,10 @@ public class GameData {
         return gameName;
     }
 
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
     public void setBlackUsername(String blackUsername) {
         this.blackUsername = blackUsername;
     }

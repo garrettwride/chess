@@ -5,6 +5,8 @@ import dataAccess.AuthDataAccess;
 import dataAccess.DataAccessException;
 import dataAccess.GameDataAccess;
 import model.GameData;
+
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 
@@ -18,7 +20,7 @@ public class JoinGameService {
     }
 
     // Method to create a new game
-    public int createGame(String gameName, String authToken) throws AuthenticationException, DataAccessException {
+    public int createGame(String gameName, String authToken) throws AuthenticationException, DataAccessException, SQLException {
         String username = authDataAccess.getUsername(authToken);
 
         if (username == null) {
@@ -42,7 +44,7 @@ public class JoinGameService {
     }
 
     // Method to join an existing game
-    public void joinGame(String authToken, String teamColor, int gameID) throws AuthenticationException, DataAccessException {
+    public void joinGame(String authToken, String teamColor, int gameID) throws AuthenticationException, DataAccessException, SQLException {
         // Retrieve the game by gameID
         GameData game = gameDataAccess.getGame(gameID);
 
@@ -80,7 +82,7 @@ public class JoinGameService {
         }
     }
 
-    public void observeGame(int gameID, String authToken) throws AuthenticationException, DataAccessException {
+    public void observeGame(int gameID, String authToken) throws AuthenticationException, DataAccessException, SQLException {
 
         // Check if the authToken is valid
         String username = authDataAccess.getUsername(authToken);
@@ -98,7 +100,7 @@ public class JoinGameService {
 
 
     // Method to list available games
-    public List<GameData> listGames(String authToken) throws AuthenticationException, DataAccessException {
+    public List<GameData> listGames(String authToken) throws AuthenticationException, DataAccessException, SQLException {
         // Check if the authToken is valid
         String username = authDataAccess.getUsername(authToken);
 
