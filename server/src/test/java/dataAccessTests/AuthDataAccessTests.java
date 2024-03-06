@@ -109,5 +109,61 @@ public class AuthDataAccessTests {
         // Expects DataAccessException to be thrown
     }
 
+    @Test
+    public void testGetUsername_Positive() throws Exception {
+        // Positive test for retrieving username using auth token
+        // Arrange
+        String username = "testUser";
+        String authToken = "testToken";
+        authDataAccess.addAuthToken(username);
+
+        // Act
+        String retrievedUsername = authDataAccess.getUsername(authToken);
+
+        // Assert
+        assertEquals(username, retrievedUsername);
+    }
+
+    @Test(expected = DataAccessException.class)
+    public void testGetUsername_Negative_AuthTokenNotFound() throws Exception {
+        // Negative test for retrieving username with non-existent auth token
+        // Arrange
+        String authToken = "nonExistentToken";
+
+        // Act
+        authDataAccess.getUsername(authToken);
+
+        // Assert
+        // Expects DataAccessException to be thrown
+    }
+
+    @Test
+    public void testDeleteAuthToken_Positive() throws Exception {
+        // Positive test for deleting auth token
+        // Arrange
+        String username = "testUser";
+        String authToken = "testToken";
+        authDataAccess.addAuthToken(username, authToken);
+
+        // Act
+        authDataAccess.deleteAuthToken(username);
+
+        // Assert
+        assertNull(authDataAccess.getUsername(authToken));
+    }
+
+    @Test(expected = DataAccessException.class)
+    public void testDeleteAuthToken_Negative_UserNotFound() throws Exception {
+        // Negative test for deleting auth token with non-existent user
+        // Arrange
+        String username = "nonExistentUser";
+
+        // Act
+        authDataAccess.deleteAuthToken(username);
+
+        // Assert
+        // Expects DataAccessException to be thrown
+    }
+
 }
 
