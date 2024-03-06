@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import dataAccess.*;
 import java.sql.*;
 
+import static org.junit.Assert.*;
+import org.junit.*;
+import java.sql.*;
+
 public class UserDataAccessTest {
 
     private UserDataAccess userDataAccess;
@@ -33,26 +37,77 @@ public class UserDataAccessTest {
         // Arrange
         String username = "testUser";
         String password = "testPassword";
-        userDataAccess.addUser(new UserData(username, password));
+        addUserToDatabase(username, password);
 
         // Act
-        UserData userData = userDataAccess.getUser(username);
+        UserData retrievedUser = userDataAccess.getUser(username);
 
         // Assert
-        assertNotNull(userData);
-        assertEquals(username, userData.getUsername());
-        assertEquals(password, userData.getPassword());
+        assertNotNull(retrievedUser);
+        assertEquals(username, retrievedUser.getUsername());
+        assertEquals(password, retrievedUser.getPassword());
     }
 
     @Test
     public void testGetUser_Negative_UserNotFound() throws Exception {
         // Arrange
-        String username = "nonexistentUser";
+        String username = "nonExistingUser";
 
         // Act
-        UserData userData = userDataAccess.getUser(username);
+        UserData retrievedUser = userDataAccess.getUser(username);
 
         // Assert
-        assertNull(userData);
+        assertNull(retrievedUser);
+    }
+
+    @Test
+    public void testAddUser_Positive() throws Exception {
+        // Arrange
+        String username = "testUser";
+        String password = "testPassword";
+        UserData userData = new UserData(username, password);
+
+        // Act
+        userDataAccess.addUser(userData);
+        UserData retrievedUser = getUserFromDatabase(username);
+
+        // Assert
+        assertNotNull(retrievedUser);
+        assertEquals(username, retrievedUser.getUsername());
+        assertEquals(password, retrievedUser.getPassword());
+    }
+
+    @Test
+    public void testAddUser_Negative_UserAlreadyExists() throws Exception {
+        // Arrange
+        String username = "existingUser";
+        String password = "existingPassword";
+        UserData existingUser = new UserData(username, password);
+        userDataAccess.addUser(existingUser); // Add the user once
+
+        userDataAccess.addUser(existingUser); // Try to add the same user again
+    }
+
+    private void addUserToDatabase(String username, String password) throws SQLException {
+        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.executeUpdate();
+        }
+    }
+
+    private UserData getUserFromDatabase(String username) throws SQLException {
+        String query = "SELECT * FROM users WHERE username = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, username);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    String password = rs.getString("password");
+                    return new UserData(username, password);
+                }
+            }
+        }
+        return null;
     }
 }
