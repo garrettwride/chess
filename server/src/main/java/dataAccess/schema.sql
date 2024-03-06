@@ -15,5 +15,6 @@ CREATE TABLE games (
                        id INT PRIMARY KEY,
                        game_name VARCHAR(12) NOT NULL,
                        white_player VARCHAR(20),
-                       black_player VARCHAR(20)
+                       black_player VARCHAR(20),
+                       game TEXT
 );
