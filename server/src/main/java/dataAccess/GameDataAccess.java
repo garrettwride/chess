@@ -1,98 +1,100 @@
 package dataAccess;
 
 import model.GameData;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import chess.ChessGame;
+import com.google.gson.Gson;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameDataAccess {
-    // Method to add a new game
-    public void addGame(GameData game) throws DataAccessException {
-        String query = "INSERT INTO game_data (gameID, whiteUsername, blackUsername) VALUES (?, ?, ?)";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
-            statement.setInt(1, game.getGameID());
-            statement.setString(2, game.getWhiteUsername());
-            statement.setString(3, game.getBlackUsername());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new DataAccessException("Error adding game: " + e.getMessage());
-        }
-    }
+    private static final String TABLE_NAME = "game_data";
 
-    // Method to get a game by gameID
-    public GameData getGame(int gameID) throws DataAccessException {
-        String query = "SELECT * FROM game_data WHERE gameID = ?";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
-            statement.setInt(1, gameID);
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    String whiteUsername = rs.getString("whiteUsername");
-                    String blackUsername = rs.getString("blackUsername");
-                    return new GameData(gameID, whiteUsername, blackUsername);
+    public void addGame(GameData gameData) throws SQLException {
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "INSERT INTO " + TABLE_NAME + "(whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)",
+                     Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, gameData.getWhiteUsername());
+            preparedStatement.setString(2, gameData.getBlackUsername());
+            preparedStatement.setString(3, gameData.getGameName());
+            preparedStatement.setString(4, gameData.toString()); // Convert ChessGame to JSON string
+            preparedStatement.executeUpdate();
+
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int gameId = generatedKeys.getInt(1);
+                    gameData.setGameID(gameId);
+                } else {
+                    throw new SQLException("Failed to retrieve generated gameID.");
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Error retrieving game: " + e.getMessage());
-        }
-        return null; // Return null if game not found
-    }
-
-    // Method to update a game
-    public void updateGame(int gameID, String username, String teamColor) throws DataAccessException {
-        GameData updatedGame = getGame(gameID);
-        if (teamColor.equalsIgnoreCase("WHITE")) {
-            updatedGame.setWhiteUsername(username);
-        } else if (teamColor.equalsIgnoreCase("BLACK")) {
-            updatedGame.setBlackUsername(username);
-        } else {
-            throw new IllegalArgumentException("Error: Invalid team color");
-        }
-        String query = "UPDATE game_data SET whiteUsername = ?, blackUsername = ? WHERE gameID = ?";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
-            statement.setString(1, updatedGame.getWhiteUsername());
-            statement.setString(2, updatedGame.getBlackUsername());
-            statement.setInt(3, gameID);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new DataAccessException("Error updating game: " + e.getMessage());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    // Method to retrieve all games
-    public List<GameData> getAllGames() throws DataAccessException {
-        List<GameData> games = new ArrayList<>();
-        String query = "SELECT * FROM game_data";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query);
-             ResultSet rs = statement.executeQuery()) {
-            while (rs.next()) {
-                int gameID = rs.getInt("gameID");
-                String whiteUsername = rs.getString("whiteUsername");
-                String blackUsername = rs.getString("blackUsername");
-                games.add(new GameData(gameID, whiteUsername, blackUsername));
+    public GameData getGame(int gameID) throws SQLException {
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT * FROM " + TABLE_NAME + " WHERE gameID = ?")) {
+            preparedStatement.setInt(1, gameID);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return extractGameDataFromResultSet(resultSet);
+                }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Error retrieving all games: " + e.getMessage());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public List<GameData> getAllGames() throws SQLException {
+        List<GameData> games = new ArrayList<>();
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT * FROM " + TABLE_NAME);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                games.add(extractGameDataFromResultSet(resultSet));
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
         return games;
     }
 
-    // Method to clear games
-    public void clear() throws DataAccessException {
-        String query = "DELETE FROM game_data";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new DataAccessException("Error clearing games: " + e.getMessage());
+    public void updateGame(GameData gameData) throws SQLException {
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "UPDATE " + TABLE_NAME + " SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?")) {
+            preparedStatement.setString(1, gameData.getWhiteUsername());
+            preparedStatement.setString(2, gameData.getBlackUsername());
+            preparedStatement.setString(3, gameData.getGameName());
+            preparedStatement.setString(4, gameData.toString()); // Convert ChessGame to JSON string
+            preparedStatement.setInt(5, gameData.getGameID());
+            preparedStatement.executeUpdate();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    public void clear() throws SQLException, DataAccessException {
+        try (Connection connection = DatabaseManager.getConnection();
+             Statement statement = connection.createStatement()) {
+            statement.executeUpdate("DELETE FROM " + TABLE_NAME);
+        }
+    }
+
+    private GameData extractGameDataFromResultSet(ResultSet resultSet) throws SQLException {
+        int gameID = resultSet.getInt("gameID");
+        String whiteUsername = resultSet.getString("whiteUsername");
+        String blackUsername = resultSet.getString("blackUsername");
+        String gameName = resultSet.getString("gameName");
+        ChessGame game = new Gson().fromJson(resultSet.getString("game"), ChessGame.class); // Deserialize JSON string to ChessGame
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+    }
 }
+
 
