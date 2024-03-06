@@ -143,7 +143,7 @@ public class AuthDataAccessTests {
         // Arrange
         String username = "testUser";
         String authToken = "testToken";
-        authDataAccess.addAuthToken(username, authToken);
+        authDataAccess.addAuthToken(username);
 
         // Act
         authDataAccess.deleteAuthToken(username);
@@ -163,6 +163,26 @@ public class AuthDataAccessTests {
 
         // Assert
         // Expects DataAccessException to be thrown
+    }
+
+    @Test
+    public void testClear_Positive() throws Exception {
+        // Positive test for clearing auth tokens
+        // Arrange
+        String username1 = "testUser1";
+        String authToken1 = "testToken1";
+        authDataAccess.addAuthToken(username1);
+
+        String username2 = "testUser2";
+        String authToken2 = "testToken2";
+        authDataAccess.addAuthToken(username2);
+
+        // Act
+        authDataAccess.clear();
+
+        // Assert
+        assertNull(authDataAccess.getUsername(authToken1));
+        assertNull(authDataAccess.getUsername(authToken2));
     }
 
 }
