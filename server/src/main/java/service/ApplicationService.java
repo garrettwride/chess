@@ -2,6 +2,8 @@ package service;
 
 import dataAccess.*;
 
+import java.sql.SQLException;
+
 public class ApplicationService {
     private final UserDataAccess userDataAccess;
     private final GameDataAccess gameDataAccess;
@@ -14,7 +16,7 @@ public class ApplicationService {
         this.authDataAccess = authDataAccess;
     }
 
-    public boolean clear() throws RegistrationException, DataAccessException {
+    public boolean clear() throws RegistrationException, DataAccessException, SQLException {
         // Clear
         userDataAccess.clear();
         gameDataAccess.clear();

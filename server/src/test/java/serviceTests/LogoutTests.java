@@ -23,7 +23,7 @@ public class LogoutTests {
     }
 
     @Test
-    public void testLogoutSuccess() throws AuthenticationException, RegistrationException {
+    public void testLogoutSuccess() throws AuthenticationException, RegistrationException, DataAccessException {
         // Register a user
         UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
         registrationService.register(newUser);

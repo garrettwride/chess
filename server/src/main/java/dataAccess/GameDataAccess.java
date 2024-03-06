@@ -65,20 +65,25 @@ public class GameDataAccess {
         return games;
     }
 
-    public void updateGame(GameData gameData) throws SQLException {
+    public void updateGame(int gameID, String username, String teamColor) throws SQLException, DataAccessException {
+        String columnName;
+        if (teamColor.equalsIgnoreCase("WHITE")) {
+            columnName = "whiteUsername";
+        } else if (teamColor.equalsIgnoreCase("BLACK")) {
+            columnName = "blackUsername";
+        } else {
+            throw new IllegalArgumentException("Error: Invalid team color");
+        }
+
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "UPDATE " + TABLE_NAME + " SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?")) {
-            preparedStatement.setString(1, gameData.getWhiteUsername());
-            preparedStatement.setString(2, gameData.getBlackUsername());
-            preparedStatement.setString(3, gameData.getGameName());
-            preparedStatement.setString(4, gameData.toString()); // Convert ChessGame to JSON string
-            preparedStatement.setInt(5, gameData.getGameID());
+                     "UPDATE " + TABLE_NAME + " SET " + columnName + " = ? WHERE gameID = ?")) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setInt(2, gameID);
             preparedStatement.executeUpdate();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
+
 
     public void clear() throws SQLException, DataAccessException {
         try (Connection connection = DatabaseManager.getConnection();
