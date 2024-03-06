@@ -34,15 +34,48 @@ public class DatabaseManager {
     /**
      * Creates the database if it does not already exist.
      */
-    static void createDatabase() throws DataAccessException {
-        try {
-            var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
-            var conn = DriverManager.getConnection(connectionUrl, user, password);
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
-            }
+    public static void createDatabase() throws DataAccessException {
+        try (Connection connection = DriverManager.getConnection(connectionUrl, user, password)) {
+            createUsersTable(connection);
+            createAuthTokensTable(connection);
+            createGamesTable(connection);
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException("Error creating database: " + e.getMessage());
+        }
+    }
+
+    private static void createUsersTable(Connection connection) throws SQLException {
+        String sql = "CREATE TABLE IF NOT EXISTS users (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "username VARCHAR(20) UNIQUE NOT NULL," +
+                "password VARCHAR(20) NOT NULL" +
+                ")";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.executeUpdate();
+        }
+    }
+
+    private static void createAuthTokensTable(Connection connection) throws SQLException {
+        String sql = "CREATE TABLE IF NOT EXISTS auth_tokens (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "username VARCHAR(20) UNIQUE NOT NULL," +
+                "auth_token VARCHAR(12) UNIQUE NOT NULL" +
+                ")";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.executeUpdate();
+        }
+    }
+
+    private static void createGamesTable(Connection connection) throws SQLException {
+        String sql = "CREATE TABLE IF NOT EXISTS games (" +
+                "id INT PRIMARY KEY," +
+                "game_name VARCHAR(12) NOT NULL," +
+                "white_player VARCHAR(20)," +
+                "black_player VARCHAR(20)," +
+                "game TEXT" +
+                ")";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.executeUpdate();
         }
     }
 
@@ -62,6 +95,7 @@ public class DatabaseManager {
         try {
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             conn.setCatalog(databaseName);
+            createDatabase();
             return conn;
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
