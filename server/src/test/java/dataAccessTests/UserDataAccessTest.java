@@ -88,6 +88,22 @@ public class UserDataAccessTest {
         userDataAccess.addUser(existingUser); // Try to add the same user again
     }
 
+    @Test
+    public void testClear() throws Exception {
+        // Arrange
+        String username = "userToClear";
+        String password = "passwordToClear";
+        UserData userData = new UserData(username, password);
+        userDataAccess.addUser(userData);
+
+        // Act
+        userDataAccess.clear();
+        UserData retrievedUser = getUserFromDatabase(username);
+
+        // Assert
+        assertNull(retrievedUser);
+    }
+
     private void addUserToDatabase(String username, String password) throws SQLException {
         String query = "INSERT INTO users (username, password) VALUES (?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
