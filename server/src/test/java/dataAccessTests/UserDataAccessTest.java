@@ -10,10 +10,6 @@ import org.junit.jupiter.api.Test;
 import dataAccess.*;
 import java.sql.*;
 
-import static org.junit.Assert.*;
-import org.junit.*;
-import java.sql.*;
-
 public class UserDataAccessTest {
 
     private UserDataAccess userDataAccess;
