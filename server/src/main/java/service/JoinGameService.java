@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataAccess.AuthDataAccess;
+import dataAccess.DataAccessException;
 import dataAccess.GameDataAccess;
 import model.GameData;
 import java.util.List;
@@ -17,7 +18,7 @@ public class JoinGameService {
     }
 
     // Method to create a new game
-    public int createGame(String gameName, String authToken) throws AuthenticationException {
+    public int createGame(String gameName, String authToken) throws AuthenticationException, DataAccessException {
         String username = authDataAccess.getUsername(authToken);
 
         if (username == null) {
@@ -41,7 +42,7 @@ public class JoinGameService {
     }
 
     // Method to join an existing game
-    public void joinGame(String authToken, String teamColor, int gameID) throws AuthenticationException {
+    public void joinGame(String authToken, String teamColor, int gameID) throws AuthenticationException, DataAccessException {
         // Retrieve the game by gameID
         GameData game = gameDataAccess.getGame(gameID);
 
@@ -79,7 +80,7 @@ public class JoinGameService {
         }
     }
 
-    public void observeGame(int gameID, String authToken)throws AuthenticationException {
+    public void observeGame(int gameID, String authToken) throws AuthenticationException, DataAccessException {
 
         // Check if the authToken is valid
         String username = authDataAccess.getUsername(authToken);
@@ -97,7 +98,7 @@ public class JoinGameService {
 
 
     // Method to list available games
-    public List<GameData> listGames(String authToken) throws AuthenticationException {
+    public List<GameData> listGames(String authToken) throws AuthenticationException, DataAccessException {
         // Check if the authToken is valid
         String username = authDataAccess.getUsername(authToken);
 

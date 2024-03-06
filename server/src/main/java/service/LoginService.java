@@ -27,7 +27,7 @@ public class LoginService {
 
     }
 
-    public void deauthenticate(String authToken) throws AuthenticationException {
+    public void deauthenticate(String authToken) throws AuthenticationException, DataAccessException {
         // Check if the authToken is valid
         String username = authDataAccess.getUsername(authToken);
 
