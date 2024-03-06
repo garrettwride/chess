@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import dataAccess.*;
 import service.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class ListGamesTests {
@@ -16,17 +17,16 @@ public class ListGamesTests {
     private LoginService loginService;
 
     ListGamesTests() {
-        DataMemory dataMemory = new DataMemory();
-        GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
-        AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
-        UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
+        GameDataAccess gameDataAccess = new GameDataAccess();
+        AuthDataAccess authDataAccess = new AuthDataAccess();
+        UserDataAccess userDataAccess = new UserDataAccess();
         this.joinGameService = new JoinGameService(gameDataAccess, authDataAccess);
         this.registrationService = new RegistrationService(userDataAccess, authDataAccess);
         this.loginService = new LoginService(authDataAccess, userDataAccess);
     }
 
     @Test
-    public void testListGamesSuccess() throws RegistrationException, AuthenticationException {
+    public void testListGamesSuccess() throws RegistrationException, AuthenticationException, DataAccessException, SQLException {
         // Register a user
         UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
         registrationService.register(newUser);
@@ -48,7 +48,7 @@ public class ListGamesTests {
     }
 
     @Test
-    public void testListGamesEmpty() throws RegistrationException, AuthenticationException {
+    public void testListGamesEmpty() throws RegistrationException, AuthenticationException, DataAccessException, SQLException {
         // Register a user
         UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
         registrationService.register(newUser);

@@ -1,13 +1,12 @@
 package serviceTests;
 
-import dataAccess.AuthDataAccess;
-import dataAccess.DataMemory;
-import dataAccess.GameDataAccess;
-import dataAccess.UserDataAccess;
+import dataAccess.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import service.*;
+
+import java.sql.SQLException;
 
 public class ClearTest {
 
@@ -16,15 +15,14 @@ public class ClearTest {
     @BeforeEach
     public void setUp() {
         // Initialize your ApplicationService instance here
-        DataMemory dataMemory = new DataMemory();
-        UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
-        GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
-        AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
+        UserDataAccess userDataAccess = new UserDataAccess();
+        GameDataAccess gameDataAccess = new GameDataAccess();
+        AuthDataAccess authDataAccess = new AuthDataAccess();
         this.applicationService = new ApplicationService(userDataAccess, gameDataAccess, authDataAccess);
     }
 
     @Test
-    public void testClearSuccess() throws RegistrationException {
+    public void testClearSuccess() throws RegistrationException, SQLException, DataAccessException {
         // Given: Set up any preconditions necessary for the test
 
         // When: Call the method you want to test

@@ -16,17 +16,16 @@ public class CreateGameTest {
     private LoginService loginService;
 
     CreateGameTest() {
-        DataMemory dataMemory = new DataMemory();
-        GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
-        AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
-        UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
+        GameDataAccess gameDataAccess = new GameDataAccess();
+        AuthDataAccess authDataAccess = new AuthDataAccess();
+        UserDataAccess userDataAccess = new UserDataAccess();
         this.joinGameService = new JoinGameService(gameDataAccess, authDataAccess);
         this.registrationService = new RegistrationService(userDataAccess, authDataAccess);
         this.loginService = new LoginService(authDataAccess, userDataAccess);
     }
 
     @Test
-    public void testCreateGameSuccess() throws RegistrationException, AuthenticationException {
+    public void testCreateGameSuccess() throws RegistrationException, AuthenticationException, DataAccessException {
         UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
         registrationService.register(newUser);
 
@@ -38,7 +37,7 @@ public class CreateGameTest {
     }
 
     @Test
-    public void testCreateGameFailureDuplicateID() throws RegistrationException, AuthenticationException {
+    public void testCreateGameFailureDuplicateID() throws RegistrationException, AuthenticationException, DataAccessException {
         UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
         registrationService.register(newUser);
 

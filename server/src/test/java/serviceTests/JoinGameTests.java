@@ -7,6 +7,7 @@ import dataAccess.*;
 import model.*;
 import service.*;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,17 +18,16 @@ public class JoinGameTests {
     private LoginService loginService;
 
     JoinGameTests() {
-        DataMemory dataMemory = new DataMemory();
-        GameDataAccess gameDataAccess = new GameDataAccess(dataMemory);
-        AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
-        UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
+        GameDataAccess gameDataAccess = new GameDataAccess();
+        AuthDataAccess authDataAccess = new AuthDataAccess();
+        UserDataAccess userDataAccess = new UserDataAccess();
         this.joinGameService = new JoinGameService(gameDataAccess, authDataAccess);
         this.registrationService = new RegistrationService(userDataAccess, authDataAccess);
         this.loginService = new LoginService(authDataAccess, userDataAccess);
     }
 
     @Test
-    public void testJoinGameSuccess() throws RegistrationException, AuthenticationException {
+    public void testJoinGameSuccess() throws RegistrationException, AuthenticationException, DataAccessException, SQLException {
         // Register white player
         UserData whiteUser = new UserData("whitePlayer", "password123", "white@example.com");
         registrationService.register(whiteUser);
@@ -61,7 +61,7 @@ public class JoinGameTests {
 
 
     @Test
-    public void testJoinGameFailureGameNotFound() throws RegistrationException, AuthenticationException {
+    public void testJoinGameFailureGameNotFound() throws RegistrationException, AuthenticationException, DataAccessException {
         // Register black player
         UserData blackUser = new UserData("blackPlayer", "password456", "black@example.com");
         registrationService.register(blackUser);

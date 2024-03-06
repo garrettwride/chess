@@ -15,9 +15,8 @@ public class LogoutTests {
     private UserDataAccess userDataAccess;
 
     LogoutTests() {
-        DataMemory dataMemory = new DataMemory();
-        userDataAccess = new UserDataAccess(dataMemory);
-        authDataAccess = new AuthDataAccess(dataMemory);
+        userDataAccess = new UserDataAccess();
+        authDataAccess = new AuthDataAccess();
         loginService = new LoginService(authDataAccess, userDataAccess);
         registrationService = new RegistrationService(userDataAccess, authDataAccess);
     }

@@ -13,9 +13,8 @@ public class RegistrationTests {
     private RegistrationService registrationService;
 
     RegistrationTests() {
-        DataMemory dataMemory = new DataMemory();
-        UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
-        AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
+        UserDataAccess userDataAccess = new UserDataAccess();
+        AuthDataAccess authDataAccess = new AuthDataAccess();
         this.registrationService = new RegistrationService(userDataAccess, authDataAccess);
     }
 
@@ -30,7 +29,7 @@ public class RegistrationTests {
     }
 
     @Test
-    public void testRegistrationFailureUsernameTaken() throws RegistrationException {
+    public void testRegistrationFailureUsernameTaken() throws RegistrationException, DataAccessException {
 
         // Register an existing user
         UserData existingUser = new UserData("existinguser", "password123", "existing@example.com");

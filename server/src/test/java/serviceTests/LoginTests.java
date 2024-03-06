@@ -14,9 +14,8 @@ public class LoginTests {
     private  RegistrationService registrationService;
 
     LoginTests() {
-        DataMemory dataMemory = new DataMemory();
-        UserDataAccess userDataAccess = new UserDataAccess(dataMemory);
-        AuthDataAccess authDataAccess = new AuthDataAccess(dataMemory);
+        UserDataAccess userDataAccess = new UserDataAccess();
+        AuthDataAccess authDataAccess = new AuthDataAccess();
         this.loginService = new LoginService(authDataAccess, userDataAccess);
         this.registrationService = new RegistrationService(userDataAccess, authDataAccess);
     }
