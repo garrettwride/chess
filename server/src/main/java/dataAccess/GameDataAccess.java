@@ -10,25 +10,24 @@ import java.util.List;
 public class GameDataAccess {
     private static final String TABLE_NAME = "game_data";
 
-    public void addGame(GameData gameData) throws SQLException {
+    // Method to add a new game
+    public void addGame(GameData game) {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "INSERT INTO " + TABLE_NAME + "(whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)",
-                     Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, gameData.getWhiteUsername());
-            preparedStatement.setString(2, gameData.getBlackUsername());
-            preparedStatement.setString(3, gameData.getGameName());
-            preparedStatement.setString(4, gameData.toString()); // Convert ChessGame to JSON string
-            preparedStatement.executeUpdate();
+                     "INSERT INTO " + TABLE_NAME + " (gameID, whiteUsername, blackUsername, gameName, game) " +
+                             "VALUES (?, ?, ?, ?, ?)")) {
+            preparedStatement.setInt(1, game.getGameID());
+            preparedStatement.setString(2, game.getWhiteUsername());
+            preparedStatement.setString(3, game.getBlackUsername());
+            preparedStatement.setString(4, game.getGameName());
 
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int gameId = generatedKeys.getInt(1);
-                    gameData.setGameID(gameId);
-                } else {
-                    throw new SQLException("Failed to retrieve generated gameID.");
-                }
-            }
+            // Serialize the ChessGame object to JSON string
+            String gameJson = new Gson().toJson(game.getGame());
+            preparedStatement.setString(5, gameJson);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle exception properly
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
