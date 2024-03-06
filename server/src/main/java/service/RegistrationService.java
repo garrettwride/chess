@@ -12,7 +12,7 @@ public class RegistrationService {
             this.authDataAccess = authDataAccess;
         }
 
-        public AuthData register(UserData newUser) throws RegistrationException {
+        public AuthData register(UserData newUser) throws RegistrationException, DataAccessException {
             // Check if the username already exists
             UserData existingUser = userDataAccess.getUser(newUser.getUsername());
             if (existingUser != null) {

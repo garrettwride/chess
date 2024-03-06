@@ -1,6 +1,7 @@
 package service;
 
 import dataAccess.AuthDataAccess;
+import dataAccess.DataAccessException;
 import dataAccess.UserDataAccess;
 import model.UserData;
 
@@ -15,7 +16,7 @@ public class LoginService {
         this.userDataAccess = userDataAccess;
     }
 
-    public String authenticate(String username, String password) throws AuthenticationException {
+    public String authenticate(String username, String password) throws AuthenticationException, DataAccessException {
         // Check if the username and password are valid
         if (!isValidCredentials(username, password)) {
             throw new AuthenticationException("Invalid username or password");
@@ -40,7 +41,7 @@ public class LoginService {
 
     }
 
-    private boolean isValidCredentials(String username, String password) {
+    private boolean isValidCredentials(String username, String password) throws DataAccessException {
         UserData checkUser = userDataAccess.getUser(username);
         return checkUser != null && Objects.equals(password, checkUser.getPassword());
     }
