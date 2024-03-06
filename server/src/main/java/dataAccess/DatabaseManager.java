@@ -45,35 +45,41 @@ public class DatabaseManager {
     }
 
     private static void createUsersTable(Connection connection) throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS users (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY," +
-                "username VARCHAR(20) UNIQUE NOT NULL," +
-                "password VARCHAR(20) NOT NULL" +
-                ")";
+        String sql = """
+                CREATE TABLE IF NOT EXISTS users (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `username` VARCHAR(255) UNIQUE NOT NULL, 
+                `password` VARCHAR(255) NOT NULL
+                )
+                """;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.executeUpdate();
         }
     }
 
     private static void createAuthTokensTable(Connection connection) throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS auth_tokens (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY," +
-                "username VARCHAR(20) UNIQUE NOT NULL," +
-                "auth_token VARCHAR(12) UNIQUE NOT NULL" +
-                ")";
+        String sql = """
+                CREATE TABLE IF NOT EXISTS auth_tokens (
+                `id` INT AUTO_INCREMENT PRIMARY KEY
+                `username` VARCHAR(255) UNIQUE NOT NULL
+                `auth_token` VARCHAR(255) UNIQUE NOT NULL
+                )
+                """;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.executeUpdate();
         }
     }
 
     private static void createGamesTable(Connection connection) throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS games (" +
-                "id INT PRIMARY KEY," +
-                "game_name VARCHAR(12) NOT NULL," +
-                "white_player VARCHAR(20)," +
-                "black_player VARCHAR(20)," +
-                "game TEXT" +
-                ")";
+        String sql = """
+                CREATE TABLE IF NOT EXISTS games (
+                `id` INT PRIMARY KEY,
+                `game_name` VARCHAR(255) NOT NULL,
+                `white_player` VARCHAR(255),
+                `black_player` VARCHAR(255),
+                `game` TEXT
+                )
+                """;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.executeUpdate();
         }

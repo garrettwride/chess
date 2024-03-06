@@ -28,7 +28,7 @@ public class ListGamesTests {
     @Test
     public void testListGamesSuccess() throws RegistrationException, AuthenticationException, DataAccessException, SQLException {
         // Register a user
-        UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
+        UserData newUser = new UserData("testuser", "password123");
         registrationService.register(newUser);
 
         // Login to obtain an authToken
@@ -50,7 +50,7 @@ public class ListGamesTests {
     @Test
     public void testListGamesEmpty() throws RegistrationException, AuthenticationException, DataAccessException, SQLException {
         // Register a user
-        UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
+        UserData newUser = new UserData("testuser", "password123");
         registrationService.register(newUser);
 
         // Login to obtain an authToken

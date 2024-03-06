@@ -23,7 +23,7 @@ public class LoginTests {
     @Test
     public void testLoginSuccess() {
         // Register a user
-        UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
+        UserData newUser = new UserData("testuser", "password123");
         assertDoesNotThrow(() -> registrationService.register(newUser));
 
         // Login with correct credentials

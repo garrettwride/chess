@@ -24,7 +24,7 @@ public class LogoutTests {
     @Test
     public void testLogoutSuccess() throws AuthenticationException, RegistrationException, DataAccessException {
         // Register a user
-        UserData newUser = new UserData("testuser", "password123", "testuser@example.com");
+        UserData newUser = new UserData("testuser", "password123");
         registrationService.register(newUser);
 
         // Login to obtain an authToken

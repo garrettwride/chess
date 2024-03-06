@@ -22,7 +22,7 @@ public class RegistrationTests {
     public void testRegistrationSuccess() {
 
         // Create a new user
-        UserData newUser = new UserData("newuser", "password123", "newuser@example.com");
+        UserData newUser = new UserData("newuser", "password123");
 
         // Call the register method and verify success
         assertDoesNotThrow(() -> registrationService.register(newUser));
@@ -32,11 +32,11 @@ public class RegistrationTests {
     public void testRegistrationFailureUsernameTaken() throws RegistrationException, DataAccessException {
 
         // Register an existing user
-        UserData existingUser = new UserData("existinguser", "password123", "existing@example.com");
+        UserData existingUser = new UserData("existinguser", "password123");
         registrationService.register(existingUser);
 
         // Attempt to register the same username again
-        UserData newUser = new UserData("existinguser", "password123", "newuser@example.com");
+        UserData newUser = new UserData("existinguser", "password123");
 
         // Call the register method and verify that it fails
         assertThrows(IllegalStateException.class, () -> registrationService.register(newUser));
