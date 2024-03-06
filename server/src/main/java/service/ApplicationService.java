@@ -14,7 +14,7 @@ public class ApplicationService {
         this.authDataAccess = authDataAccess;
     }
 
-    public boolean clear() throws RegistrationException {
+    public boolean clear() throws RegistrationException, DataAccessException {
         // Clear
         userDataAccess.clear();
         gameDataAccess.clear();

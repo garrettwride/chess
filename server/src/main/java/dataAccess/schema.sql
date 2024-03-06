@@ -1,8 +1,8 @@
+
 CREATE TABLE users (
                        id INT AUTO_INCREMENT PRIMARY KEY,
                        username VARCHAR(20) UNIQUE NOT NULL,
-                       password VARCHAR(20) NOT NULL,
-                       email VARCHAR(20) UNIQUE NOT NULL
+                       password VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE auth_tokens (
