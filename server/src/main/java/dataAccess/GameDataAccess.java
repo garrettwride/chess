@@ -14,12 +14,12 @@ public class GameDataAccess {
     public void addGame(GameData game) {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "INSERT INTO " + TABLE_NAME + " (gameID, whiteUsername, blackUsername, gameName, game) " +
+                     "INSERT INTO " + TABLE_NAME + " (id, game_name, white_player, black_player, game) " +
                              "VALUES (?, ?, ?, ?, ?)")) {
             preparedStatement.setInt(1, game.getGameID());
-            preparedStatement.setString(2, game.getWhiteUsername());
-            preparedStatement.setString(3, game.getBlackUsername());
-            preparedStatement.setString(4, game.getGameName());
+            preparedStatement.setString(2, game.getGameName());
+            preparedStatement.setString(3, game.getWhiteUsername());
+            preparedStatement.setString(4, game.getBlackUsername());
 
             // Serialize the ChessGame object to JSON string
             String gameJson = new Gson().toJson(game.getGame());
@@ -36,7 +36,7 @@ public class GameDataAccess {
     public GameData getGame(int gameID) throws SQLException {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "SELECT * FROM " + TABLE_NAME + " WHERE gameID = ?")) {
+                     "SELECT * FROM " + TABLE_NAME + " WHERE id = ?")) {
             preparedStatement.setInt(1, gameID);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -67,22 +67,21 @@ public class GameDataAccess {
     public void updateGame(int gameID, String username, String teamColor) throws SQLException, DataAccessException {
         String columnName;
         if (teamColor.equalsIgnoreCase("WHITE")) {
-            columnName = "whiteUsername";
+            columnName = "white_player";
         } else if (teamColor.equalsIgnoreCase("BLACK")) {
-            columnName = "blackUsername";
+            columnName = "black_player";
         } else {
             throw new IllegalArgumentException("Error: Invalid team color");
         }
 
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "UPDATE " + TABLE_NAME + " SET " + columnName + " = ? WHERE gameID = ?")) {
+                     "UPDATE " + TABLE_NAME + " SET " + columnName + " = ? WHERE id = ?")) {
             preparedStatement.setString(1, username);
             preparedStatement.setInt(2, gameID);
             preparedStatement.executeUpdate();
         }
     }
-
 
     public void clear() throws SQLException, DataAccessException {
         try (Connection connection = DatabaseManager.getConnection();
@@ -92,13 +91,11 @@ public class GameDataAccess {
     }
 
     private GameData extractGameDataFromResultSet(ResultSet resultSet) throws SQLException {
-        int gameID = resultSet.getInt("gameID");
-        String whiteUsername = resultSet.getString("whiteUsername");
-        String blackUsername = resultSet.getString("blackUsername");
-        String gameName = resultSet.getString("gameName");
+        int gameID = resultSet.getInt("id");
+        String whiteUsername = resultSet.getString("white_player");
+        String blackUsername = resultSet.getString("black_player");
+        String gameName = resultSet.getString("game_name");
         ChessGame game = new Gson().fromJson(resultSet.getString("game"), ChessGame.class); // Deserialize JSON string to ChessGame
         return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 }
-
-
