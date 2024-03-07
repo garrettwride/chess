@@ -13,7 +13,8 @@ public class LoginTests {
     private LoginService loginService;
     private  RegistrationService registrationService;
 
-    LoginTests() {
+    LoginTests() throws DataAccessException {
+        DatabaseManager.createDatabase();
         UserDataAccess userDataAccess = new UserDataAccess();
         AuthDataAccess authDataAccess = new AuthDataAccess();
         this.loginService = new LoginService(authDataAccess, userDataAccess);

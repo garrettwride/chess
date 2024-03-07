@@ -15,10 +15,10 @@ public class UserDataAccessTests {
 
     @BeforeEach
     public void setUp() throws Exception {
+        DatabaseManager.createDatabase();
         userDataAccess = new UserDataAccess();
         connection = DatabaseManager.getConnection();
         connection.setAutoCommit(false);
-        userDataAccess.clear();
     }
 
     @AfterEach

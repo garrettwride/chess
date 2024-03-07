@@ -20,6 +20,7 @@ public class CreateGameTest {
     private ApplicationService applicationService;
     @BeforeEach
     public void setUp() throws Exception {
+        DatabaseManager.createDatabase();
         GameDataAccess gameDataAccess = new GameDataAccess();
         AuthDataAccess authDataAccess = new AuthDataAccess();
         UserDataAccess userDataAccess = new UserDataAccess();

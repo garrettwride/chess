@@ -19,10 +19,10 @@ public class GameDataAccessTests {
 
     @BeforeEach
     public void setUp() throws Exception {
+        DatabaseManager.createDatabase();
         gameDataAccess = new GameDataAccess();
         connection = DatabaseManager.getConnection();
         connection.setAutoCommit(false);
-        gameDataAccess.clear();
     }
 
     @AfterEach
