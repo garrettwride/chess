@@ -77,11 +77,11 @@ public class AuthDataAccess {
     }
 
     // Method to delete authToken by username
-    public void deleteAuthToken(String username) throws DataAccessException {
-        String query = "DELETE FROM auth_tokens WHERE username = ?";
+    public void deleteAuthToken(String authToken) throws DataAccessException {
+        String query = "DELETE FROM auth_tokens WHERE auth_token = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
-            statement.setString(1, username);
+            statement.setString(1, authToken);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Error deleting authToken: " + e.getMessage());
