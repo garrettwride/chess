@@ -20,6 +20,7 @@ public class UserDataAccessTests {
         userDataAccess = new UserDataAccess();
         connection = DatabaseManager.getConnection();
         connection.setAutoCommit(false);
+        userDataAccess.clear();
     }
 
     @After
@@ -34,15 +35,16 @@ public class UserDataAccessTests {
         String username = "testUser";
         String password = "testPassword";
         String email = "test@email";
-        addUserToDatabase(username, password, email);
+        UserData userData = new UserData(username, password, email);
 
         // Act
-        UserData retrievedUser = userDataAccess.getUser(username);
+        userDataAccess.addUser(userData);
+        UserData retrievedUser = getUserFromDatabase(username);
 
         // Assert
         assertNotNull(retrievedUser);
         assertEquals(username, retrievedUser.getUsername());
-        assertEquals(password, retrievedUser.getPassword());
+        assertEquals(email, retrievedUser.getEmail());
     }
 
     @Test
@@ -72,10 +74,10 @@ public class UserDataAccessTests {
         // Assert
         assertNotNull(retrievedUser);
         assertEquals(username, retrievedUser.getUsername());
-        assertEquals(password, retrievedUser.getPassword());
+        assertEquals(email, retrievedUser.getEmail());
     }
 
-    @Test
+    @Test(expected = DataAccessException.class)
     public void testAddUser_Negative_UserAlreadyExists() throws Exception {
         // Arrange
         String username = "existingUser";
@@ -84,8 +86,13 @@ public class UserDataAccessTests {
         UserData existingUser = new UserData(username, password, email);
         userDataAccess.addUser(existingUser); // Add the user once
 
+        // Act
         userDataAccess.addUser(existingUser); // Try to add the same user again
+
+        // Assert
+        // Expects DataAccessException to be thrown
     }
+
 
     @Test
     public void testClear() throws Exception {

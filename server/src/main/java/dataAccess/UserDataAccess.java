@@ -12,6 +12,12 @@ import java.util.Base64;
 public class UserDataAccess {
     // Method to add a new user
     public void addUser(UserData user) throws DataAccessException {
+        // Check if the user already exists
+        UserData existingUser = getUser(user.getUsername());
+        if (existingUser != null) {
+            throw new DataAccessException("User with username '" + user.getUsername() + "' already exists");
+        }
+
         String query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -24,6 +30,7 @@ public class UserDataAccess {
             throw new DataAccessException("Error adding user: " + e.getMessage());
         }
     }
+
 
 
     // Method to retrieve a user by username
