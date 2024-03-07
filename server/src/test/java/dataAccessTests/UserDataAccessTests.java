@@ -33,7 +33,8 @@ public class UserDataAccessTests {
         // Arrange
         String username = "testUser";
         String password = "testPassword";
-        addUserToDatabase(username, password);
+        String email = "test@email";
+        addUserToDatabase(username, password, email);
 
         // Act
         UserData retrievedUser = userDataAccess.getUser(username);
@@ -61,7 +62,8 @@ public class UserDataAccessTests {
         // Arrange
         String username = "testUser";
         String password = "testPassword";
-        UserData userData = new UserData(username, password);
+        String email = "test@email";
+        UserData userData = new UserData(username, password, email);
 
         // Act
         userDataAccess.addUser(userData);
@@ -78,7 +80,8 @@ public class UserDataAccessTests {
         // Arrange
         String username = "existingUser";
         String password = "existingPassword";
-        UserData existingUser = new UserData(username, password);
+        String email = "test@email";
+        UserData existingUser = new UserData(username, password, email);
         userDataAccess.addUser(existingUser); // Add the user once
 
         userDataAccess.addUser(existingUser); // Try to add the same user again
@@ -89,7 +92,8 @@ public class UserDataAccessTests {
         // Arrange
         String username = "userToClear";
         String password = "passwordToClear";
-        UserData userData = new UserData(username, password);
+        String email = "test@email";
+        UserData userData = new UserData(username, password, email);
         userDataAccess.addUser(userData);
 
         // Act
@@ -100,11 +104,12 @@ public class UserDataAccessTests {
         assertNull(retrievedUser);
     }
 
-    private void addUserToDatabase(String username, String password) throws SQLException {
-        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+    private void addUserToDatabase(String username, String password, String email) throws SQLException {
+        String query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
             statement.setString(2, password);
+            statement.setString(3, email);
             statement.executeUpdate();
         }
     }
@@ -116,10 +121,12 @@ public class UserDataAccessTests {
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
                     String password = rs.getString("password");
-                    return new UserData(username, password);
+                    String email = rs.getString("email");
+                    return new UserData(username, password, email);
                 }
             }
         }
         return null;
     }
+
 }

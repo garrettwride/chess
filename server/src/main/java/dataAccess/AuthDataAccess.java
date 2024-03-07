@@ -12,7 +12,7 @@ public class AuthDataAccess {
     // Method to add a new authToken for a user
     public String addAuthToken(String username) throws DataAccessException {
         String authToken = createAuthToken();
-        String query = "INSERT INTO auth_tokens (username, authToken) VALUES (?, ?)";
+        String query = "INSERT INTO auth_tokens (username, auth_token) VALUES (?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
@@ -20,30 +20,30 @@ public class AuthDataAccess {
             statement.executeUpdate();
             return authToken;
         } catch (SQLException e) {
-            throw new DataAccessException("Error adding authToken: " + e.getMessage());
+            throw new DataAccessException("Error adding auth_token: " + e.getMessage());
         }
     }
 
     // Method to retrieve authToken by token
     public String getAuthToken(String authToken) throws DataAccessException {
-        String query = "SELECT authToken FROM auth_tokens WHERE authToken = ?";
+        String query = "SELECT auth_token FROM auth_tokens WHERE auth_token = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, authToken);
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("authToken");
+                    return rs.getString("auth_token");
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error retrieving authToken: " + e.getMessage());
+            throw new DataAccessException("Error retrieving auth_token: " + e.getMessage());
         }
         return null; // Return null if authToken not found
     }
 
     // Method to retrieve AuthData by token
     public AuthData getAuthData(String authToken) throws DataAccessException {
-        String query = "SELECT * FROM auth_tokens WHERE authToken = ?";
+        String query = "SELECT * FROM auth_tokens WHERE auth_token = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, authToken);
@@ -61,7 +61,7 @@ public class AuthDataAccess {
 
     // Method to retrieve username by token
     public String getUsername(String authToken) throws DataAccessException {
-        String query = "SELECT username FROM auth_tokens WHERE authToken = ?";
+        String query = "SELECT username FROM auth_tokens WHERE auth_token = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, authToken);
@@ -104,4 +104,3 @@ public class AuthDataAccess {
         return UUID.randomUUID().toString();
     }
 }
-

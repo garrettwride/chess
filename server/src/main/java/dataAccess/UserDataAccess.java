@@ -12,7 +12,7 @@ import java.util.Base64;
 public class UserDataAccess {
     // Method to add a new user
     public void addUser(UserData user) throws DataAccessException {
-        String query = "INSERT INTO users (username, password, email) VALUES (?, ?)";
+        String query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             String hashedPassword = hashPassword(user.getPassword());
@@ -24,6 +24,7 @@ public class UserDataAccess {
             throw new DataAccessException("Error adding user: " + e.getMessage());
         }
     }
+
 
     // Method to retrieve a user by username
     public UserData getUser(String username) throws DataAccessException {
