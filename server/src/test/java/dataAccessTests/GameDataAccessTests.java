@@ -63,7 +63,7 @@ public class GameDataAccessTests {
         String gameName = "game1";
         ChessGame game = new ChessGame(); // Create a new ChessGame object
         GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
-        addGameToDatabase(gameData);
+        gameDataAccess.addGame(gameData);
 
         // Act
         GameData retrievedGame = getGame(gameID);
@@ -86,7 +86,7 @@ public class GameDataAccessTests {
         String gameName = "game2";
         ChessGame game = new ChessGame(); // Create a new ChessGame object
         GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
-        addGameToDatabase(gameData);
+        gameDataAccess.addGame(gameData);
 
         // Act
         gameDataAccess.clear();
@@ -106,7 +106,7 @@ public class GameDataAccessTests {
         String gameName1 = "game1";
         ChessGame game1 = new ChessGame(); // Create a new ChessGame object
         GameData gameData1 = new GameData(gameID1, whiteUsername1, blackUsername1, gameName1, game1);
-        addGameToDatabase(gameData1);
+        gameDataAccess.addGame(gameData1);
 
         int gameID2 = 2;
         String whiteUsername2 = "user3";
@@ -114,7 +114,7 @@ public class GameDataAccessTests {
         String gameName2 = "game2";
         ChessGame game2 = new ChessGame(); // Create another ChessGame object
         GameData gameData2 = new GameData(gameID2, whiteUsername2, blackUsername2, gameName2, game2);
-        addGameToDatabase(gameData2);
+        gameDataAccess.addGame(gameData2);
 
         // Act
         List<GameData> games = gameDataAccess.getAllGames();
@@ -145,7 +145,7 @@ public class GameDataAccessTests {
 
         // Add a game to the database
         GameData gameData = new GameData(gameID, "oldUser", "oldUser", "oldGame", new ChessGame());
-        addGameToDatabase(gameData);
+        gameDataAccess.addGame(gameData);
 
         // Act
         gameDataAccess.updateGame(gameID, newUsername, teamColor);
@@ -165,7 +165,7 @@ public class GameDataAccessTests {
 
         // Add a game to the database
         GameData gameData = new GameData(gameID, "oldUser", "oldUser", "oldGame", new ChessGame());
-        addGameToDatabase(gameData);
+        gameDataAccess.addGame(gameData);
 
         // Act
         gameDataAccess.updateGame(gameID, newUsername, teamColor);
@@ -173,16 +173,5 @@ public class GameDataAccessTests {
         // Assert (Exception expected)
     }
 
-    private void addGameToDatabase(GameData gameData) throws SQLException {
-        String query = "INSERT INTO games (id, game_name, white_player, black_player, game) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, gameData.getGameID());
-            statement.setString(2, gameData.getGameName());
-            statement.setString(3, gameData.getWhiteUsername());
-            statement.setString(4, gameData.getBlackUsername());
-            statement.setString(5, ""); // For now, just insert an empty string for the game
-            statement.executeUpdate();
-        }
-    }
-
 }
+
