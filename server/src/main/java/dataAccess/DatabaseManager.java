@@ -36,6 +36,23 @@ public class DatabaseManager {
      */
     public static void createDatabase() throws DataAccessException {
         try (Connection connection = DriverManager.getConnection(connectionUrl, user, password)) {
+            // Check if the database exists and drop it if it does
+            if (databaseExists(connection)) {
+                dropDatabase(connection);
+            }
+
+            // Create the database
+            String sql = "CREATE DATABASE IF NOT EXISTS chess";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.executeUpdate();
+            }
+
+            String sql2 = "USE chess";
+            try (PreparedStatement statement = connection.prepareStatement(sql2)) {
+                statement.executeUpdate();
+            }
+
+            // Create tables in the newly created database
             createUsersTable(connection);
             createAuthTokensTable(connection);
             createGamesTable(connection);
@@ -43,6 +60,27 @@ public class DatabaseManager {
             throw new DataAccessException("Error creating database: " + e.getMessage());
         }
     }
+
+    private static boolean databaseExists(Connection connection) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        try (ResultSet resultSet = metaData.getCatalogs()) {
+            while (resultSet.next()) {
+                String dbName = resultSet.getString(1);
+                if ("chess".equalsIgnoreCase(dbName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void dropDatabase(Connection connection) throws SQLException {
+        String sql = "DROP DATABASE chess";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.executeUpdate();
+        }
+    }
+
 
     private static void createUsersTable(Connection connection) throws SQLException {
         String sql = """

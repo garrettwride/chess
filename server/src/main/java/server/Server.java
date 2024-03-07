@@ -27,6 +27,11 @@ public class Server {
     }
 
     public int run(int desiredPort) {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         registrationService = new RegistrationService(userDataAccess, authDataAccess);
         loginService = new LoginService(authDataAccess, userDataAccess);
         joinGameService = new JoinGameService(gameDataAccess, authDataAccess);
