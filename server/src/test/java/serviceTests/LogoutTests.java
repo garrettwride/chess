@@ -2,25 +2,32 @@ package serviceTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import dataAccess.*;
 import model.UserData;
 import service.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
 
 public class LogoutTests {
 
-    private LoginService loginService;
+    private AuthDataAccess authDataAccess = new AuthDataAccess();
     private RegistrationService registrationService;
-    private AuthDataAccess authDataAccess;
-    private UserDataAccess userDataAccess;
-
-    LogoutTests() {
-        userDataAccess = new UserDataAccess();
-        authDataAccess = new AuthDataAccess();
-        loginService = new LoginService(authDataAccess, userDataAccess);
-        registrationService = new RegistrationService(userDataAccess, authDataAccess);
+    private LoginService loginService;
+    private Connection connection;
+    private ApplicationService applicationService;
+    @BeforeEach
+    public void setUp() throws Exception {
+        GameDataAccess gameDataAccess = new GameDataAccess();
+        UserDataAccess userDataAccess = new UserDataAccess();
+        this.registrationService = new RegistrationService(userDataAccess, authDataAccess);
+        this.loginService = new LoginService(authDataAccess, userDataAccess);
+        applicationService = new ApplicationService(userDataAccess, gameDataAccess, authDataAccess);
+        connection = DatabaseManager.getConnection();
+        connection.setAutoCommit(false);
+        applicationService.clear();
     }
 
     @Test

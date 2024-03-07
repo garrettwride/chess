@@ -3,6 +3,9 @@ package serviceTests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import model.UserData;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import dataAccess.*;
 import model.GameData;
@@ -10,20 +13,33 @@ import chess.ChessGame;
 import service.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
 
 public class CreateGameTest {
 
     private JoinGameService joinGameService;
     private RegistrationService registrationService;
     private LoginService loginService;
-
-    CreateGameTest() {
+    private Connection connection;
+    private ApplicationService applicationService;
+    @BeforeEach
+    public void setUp() throws Exception {
         GameDataAccess gameDataAccess = new GameDataAccess();
         AuthDataAccess authDataAccess = new AuthDataAccess();
         UserDataAccess userDataAccess = new UserDataAccess();
         this.joinGameService = new JoinGameService(gameDataAccess, authDataAccess);
         this.registrationService = new RegistrationService(userDataAccess, authDataAccess);
         this.loginService = new LoginService(authDataAccess, userDataAccess);
+        applicationService = new ApplicationService(userDataAccess, gameDataAccess, authDataAccess);
+        connection = DatabaseManager.getConnection();
+        connection.setAutoCommit(false);
+        applicationService.clear();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        connection.rollback();
+        connection.close();
     }
 
     @Test
