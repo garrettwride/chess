@@ -1,12 +1,10 @@
 package dataAccessTests;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import dataAccess.UserDataAccess;
 import model.UserData;
-import org.junit.*;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import dataAccess.*;
 import java.sql.*;
 
@@ -15,7 +13,7 @@ public class UserDataAccessTests {
     private UserDataAccess userDataAccess;
     private Connection connection;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         userDataAccess = new UserDataAccess();
         connection = DatabaseManager.getConnection();
@@ -23,7 +21,7 @@ public class UserDataAccessTests {
         userDataAccess.clear();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         connection.rollback();
         connection.close();
@@ -77,7 +75,7 @@ public class UserDataAccessTests {
         assertEquals(email, retrievedUser.getEmail());
     }
 
-    @Test(expected = DataAccessException.class)
+    @Test
     public void testAddUser_Negative_UserAlreadyExists() throws Exception {
         // Arrange
         String username = "existingUser";
@@ -87,7 +85,7 @@ public class UserDataAccessTests {
         userDataAccess.addUser(existingUser); // Add the user once
 
         // Act
-        userDataAccess.addUser(existingUser); // Try to add the same user again
+        assertThrows(DataAccessException.class, ()-> userDataAccess.addUser(existingUser)); // Try to add the same user again
 
         // Assert
         // Expects DataAccessException to be thrown

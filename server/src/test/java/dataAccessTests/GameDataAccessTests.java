@@ -1,13 +1,13 @@
 package dataAccessTests;
 
 import static dataAccess.GameDataAccess.getGame;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import chess.ChessGame;
 import dataAccess.DatabaseManager;
 import dataAccess.GameDataAccess;
 import model.GameData;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import java.sql.*;
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class GameDataAccessTests {
     private GameDataAccess gameDataAccess;
     private Connection connection;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         gameDataAccess = new GameDataAccess();
         connection = DatabaseManager.getConnection();
@@ -25,7 +25,7 @@ public class GameDataAccessTests {
         gameDataAccess.clear();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         connection.rollback();
         connection.close();
@@ -155,7 +155,7 @@ public class GameDataAccessTests {
         assertEquals(newUsername, updatedGameData.getWhiteUsername());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test()
     public void testUpdateGame_Negative_InvalidTeamColor() throws Exception {
         // Negative test for updating a game with invalid team color
         // Arrange
@@ -168,7 +168,7 @@ public class GameDataAccessTests {
         gameDataAccess.addGame(gameData);
 
         // Act
-        gameDataAccess.updateGame(gameID, newUsername, teamColor);
+        assertThrows(IllegalArgumentException.class, ()->gameDataAccess.updateGame(gameID, newUsername, teamColor));
 
         // Assert (Exception expected)
     }

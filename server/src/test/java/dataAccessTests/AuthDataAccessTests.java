@@ -1,12 +1,12 @@
 package dataAccessTests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import dataAccess.DataAccessException;
 import dataAccess.DatabaseManager;
 import dataAccess.AuthDataAccess;
 import model.AuthData;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import java.sql.*;
 
 public class AuthDataAccessTests {
@@ -14,14 +14,14 @@ public class AuthDataAccessTests {
     private AuthDataAccess authDataAccess;
     private Connection connection;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         authDataAccess = new AuthDataAccess();
         connection = DatabaseManager.getConnection();
         connection.setAutoCommit(false);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         connection.rollback();
         connection.close();
@@ -70,17 +70,15 @@ public class AuthDataAccessTests {
         assertEquals(authToken, authData.getAuthToken());
     }
 
-    @Test(expected = DataAccessException.class)
+    @Test
     public void testAddAuthToken_Negative_EmptyUsername() throws Exception {
         // Negative test for adding an auth token with an empty username
         // Arrange
         String emptyUsername = "";
 
         // Act
-        String result = authDataAccess.addAuthToken(emptyUsername);
+         assertThrows(DataAccessException.class, ()->authDataAccess.addAuthToken(emptyUsername));
 
-        // Assert
-        assertNull(result);
     }
 
 
@@ -156,14 +154,14 @@ public class AuthDataAccessTests {
         assertNull(authDataAccess.getUsername(authToken));
     }
 
-    @Test(expected = DataAccessException.class)
+    @Test
     public void testDeleteAuthToken_Negative_UserNotFound() throws Exception {
         // Negative test for deleting auth token with non-existent user
         // Arrange
         String username = "nonExistentUser";
 
         // Act
-        authDataAccess.deleteAuthToken(username);
+        assertThrows(DataAccessException.class, ()->authDataAccess.deleteAuthToken(username));
 
         // Assert
         // Expects DataAccessException to be thrown
