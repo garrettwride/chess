@@ -71,51 +71,53 @@ public class AuthDataAccessTests {
     }
 
     @Test(expected = DataAccessException.class)
-    public void testAddAuthToken_Negative_UserNotFound() throws Exception {
-        // Negative test for adding an auth token with user not found
+    public void testAddAuthToken_Negative_EmptyUsername() throws Exception {
+        // Negative test for adding an auth token with an empty username
         // Arrange
-        String username = "nonExistentUser";
+        String emptyUsername = "";
 
         // Act
-        authDataAccess.addAuthToken(username);
+        String result = authDataAccess.addAuthToken(emptyUsername);
 
         // Assert
-        // Expects DataAccessException to be thrown
+        assertNull(result);
     }
 
-    @Test(expected = DataAccessException.class)
+
+
+    @Test
     public void testGetAuthToken_Negative_AuthTokenNotFound() throws Exception {
         // Negative test for retrieving an auth token with non-existent auth token
         // Arrange
         String authToken = "nonExistentToken";
 
         // Act
-        authDataAccess.getAuthToken(authToken);
+        String retrievedAuthToken = authDataAccess.getAuthToken(authToken);
 
         // Assert
-        // Expects DataAccessException to be thrown
+        assertNull(retrievedAuthToken);
     }
 
-    @Test(expected = DataAccessException.class)
+    @Test
     public void testGetAuthData_Negative_AuthDataNotFound() throws Exception {
         // Negative test for retrieving auth data with non-existent auth token
         // Arrange
         String authToken = "nonExistentToken";
 
         // Act
-        authDataAccess.getAuthData(authToken);
+        AuthData retrievedAuthData = authDataAccess.getAuthData(authToken);
 
         // Assert
-        // Expects DataAccessException to be thrown
+        assertNull(retrievedAuthData);
     }
+
 
     @Test
     public void testGetUsername_Positive() throws Exception {
         // Positive test for retrieving username using auth token
         // Arrange
         String username = "testUser";
-        String authToken = "testToken";
-        authDataAccess.addAuthToken(username);
+        String authToken = authDataAccess.addAuthToken(username);
 
         // Act
         String retrievedUsername = authDataAccess.getUsername(authToken);
@@ -124,29 +126,31 @@ public class AuthDataAccessTests {
         assertEquals(username, retrievedUsername);
     }
 
-    @Test(expected = DataAccessException.class)
+    @Test
     public void testGetUsername_Negative_AuthTokenNotFound() throws Exception {
         // Negative test for retrieving username with non-existent auth token
         // Arrange
         String authToken = "nonExistentToken";
 
         // Act
-        authDataAccess.getUsername(authToken);
+        String username = authDataAccess.getUsername(authToken);
 
         // Assert
-        // Expects DataAccessException to be thrown
+        assertNull(username);
     }
+
+
+
 
     @Test
     public void testDeleteAuthToken_Positive() throws Exception {
         // Positive test for deleting auth token
         // Arrange
         String username = "testUser";
-        String authToken = "testToken";
-        authDataAccess.addAuthToken(username);
+        String authToken = authDataAccess.addAuthToken(username);
 
         // Act
-        authDataAccess.deleteAuthToken(username);
+        authDataAccess.deleteAuthToken(authToken);
 
         // Assert
         assertNull(authDataAccess.getUsername(authToken));

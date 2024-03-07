@@ -11,6 +11,10 @@ import java.util.UUID;
 public class AuthDataAccess {
     // Method to add a new authToken for a user
     public String addAuthToken(String username) throws DataAccessException {
+        if (username == null || username.isEmpty()) {
+            throw new DataAccessException("Empty username");
+        }
+
         String authToken = createAuthToken();
         String query = "INSERT INTO auth_tokens (username, auth_token) VALUES (?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
@@ -23,6 +27,7 @@ public class AuthDataAccess {
             throw new DataAccessException("Error adding auth_token: " + e.getMessage());
         }
     }
+
 
     // Method to retrieve authToken by token
     public String getAuthToken(String authToken) throws DataAccessException {
@@ -78,6 +83,11 @@ public class AuthDataAccess {
 
     // Method to delete authToken by username
     public void deleteAuthToken(String authToken) throws DataAccessException {
+        // Check if the auth token exists before deletion
+        if (getAuthToken(authToken) == null) {
+            throw new DataAccessException("Error deleting authToken: AuthToken not found");
+        }
+
         String query = "DELETE FROM auth_tokens WHERE auth_token = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -87,6 +97,7 @@ public class AuthDataAccess {
             throw new DataAccessException("Error deleting authToken: " + e.getMessage());
         }
     }
+
 
     // Method to clear authTokens
     public void clear() throws DataAccessException {

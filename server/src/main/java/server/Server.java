@@ -18,7 +18,6 @@ public class Server {
 
     private JoinGameService joinGameService;
     private ApplicationService applicationService;
-    private DataMemory dataMemory = new DataMemory();
     private UserDataAccess userDataAccess = new UserDataAccess();
     private GameDataAccess gameDataAccess = new GameDataAccess();
     private AuthDataAccess authDataAccess = new AuthDataAccess();
