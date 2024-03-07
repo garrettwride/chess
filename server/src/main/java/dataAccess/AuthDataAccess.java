@@ -12,7 +12,7 @@ public class AuthDataAccess {
     // Method to add a new authToken for a user
     public String addAuthToken(String username) throws DataAccessException {
         String authToken = createAuthToken();
-        String query = "INSERT INTO auth_data (username, authToken) VALUES (?, ?)";
+        String query = "INSERT INTO auth_tokens (username, authToken) VALUES (?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
@@ -26,7 +26,7 @@ public class AuthDataAccess {
 
     // Method to retrieve authToken by token
     public String getAuthToken(String authToken) throws DataAccessException {
-        String query = "SELECT authToken FROM auth_data WHERE authToken = ?";
+        String query = "SELECT authToken FROM auth_tokens WHERE authToken = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, authToken);
@@ -43,7 +43,7 @@ public class AuthDataAccess {
 
     // Method to retrieve AuthData by token
     public AuthData getAuthData(String authToken) throws DataAccessException {
-        String query = "SELECT * FROM auth_data WHERE authToken = ?";
+        String query = "SELECT * FROM auth_tokens WHERE authToken = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, authToken);
@@ -61,7 +61,7 @@ public class AuthDataAccess {
 
     // Method to retrieve username by token
     public String getUsername(String authToken) throws DataAccessException {
-        String query = "SELECT username FROM auth_data WHERE authToken = ?";
+        String query = "SELECT username FROM auth_tokens WHERE authToken = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, authToken);
@@ -78,7 +78,7 @@ public class AuthDataAccess {
 
     // Method to delete authToken by username
     public void deleteAuthToken(String username) throws DataAccessException {
-        String query = "DELETE FROM auth_data WHERE username = ?";
+        String query = "DELETE FROM auth_tokens WHERE username = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
@@ -90,7 +90,7 @@ public class AuthDataAccess {
 
     // Method to clear authTokens
     public void clear() throws DataAccessException {
-        String query = "DELETE FROM auth_data";
+        String query = "DELETE FROM auth_tokens";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.executeUpdate();

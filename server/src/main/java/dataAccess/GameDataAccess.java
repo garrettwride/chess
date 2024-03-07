@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameDataAccess {
-    private static final String TABLE_NAME = "game_data";
+    private static final String TABLE_NAME = "games";
 
     // Method to add a new game
     public void addGame(GameData game) {
