@@ -33,7 +33,7 @@ public class GameDataAccess {
         }
     }
 
-    public GameData getGame(int gameID) throws SQLException {
+    public static GameData getGame(int gameID) throws SQLException {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                      "SELECT * FROM " + TABLE_NAME + " WHERE id = ?")) {
@@ -90,7 +90,7 @@ public class GameDataAccess {
         }
     }
 
-    private GameData extractGameDataFromResultSet(ResultSet resultSet) throws SQLException {
+    private static GameData extractGameDataFromResultSet(ResultSet resultSet) throws SQLException {
         int gameID = resultSet.getInt("id");
         String whiteUsername = resultSet.getString("white_player");
         String blackUsername = resultSet.getString("black_player");

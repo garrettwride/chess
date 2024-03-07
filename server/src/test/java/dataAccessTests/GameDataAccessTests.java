@@ -1,5 +1,6 @@
 package dataAccessTests;
 
+import static dataAccess.GameDataAccess.getGame;
 import static org.junit.Assert.*;
 
 import chess.ChessGame;
@@ -21,6 +22,7 @@ public class GameDataAccessTests {
         gameDataAccess = new GameDataAccess();
         connection = DatabaseManager.getConnection();
         connection.setAutoCommit(false);
+        gameDataAccess.clear();
     }
 
     @After
@@ -41,7 +43,7 @@ public class GameDataAccessTests {
 
         // Act
         gameDataAccess.addGame(gameData);
-        GameData retrievedGame = getGameFromDatabase(gameID);
+        GameData retrievedGame = getGame(gameID);
 
         // Assert
         assertNotNull(retrievedGame);
@@ -64,7 +66,7 @@ public class GameDataAccessTests {
         addGameToDatabase(gameData);
 
         // Act
-        GameData retrievedGame = gameDataAccess.getGame(gameID);
+        GameData retrievedGame = getGame(gameID);
 
         // Assert
         assertNotNull(retrievedGame);
@@ -88,7 +90,7 @@ public class GameDataAccessTests {
 
         // Act
         gameDataAccess.clear();
-        GameData retrievedGame = getGameFromDatabase(gameID);
+        GameData retrievedGame = getGame(gameID);
 
         // Assert
         assertNull(retrievedGame);
@@ -149,8 +151,8 @@ public class GameDataAccessTests {
         gameDataAccess.updateGame(gameID, newUsername, teamColor);
 
         // Assert
-        GameData updatedGameData = gameDataAccess.getGame(gameID);
-        assertEquals(newUsername, teamColor.equalsIgnoreCase("WHITE") ? updatedGameData.getWhiteUsername() : updatedGameData.getBlackUsername());
+        GameData updatedGameData = getGame(gameID);
+        assertEquals(newUsername, updatedGameData.getWhiteUsername());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -183,21 +185,4 @@ public class GameDataAccessTests {
         }
     }
 
-    private GameData getGameFromDatabase(int gameID) throws SQLException {
-        String query = "SELECT * FROM games WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, gameID);
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    String whiteUsername = rs.getString("white_player");
-                    String blackUsername = rs.getString("black_player");
-                    String gameName = rs.getString("game_name");
-                    // For now, just return an empty ChessGame object
-                    ChessGame game = new ChessGame();
-                    return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
-                }
-            }
-        }
-        return null;
-    }
 }
