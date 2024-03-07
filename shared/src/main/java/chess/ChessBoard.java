@@ -49,23 +49,23 @@ public class ChessBoard implements Cloneable {
 
         // Define the piece types and their initial positions
         ChessPiece.PieceType[] whitePieces = {
-                ChessPiece.PieceType.KING,
-                ChessPiece.PieceType.QUEEN,
-                ChessPiece.PieceType.BISHOP,
-                ChessPiece.PieceType.BISHOP,
-                ChessPiece.PieceType.KNIGHT,
-                ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.ROOK,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.KING,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.ROOK
         };
         ChessPiece.PieceType[] blackPieces = {
-                ChessPiece.PieceType.KING,
-                ChessPiece.PieceType.QUEEN,
-                ChessPiece.PieceType.BISHOP,
-                ChessPiece.PieceType.BISHOP,
-                ChessPiece.PieceType.KNIGHT,
-                ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.ROOK,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.KING,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.ROOK
         };
 
