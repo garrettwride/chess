@@ -12,12 +12,13 @@ import java.util.Base64;
 public class UserDataAccess {
     // Method to add a new user
     public void addUser(UserData user) throws DataAccessException {
-        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+        String query = "INSERT INTO users (username, password, email) VALUES (?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             String hashedPassword = hashPassword(user.getPassword());
             statement.setString(1, user.getUsername());
             statement.setString(2, hashedPassword);
+            statement.setString(3, user.getEmail());
             statement.executeUpdate();
         } catch (SQLException | NoSuchAlgorithmException e) {
             throw new DataAccessException("Error adding user: " + e.getMessage());
@@ -33,7 +34,8 @@ public class UserDataAccess {
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
                     String password = rs.getString("password");
-                    return new UserData(username, password);
+                    String email = rs.getString("email");
+                    return new UserData(username, password, email);
                 }
             }
         } catch (SQLException e) {

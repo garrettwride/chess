@@ -48,8 +48,9 @@ public class DatabaseManager {
         String sql = """
                 CREATE TABLE IF NOT EXISTS users (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `username` VARCHAR(255) UNIQUE NOT NULL, 
-                `password` VARCHAR(255) NOT NULL
+                `username` VARCHAR(255) UNIQUE NOT NULL,
+                `password` VARCHAR(255) NOT NULL,
+                `email` VARCHAR(255) NOT NULL
                 )
                 """;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -132,4 +133,18 @@ public class DatabaseManager {
         }
     }
 
+    @Override
+    public String toString() {
+        return "DatabaseManager{}";
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

@@ -2,7 +2,7 @@ package model;
 
 import com.google.gson.Gson;
 
-public record UserData(String username, String password) {
+public record UserData(String username, String password, String email) {
 
     public String getUsername() {
         return username;
@@ -10,6 +10,10 @@ public record UserData(String username, String password) {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public String toString() {

@@ -6,11 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import dataAccess.UserDataAccess;
 import model.UserData;
 import org.junit.*;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import dataAccess.*;
 import java.sql.*;
 
-public class UserDataAccessTest {
+public class UserDataAccessTests {
 
     private UserDataAccess userDataAccess;
     private Connection connection;
