@@ -3,11 +3,9 @@ package serviceTests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import model.UserData;
-import org.junit.Before;
+
 import org.junit.jupiter.api.*;
 import dataAccess.*;
-import model.GameData;
-import chess.ChessGame;
 import service.*;
 
 import java.security.NoSuchAlgorithmException;
