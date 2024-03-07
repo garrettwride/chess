@@ -7,6 +7,8 @@ import dataAccess.*;
 import model.UserData;
 import service.*;
 
+import java.security.NoSuchAlgorithmException;
+
 public class LogoutTests {
 
     private LoginService loginService;
@@ -22,7 +24,7 @@ public class LogoutTests {
     }
 
     @Test
-    public void testLogoutSuccess() throws AuthenticationException, RegistrationException, DataAccessException {
+    public void testLogoutSuccess() throws AuthenticationException, RegistrationException, DataAccessException, NoSuchAlgorithmException {
         // Register a user
         UserData newUser = new UserData("testuser", "password123", "test@email");
         registrationService.register(newUser);

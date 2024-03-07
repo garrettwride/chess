@@ -7,6 +7,7 @@ import dataAccess.*;
 import model.*;
 import service.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,7 @@ public class JoinGameTests {
     }
 
     @Test
-    public void testJoinGameSuccess() throws RegistrationException, AuthenticationException, DataAccessException, SQLException {
+    public void testJoinGameSuccess() throws RegistrationException, AuthenticationException, DataAccessException, SQLException, NoSuchAlgorithmException {
         // Register white player
         UserData whiteUser = new UserData("whitePlayer", "password123", "test@email");
         registrationService.register(whiteUser);
@@ -61,7 +62,7 @@ public class JoinGameTests {
 
 
     @Test
-    public void testJoinGameFailureGameNotFound() throws RegistrationException, AuthenticationException, DataAccessException {
+    public void testJoinGameFailureGameNotFound() throws RegistrationException, AuthenticationException, DataAccessException, NoSuchAlgorithmException {
         // Register black player
         UserData blackUser = new UserData("blackPlayer", "password456", "test@email");
         registrationService.register(blackUser);

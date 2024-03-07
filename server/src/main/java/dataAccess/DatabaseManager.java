@@ -61,12 +61,11 @@ public class DatabaseManager {
     private static void createAuthTokensTable(Connection connection) throws SQLException {
         String sql = """
                 CREATE TABLE IF NOT EXISTS auth_tokens (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    username VARCHAR(255) NOT NULL,
-                    auth_token VARCHAR(255) UNIQUE NOT NULL,
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `username` VARCHAR(255) NOT NULL,
+                    `auth_token` VARCHAR(255) UNIQUE NOT NULL,
                     FOREIGN KEY (username) REFERENCES users(username)
-                );
-                
+                )
                 """;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.executeUpdate();

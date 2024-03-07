@@ -4,6 +4,9 @@ import dataAccess.AuthDataAccess;
 import dataAccess.DataAccessException;
 import dataAccess.UserDataAccess;
 import model.UserData;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 import java.util.Objects;
 
@@ -16,7 +19,7 @@ public class LoginService {
         this.userDataAccess = userDataAccess;
     }
 
-    public String authenticate(String username, String password) throws AuthenticationException, DataAccessException {
+    public String authenticate(String username, String password) throws AuthenticationException, DataAccessException, NoSuchAlgorithmException {
         // Check if the username and password are valid
         if (!isValidCredentials(username, password)) {
             throw new AuthenticationException("Invalid username or password");
@@ -41,8 +44,21 @@ public class LoginService {
 
     }
 
-    private boolean isValidCredentials(String username, String password) throws DataAccessException {
+    private boolean isValidCredentials(String username, String password) throws DataAccessException, NoSuchAlgorithmException {
+        // Get the stored user data
         UserData checkUser = userDataAccess.getUser(username);
-        return checkUser != null && Objects.equals(password, checkUser.getPassword());
+        if (checkUser != null) {
+            // Hash the received password
+            String hashedPassword = hashPassword(password);
+            // Compare the hashed passwords
+            return hashedPassword.equals(checkUser.getPassword());
+        }
+        return false;
+    }
+
+    private String hashPassword(String password) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = digest.digest(password.getBytes());
+        return Base64.getEncoder().encodeToString(hashBytes);
     }
 }

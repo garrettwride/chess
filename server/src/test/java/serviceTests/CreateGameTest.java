@@ -9,6 +9,8 @@ import model.GameData;
 import chess.ChessGame;
 import service.*;
 
+import java.security.NoSuchAlgorithmException;
+
 public class CreateGameTest {
 
     private JoinGameService joinGameService;
@@ -25,7 +27,7 @@ public class CreateGameTest {
     }
 
     @Test
-    public void testCreateGameSuccess() throws RegistrationException, AuthenticationException, DataAccessException {
+    public void testCreateGameSuccess() throws RegistrationException, AuthenticationException, DataAccessException, NoSuchAlgorithmException {
         UserData newUser = new UserData("testuser", "password123", "test@email");
         registrationService.register(newUser);
 
@@ -37,7 +39,7 @@ public class CreateGameTest {
     }
 
     @Test
-    public void testCreateGameFailureDuplicateID() throws RegistrationException, AuthenticationException, DataAccessException {
+    public void testCreateGameFailureDuplicateID() throws RegistrationException, AuthenticationException, DataAccessException, NoSuchAlgorithmException {
         UserData newUser = new UserData("testuser", "password123", "test@email");
         registrationService.register(newUser);
 

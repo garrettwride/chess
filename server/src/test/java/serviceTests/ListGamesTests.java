@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import dataAccess.*;
 import service.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class ListGamesTests {
     }
 
     @Test
-    public void testListGamesSuccess() throws RegistrationException, AuthenticationException, DataAccessException, SQLException {
+    public void testListGamesSuccess() throws RegistrationException, AuthenticationException, DataAccessException, SQLException, NoSuchAlgorithmException {
         // Register a user
         UserData newUser = new UserData("testuser", "password123", "test@email");
         registrationService.register(newUser);
@@ -48,7 +49,7 @@ public class ListGamesTests {
     }
 
     @Test
-    public void testListGamesEmpty() throws RegistrationException, AuthenticationException, DataAccessException, SQLException {
+    public void testListGamesEmpty() throws RegistrationException, AuthenticationException, DataAccessException, SQLException, NoSuchAlgorithmException {
         // Register a user
         UserData newUser = new UserData("testuser", "password123", "test@email");
         registrationService.register(newUser);
