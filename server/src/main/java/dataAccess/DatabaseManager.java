@@ -97,14 +97,39 @@ public class DatabaseManager {
      * }
      * </code>
      */
+//    public static Connection getConnection() throws DataAccessException {
+//        try {
+//            var conn = DriverManager.getConnection(connectionUrl, user, password);
+//            conn.setCatalog(databaseName);
+//            createDatabase();
+//            return conn;
+//        } catch (SQLException e) {
+//            throw new DataAccessException(e.getMessage());
+//        }
+//    }
+
     public static Connection getConnection() throws DataAccessException {
+        Connection conn = null;
         try {
-            var conn = DriverManager.getConnection(connectionUrl, user, password);
+            // Attempt to establish a connection
+            conn = DriverManager.getConnection(connectionUrl, user, password);
+
+            // Check if the connection is valid
+            if (conn != null && !conn.isClosed()) {
+            } else {
+                System.err.println("Failed to establish connection or connection is closed.");
+                // You can throw an exception here or handle the error accordingly
+                // For simplicity, let's throw an exception
+                throw new DataAccessException("Failed to establish connection or connection is closed.");
+            }
+
+            // Set the catalog based on the database name
             conn.setCatalog(databaseName);
-            createDatabase();
             return conn;
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            // Handle connection exception
+            throw new DataAccessException("Error establishing connection: " + e.getMessage());
         }
     }
+
 }
