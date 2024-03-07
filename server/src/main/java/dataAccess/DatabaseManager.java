@@ -39,12 +39,12 @@ public class DatabaseManager {
             // Check if the database exists and drop it if it does
 
             // Create the database
-            String sql = "CREATE DATABASE IF NOT EXISTS chess";
+            String sql = "CREATE DATABASE IF NOT EXISTS " + databaseName;
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.executeUpdate();
             }
 
-            String sql2 = "USE chess";
+            String sql2 = "USE " + databaseName;
             try (PreparedStatement statement = connection.prepareStatement(sql2)) {
                 statement.executeUpdate();
             }
@@ -58,22 +58,9 @@ public class DatabaseManager {
         }
     }
 
-    private static boolean databaseExists(Connection connection) throws SQLException {
-        DatabaseMetaData metaData = connection.getMetaData();
-        try (ResultSet resultSet = metaData.getCatalogs()) {
-            while (resultSet.next()) {
-                String dbName = resultSet.getString(1);
-                if ("chess".equalsIgnoreCase(dbName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public static void dropDatabase() throws SQLException {
         Connection connection = DriverManager.getConnection(connectionUrl, user, password);
-        String sql = "DROP DATABASE IF EXISTS chess"; // Add IF EXISTS to prevent error if database doesn't exist
+        String sql = "DROP DATABASE IF EXISTS " + databaseName; // Add IF EXISTS to prevent error if database doesn't exist
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.executeUpdate();
         }
