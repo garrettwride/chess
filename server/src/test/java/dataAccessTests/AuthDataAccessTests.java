@@ -16,6 +16,7 @@ public class AuthDataAccessTests {
 
     @BeforeEach
     public void setUp() throws Exception {
+        DatabaseManager.dropDatabase();
         DatabaseManager.createDatabase();
         authDataAccess = new AuthDataAccess();
         connection = DatabaseManager.getConnection();

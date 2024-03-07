@@ -37,9 +37,6 @@ public class DatabaseManager {
     public static void createDatabase() throws DataAccessException {
         try (Connection connection = DriverManager.getConnection(connectionUrl, user, password)) {
             // Check if the database exists and drop it if it does
-            if (databaseExists(connection)) {
-                dropDatabase(connection);
-            }
 
             // Create the database
             String sql = "CREATE DATABASE IF NOT EXISTS chess";
@@ -74,8 +71,9 @@ public class DatabaseManager {
         return false;
     }
 
-    private static void dropDatabase(Connection connection) throws SQLException {
-        String sql = "DROP DATABASE chess";
+    public static void dropDatabase() throws SQLException {
+        Connection connection = DriverManager.getConnection(connectionUrl, user, password);
+        String sql = "DROP DATABASE IF EXISTS chess"; // Add IF EXISTS to prevent error if database doesn't exist
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.executeUpdate();
         }

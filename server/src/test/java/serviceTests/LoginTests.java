@@ -8,12 +8,15 @@ import model.UserData;
 import service.*;
 import dataAccess.*;
 
+import java.sql.SQLException;
+
 public class LoginTests {
 
     private LoginService loginService;
     private  RegistrationService registrationService;
 
-    LoginTests() throws DataAccessException {
+    LoginTests() throws DataAccessException, SQLException {
+        DatabaseManager.dropDatabase();
         DatabaseManager.createDatabase();
         UserDataAccess userDataAccess = new UserDataAccess();
         AuthDataAccess authDataAccess = new AuthDataAccess();

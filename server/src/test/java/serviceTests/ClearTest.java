@@ -12,8 +12,9 @@ public class ClearTest {
     private ApplicationService applicationService;
 
     @BeforeEach
-    public void setUp() throws DataAccessException {
+    public void setUp() throws DataAccessException, SQLException {
         // Initialize your ApplicationService instance here
+        DatabaseManager.dropDatabase();
         DatabaseManager.createDatabase();
         UserDataAccess userDataAccess = new UserDataAccess();
         GameDataAccess gameDataAccess = new GameDataAccess();

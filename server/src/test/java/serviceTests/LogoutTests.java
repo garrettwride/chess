@@ -19,6 +19,7 @@ public class LogoutTests {
     private ApplicationService applicationService;
     @BeforeEach
     public void setUp() throws Exception {
+        DatabaseManager.dropDatabase();
         DatabaseManager.createDatabase();
         GameDataAccess gameDataAccess = new GameDataAccess();
         UserDataAccess userDataAccess = new UserDataAccess();

@@ -15,6 +15,7 @@ public class UserDataAccessTests {
 
     @BeforeEach
     public void setUp() throws Exception {
+        DatabaseManager.dropDatabase();
         DatabaseManager.createDatabase();
         userDataAccess = new UserDataAccess();
         connection = DatabaseManager.getConnection();

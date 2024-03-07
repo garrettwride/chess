@@ -19,6 +19,7 @@ public class GameDataAccessTests {
 
     @BeforeEach
     public void setUp() throws Exception {
+        DatabaseManager.dropDatabase();
         DatabaseManager.createDatabase();
         gameDataAccess = new GameDataAccess();
         connection = DatabaseManager.getConnection();
