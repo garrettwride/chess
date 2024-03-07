@@ -29,11 +29,11 @@ public class JoinGameTests {
     @Test
     public void testJoinGameSuccess() throws RegistrationException, AuthenticationException, DataAccessException, SQLException {
         // Register white player
-        UserData whiteUser = new UserData("whitePlayer", "password123");
+        UserData whiteUser = new UserData("whitePlayer", "password123", "test@email");
         registrationService.register(whiteUser);
 
         // Register black player
-        UserData blackUser = new UserData("blackPlayer", "password456");
+        UserData blackUser = new UserData("blackPlayer", "password456", "test@email2");
         registrationService.register(blackUser);
 
         // Login white player to obtain an authToken
@@ -63,7 +63,7 @@ public class JoinGameTests {
     @Test
     public void testJoinGameFailureGameNotFound() throws RegistrationException, AuthenticationException, DataAccessException {
         // Register black player
-        UserData blackUser = new UserData("blackPlayer", "password456");
+        UserData blackUser = new UserData("blackPlayer", "password456", "test@email");
         registrationService.register(blackUser);
 
         // Login black player to obtain an authToken

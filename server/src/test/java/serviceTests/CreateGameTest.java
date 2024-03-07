@@ -26,7 +26,7 @@ public class CreateGameTest {
 
     @Test
     public void testCreateGameSuccess() throws RegistrationException, AuthenticationException, DataAccessException {
-        UserData newUser = new UserData("testuser", "password123");
+        UserData newUser = new UserData("testuser", "password123", "test@email");
         registrationService.register(newUser);
 
         // Login to obtain an authToken
@@ -38,7 +38,7 @@ public class CreateGameTest {
 
     @Test
     public void testCreateGameFailureDuplicateID() throws RegistrationException, AuthenticationException, DataAccessException {
-        UserData newUser = new UserData("testuser", "password123");
+        UserData newUser = new UserData("testuser", "password123", "test@email");
         registrationService.register(newUser);
 
         // Login to obtain an authToken
