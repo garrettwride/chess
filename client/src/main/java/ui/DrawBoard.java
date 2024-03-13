@@ -6,9 +6,8 @@ import java.nio.charset.StandardCharsets;
 
 public class DrawBoard {
 
-    private static final int BOARD_SIZE = 8; // Chess board is 8x8
-    private static final int SQUARE_SIZE_IN_CHARS = 3; // Adjust based on your preference
-    private static final int LINE_WIDTH_IN_CHARS = 1; // Width of vertical lines between squares
+    private static final int BOARD_SIZE = 8;
+    private static final int LINE_WIDTH_IN_CHARS = 1;
 
     public DrawBoard() {
 
@@ -27,35 +26,31 @@ public static void main(String[] args){
 
     private static void drawChessBoard(PrintStream out) {
         for (int row = 0; row < BOARD_SIZE; row++) {
-            for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_CHARS; squareRow++) {
-                for (int col = 0; col < BOARD_SIZE; col++) {
-                    drawSquare(out, row, col, squareRow);
-                }
-                out.println();
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                drawSquare(out, row, col);
             }
+            out.println();
             drawHorizontalLine(out);
         }
     }
 
-    private static void drawSquare(PrintStream out, int row, int col, int squareRow) {
+    private static void drawSquare(PrintStream out, int row, int col) {
         if ((row + col) % 2 == 0) {
             setWhite(out);
         } else {
             setBlack(out);
         }
 
-        if (squareRow == 1) {
-            out.print(EscapeSequences.WHITE_ROOK);
-            out.print(EscapeSequences.WHITE_KNIGHT);
-            out.print(EscapeSequences.WHITE_BISHOP);
-            out.print(EscapeSequences.WHITE_KING);
-            out.print(EscapeSequences.WHITE_QUEEN);
-            out.print(EscapeSequences.WHITE_BISHOP);
-            out.print(EscapeSequences.WHITE_KNIGHT);
-            out.print(EscapeSequences.WHITE_ROOK);
-            out.print(EscapeSequences.EMPTY);
+        if (row == 0) {
+            if (col == 0) {
+                out.print(EscapeSequences.WHITE_ROOK);
+            }
+            if (col == 1) {
+                out.print(EscapeSequences.WHITE_KNIGHT);
+            }
+
         } else {
-            out.print(EscapeSequences.EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
+            out.print(EscapeSequences.EMPTY);
         }
 
         if (col < BOARD_SIZE - 1) {
@@ -65,7 +60,7 @@ public static void main(String[] args){
 
     private static void drawHorizontalLine(PrintStream out) {
         for (int i = 0; i < LINE_WIDTH_IN_CHARS; i++) {
-            out.print(EscapeSequences.EMPTY.repeat(BOARD_SIZE * SQUARE_SIZE_IN_CHARS + (BOARD_SIZE - 1) * LINE_WIDTH_IN_CHARS));
+            out.print(EscapeSequences.EMPTY.repeat(BOARD_SIZE + (BOARD_SIZE - 1) * LINE_WIDTH_IN_CHARS));
             out.println();
         }
     }
