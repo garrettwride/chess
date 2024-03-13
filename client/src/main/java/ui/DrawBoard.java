@@ -22,7 +22,7 @@ public class DrawBoard {
 }
 
 public static void main(String[] args){
-        new DrawBoard();
+        DrawBoard drawBoard = new DrawBoard();
 }
 
     private static void drawChessBoard(PrintStream out) {
@@ -44,9 +44,15 @@ public static void main(String[] args){
             setBlack(out);
         }
 
-        if (squareRow == SQUARE_SIZE_IN_CHARS / 2) {
-            // Draw chess piece if needed, else draw an empty square
-            // Example: out.print(EscapeSequences.WHITE_KING);
+        if (squareRow == 1) {
+            out.print(EscapeSequences.WHITE_ROOK);
+            out.print(EscapeSequences.WHITE_KNIGHT);
+            out.print(EscapeSequences.WHITE_BISHOP);
+            out.print(EscapeSequences.WHITE_KING);
+            out.print(EscapeSequences.WHITE_QUEEN);
+            out.print(EscapeSequences.WHITE_BISHOP);
+            out.print(EscapeSequences.WHITE_KNIGHT);
+            out.print(EscapeSequences.WHITE_ROOK);
             out.print(EscapeSequences.EMPTY);
         } else {
             out.print(EscapeSequences.EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
