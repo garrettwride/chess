@@ -21,7 +21,7 @@ public class DrawBoard {
 }
 
 public static void main(String[] args){
-        DrawBoard drawBoard = new DrawBoard();
+        new DrawBoard();
 }
 
     private static void drawChessBoard(PrintStream out) {
@@ -29,8 +29,9 @@ public static void main(String[] args){
             for (int col = 0; col < BOARD_SIZE; col++) {
                 drawSquare(out, row, col);
             }
+            out.print(EscapeSequences.SET_BG_COLOR_BLACK);
             out.println();
-            drawHorizontalLine(out);
+            //drawHorizontalLine(out);
         }
     }
 
@@ -43,6 +44,7 @@ public static void main(String[] args){
 
         if (row == 0) {
             // Place white pieces in row 0
+            setBlue(out);
             if (col == 0) {
                 out.print(EscapeSequences.WHITE_ROOK);
             } else if (col == 1) {
@@ -62,12 +64,15 @@ public static void main(String[] args){
             }
         } else if (row == 1) {
             // Place white pawns in row 1
+            setBlue(out);
             out.print(EscapeSequences.WHITE_PAWN);
         } else if (row == 6) {
             // Place black pawns in row 6
+            setRed(out);
             out.print(EscapeSequences.BLACK_PAWN);
         } else if (row == 7) {
             // Place black pieces in row 7
+            setRed(out);
             if (col == 0) {
                 out.print(EscapeSequences.BLACK_ROOK);
             } else if (col == 1) {
@@ -90,7 +95,7 @@ public static void main(String[] args){
         }
 
         if (col < BOARD_SIZE - 1) {
-            drawVerticalLine(out);
+            //drawVerticalLine(out);
         }
     }
 
@@ -108,12 +113,18 @@ public static void main(String[] args){
 
     private static void setWhite(PrintStream out) {
         out.print(EscapeSequences.SET_BG_COLOR_WHITE);
-        out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
     }
 
     private static void setBlack(PrintStream out) {
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
-        out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+    }
+
+    private static void setBlue(PrintStream out) {
+        out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+    }
+
+    private static void setRed(PrintStream out) {
+        out.print(EscapeSequences.SET_TEXT_COLOR_RED);
     }
 }
 
