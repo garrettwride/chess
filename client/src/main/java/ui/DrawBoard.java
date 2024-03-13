@@ -42,13 +42,49 @@ public static void main(String[] args){
         }
 
         if (row == 0) {
+            // Place white pieces in row 0
             if (col == 0) {
                 out.print(EscapeSequences.WHITE_ROOK);
-            }
-            if (col == 1) {
+            } else if (col == 1) {
                 out.print(EscapeSequences.WHITE_KNIGHT);
+            } else if (col == 2) {
+                out.print(EscapeSequences.WHITE_BISHOP);
+            } else if (col == 3) {
+                out.print(EscapeSequences.WHITE_QUEEN);
+            } else if (col == 4) {
+                out.print(EscapeSequences.WHITE_KING);
+            } else if (col == 5) {
+                out.print(EscapeSequences.WHITE_BISHOP);
+            } else if (col == 6) {
+                out.print(EscapeSequences.WHITE_KNIGHT);
+            } else if (col == 7) {
+                out.print(EscapeSequences.WHITE_ROOK);
             }
-
+        } else if (row == 1) {
+            // Place white pawns in row 1
+            out.print(EscapeSequences.WHITE_PAWN);
+        } else if (row == 6) {
+            // Place black pawns in row 6
+            out.print(EscapeSequences.BLACK_PAWN);
+        } else if (row == 7) {
+            // Place black pieces in row 7
+            if (col == 0) {
+                out.print(EscapeSequences.BLACK_ROOK);
+            } else if (col == 1) {
+                out.print(EscapeSequences.BLACK_KNIGHT);
+            } else if (col == 2) {
+                out.print(EscapeSequences.BLACK_BISHOP);
+            } else if (col == 3) {
+                out.print(EscapeSequences.BLACK_QUEEN);
+            } else if (col == 4) {
+                out.print(EscapeSequences.BLACK_KING);
+            } else if (col == 5) {
+                out.print(EscapeSequences.BLACK_BISHOP);
+            } else if (col == 6) {
+                out.print(EscapeSequences.BLACK_KNIGHT);
+            } else if (col == 7) {
+                out.print(EscapeSequences.BLACK_ROOK);
+            }
         } else {
             out.print(EscapeSequences.EMPTY);
         }
@@ -57,6 +93,7 @@ public static void main(String[] args){
             drawVerticalLine(out);
         }
     }
+
 
     private static void drawHorizontalLine(PrintStream out) {
         for (int i = 0; i < LINE_WIDTH_IN_CHARS; i++) {
