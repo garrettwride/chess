@@ -44,35 +44,7 @@ public static void main(String[] args){
 
         if (row == 0) {
             // Place white pieces in row 0
-            setBlue(out);
-            if (col == 0) {
-                out.print(EscapeSequences.WHITE_ROOK);
-            } else if (col == 1) {
-                out.print(EscapeSequences.WHITE_KNIGHT);
-            } else if (col == 2) {
-                out.print(EscapeSequences.WHITE_BISHOP);
-            } else if (col == 3) {
-                out.print(EscapeSequences.WHITE_QUEEN);
-            } else if (col == 4) {
-                out.print(EscapeSequences.WHITE_KING);
-            } else if (col == 5) {
-                out.print(EscapeSequences.WHITE_BISHOP);
-            } else if (col == 6) {
-                out.print(EscapeSequences.WHITE_KNIGHT);
-            } else if (col == 7) {
-                out.print(EscapeSequences.WHITE_ROOK);
-            }
-        } else if (row == 1) {
-            // Place white pawns in row 1
-            setBlue(out);
-            out.print(EscapeSequences.WHITE_PAWN);
-        } else if (row == 6) {
-            // Place black pawns in row 6
-            setRed(out);
-            out.print(EscapeSequences.BLACK_PAWN);
-        } else if (row == 7) {
-            // Place black pieces in row 7
-            setRed(out);
+            setBlueText(out);
             if (col == 0) {
                 out.print(EscapeSequences.BLACK_ROOK);
             } else if (col == 1) {
@@ -89,6 +61,34 @@ public static void main(String[] args){
                 out.print(EscapeSequences.BLACK_KNIGHT);
             } else if (col == 7) {
                 out.print(EscapeSequences.BLACK_ROOK);
+            }
+        } else if (row == 1) {
+            // Place white pawns in row 1
+            setBlueText(out);
+            out.print(EscapeSequences.BLACK_PAWN);
+        } else if (row == 6) {
+            // Place black pawns in row 6
+            setRedText(out);
+            out.print(EscapeSequences.WHITE_PAWN);
+        } else if (row == 7) {
+            // Place black pieces in row 7
+            setRedText(out);
+            if (col == 0) {
+                out.print(EscapeSequences.WHITE_ROOK);
+            } else if (col == 1) {
+                out.print(EscapeSequences.WHITE_KNIGHT);
+            } else if (col == 2) {
+                out.print(EscapeSequences.WHITE_BISHOP);
+            } else if (col == 3) {
+                out.print(EscapeSequences.WHITE_QUEEN);
+            } else if (col == 4) {
+                out.print(EscapeSequences.WHITE_KING);
+            } else if (col == 5) {
+                out.print(EscapeSequences.WHITE_BISHOP);
+            } else if (col == 6) {
+                out.print(EscapeSequences.WHITE_KNIGHT);
+            } else if (col == 7) {
+                out.print(EscapeSequences.WHITE_ROOK);
             }
         } else {
             out.print(EscapeSequences.EMPTY);
@@ -119,12 +119,19 @@ public static void main(String[] args){
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
     }
 
-    private static void setBlue(PrintStream out) {
+    private static void setGrey(PrintStream out) {
+        out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
+    }
+
+    private static void setBlueText(PrintStream out) {
         out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
     }
 
-    private static void setRed(PrintStream out) {
+    private static void setRedText(PrintStream out) {
         out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+    }
+    private static void setBlackText(PrintStream out) {
+        out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
     }
 }
 
