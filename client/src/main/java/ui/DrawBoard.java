@@ -2,7 +2,7 @@ package ui;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import ui.EscapeSequences;
+
 
 public class DrawBoard {
 
@@ -10,7 +10,7 @@ public class DrawBoard {
     private static final int SQUARE_SIZE_IN_CHARS = 3; // Adjust based on your preference
     private static final int LINE_WIDTH_IN_CHARS = 1; // Width of vertical lines between squares
 
-    public void DrawBoard() {
+    public DrawBoard() {
 
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
