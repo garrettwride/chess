@@ -14,7 +14,7 @@ public class DrawBoard {
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.ERASE_SCREEN);
-        drawChessBoard(out);
+        drawChessBoards(out);
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
         out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
 
@@ -24,14 +24,26 @@ public static void main(String[] args){
         new DrawBoard();
 }
 
-    private static void drawChessBoard(PrintStream out) {
+    private static void drawChessBoards(PrintStream out) {
+        //print from white perspective
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 drawSquare(out, row, col);
             }
             out.print(EscapeSequences.SET_BG_COLOR_BLACK);
             out.println();
-            //drawHorizontalLine(out);
+
+        }
+
+        out.println();
+
+        //print from black perspective
+        for (int row = BOARD_SIZE - 1; row >= 0; row--) { // Iterate in reverse order
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                drawSquare(out, row, col); // Pass row in reverse order
+            }
+            out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+            out.println();
         }
     }
 
