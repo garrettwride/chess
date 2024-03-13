@@ -11,6 +11,12 @@ public class EscapeSequences {
     public static final String ERASE_SCREEN = UNICODE_ESCAPE + "[H" + UNICODE_ESCAPE + "[2J";
     public static final String ERASE_LINE = UNICODE_ESCAPE + "[2K";
 
+    private static final String ESCAPE = "\u001b[";
+
+    public static final String GREEN = ESCAPE + "32m";
+    public static final String BLUE = ESCAPE + "34m";
+    public static final String RED = ESCAPE + "31m";
+    public static final String RESET = ESCAPE + "0m";
     public static final String SET_TEXT_BOLD = UNICODE_ESCAPE + "[1m";
     public static final String SET_TEXT_FAINT = UNICODE_ESCAPE + "[2m";
     public static final String RESET_TEXT_BOLD_FAINT = UNICODE_ESCAPE + "[22m";

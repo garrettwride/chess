@@ -18,11 +18,11 @@ public class DrawBoard {
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
         out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
 
-}
+    }
 
-public static void main(String[] args){
-        new DrawBoard();
-}
+    public static void main(String[] args){
+            new DrawBoard();
+    }
 
     private static void drawChessBoards(PrintStream out) {
         //print from white perspective
