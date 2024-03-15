@@ -30,7 +30,7 @@ public class MenuClient {
             return switch (cmd) {
                 case "help" -> help();
                 case "login" -> login(params);
-                //case "register" -> register(params);
+                case "register" -> register(params);
                 case "logout" -> logout();
                 case "create" -> createGame(params);
                 case "list" -> listGames();
@@ -47,11 +47,13 @@ public class MenuClient {
 
     public String login(String... params) throws ResponseException {
         if (params.length == 2) {
-            state = State.SIGNEDIN;
             var username = params[0];
             var password = params[1];
             UserData user = new UserData(username, password, null);
             authToken = server.authenticate(user);
+            if (authToken != null){
+                state = State.SIGNEDIN;
+            }
             //ws = new WebSocketFacade(serverUrl, notificationHandler);
             //ws.enterPetShop(visitorName);
             return "You signed in.";
@@ -106,6 +108,8 @@ public class MenuClient {
         assertSignedIn();
        // ws.leavePetShop(visitorName);
         //ws = null;
+        String auth = authToken;
+        server.deauthenticate(auth);
         state = State.SIGNEDOUT;
         authToken = null;
         return "You signed out";
@@ -121,11 +125,30 @@ public class MenuClient {
         return null;
     }
 
+    public String register(String... params) throws ResponseException {
+        if (params.length == 3) {
+            var username = params[0];
+            var password = params[1];
+            var email = params[2];
+            UserData user = new UserData(username, password, email);
+            AuthData authData = server.register(user);
+
+            String auth = authData.getAuthToken();
+            authToken = auth;
+            if (authToken != null) {
+                assertSignedIn();
+            }
+            return String.format("%s successfully registered", authData.getUsername());
+        }
+        throw new ResponseException(400, "Expected: <name>");
+    }
+
     public String help() {
         if (state == State.SIGNEDOUT) {
             return """
                     - register <username> <password> <email>
                     - login <username> <password>
+                     - help
                     - quit
                     """;
         }
@@ -135,6 +158,7 @@ public class MenuClient {
                 - join <ID> [WHITE|BLACK|<empty>]
                 - observe <ID>
                 - logout
+                - help
                 - quit
                 """;
     }
