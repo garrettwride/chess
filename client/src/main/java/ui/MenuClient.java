@@ -5,13 +5,13 @@ import java.util.Arrays;
 import com.google.gson.Gson;
 import model.*;
 import exception.ResponseException;
-import websocket.*;
+//import websocket.*;
 
 public class MenuClient {
-    private String visitorName = null;
+    private String authToken = null;
     private final ServerFacade server;
     private final String serverUrl;
-////    private final NotificationHandler notificationHandler;
+////    private final NotificationHandler;
 //    //private WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
 //
@@ -46,37 +46,40 @@ public class MenuClient {
 
 
     public String login(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length == 2) {
             state = State.SIGNEDIN;
-            visitorName = String.join("-", params);
+            var username = params[0];
+            var password = params[1];
+            UserData user = new UserData(username, password, null);
+            authToken = server.authenticate(user);
             //ws = new WebSocketFacade(serverUrl, notificationHandler);
             //ws.enterPetShop(visitorName);
-            return String.format("You signed in as %s.", visitorName);
+            return "You signed in.";
         }
-        throw new ResponseException(400, "Expected: <yourname>");
+        throw new ResponseException(400, "Expected: <username> <password>");
     }
 
     public String createGame(String... params) throws ResponseException {
         assertSignedIn();
-        if (params.length >= 2) {
+        if (params.length == 1) {
             var name = params[0];
-            var auth = params[1];
+            String auth = authToken;
             GameInfo game = new GameInfo();
             game.setGameName(name);
             game = server.addGame(game, auth);
-            return String.format("You joined %s. Assigned ID: %d", game.getGameID());
+            return String.format("Successfully created game. Assigned ID: %d", game.getGameID());
         }
-        throw new ResponseException(400, "Expected: <name> <CAT|DOG|FROG>");
+        throw new ResponseException(400, "Expected: <name>");
     }
 
     public String listGames() throws ResponseException {
         assertSignedIn();
-        String auth = "";
-        var pets = server.listGames(auth);
+        String auth = authToken;
+        var games = server.listGames(auth);
         var result = new StringBuilder();
         var gson = new Gson();
-        for (var pet : pets) {
-            result.append(gson.toJson(pet)).append('\n');
+        for (var game : games) {
+            result.append(gson.toJson(game)).append('\n');
         }
         return result.toString();
     }
@@ -86,17 +89,17 @@ public class MenuClient {
         if (params.length == 2) {
             try {
                 var id = Integer.parseInt(params[1]);
-                String auth = "";
+                String auth = authToken;
                 var playerColor = (params[0]);
                 var game = getGame(id);
                 if (game != null) {
                     server.joinGame(id, playerColor, auth);
-                    return "Succefully joined game";
+                    return "Successfully joined game";
                 }
             } catch (NumberFormatException ignored) {
             }
         }
-        throw new ResponseException(400, "Expected: <pet id>");
+        throw new ResponseException(400, "<ID> [WHITE|BLACK|<empty>]");
     }
 
     public String logout() throws ResponseException {
@@ -104,11 +107,12 @@ public class MenuClient {
        // ws.leavePetShop(visitorName);
         //ws = null;
         state = State.SIGNEDOUT;
-        return String.format("%s left the shop", visitorName);
+        authToken = null;
+        return "You signed out";
     }
 
     private GameData getGame(int id) throws ResponseException {
-        String auth = "";
+        String auth = authToken;
         for (var game : server.listGames(auth)) {
             if (game.getGameID() == id) {
                 return game;
@@ -120,16 +124,17 @@ public class MenuClient {
     public String help() {
         if (state == State.SIGNEDOUT) {
             return """
-                    - signIn <yourname>
+                    - register <username> <password> <email>
+                    - login <username> <password>
                     - quit
                     """;
         }
         return """
                 - list
-                - adopt <pet id>
-                - rescue <name> <CAT|DOG|FROG|FISH>
-                - adoptAll
-                - signOut
+                - create <name>
+                - join <ID> [WHITE|BLACK|<empty>]
+                - observe <ID>
+                - logout
                 - quit
                 """;
     }

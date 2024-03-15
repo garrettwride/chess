@@ -20,7 +20,6 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-
     public GameInfo addGame(GameInfo game, String auth) throws ResponseException {
         var path = "/game";
         Map<String, String> headers = new HashMap<>();
@@ -37,6 +36,18 @@ public class ServerFacade {
             headers.put("Authorization", auth);
         }
         this.makeRequest("DELETE", path, null, headers, null);
+    }
+
+    public String authenticate(UserData userData) throws ResponseException {
+        var path = "/session";
+        return this.makeRequest("POST", path, userData, null, String.class);
+    }
+
+    public void deauthenticate(String authToken) throws ResponseException {
+        var path = "/session";
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", authToken);
+        this.makeRequest("DELETE", path, null, headers, Void.class);
     }
 
     public void deleteAllGames(String auth) throws ResponseException {
