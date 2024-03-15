@@ -3,11 +3,13 @@ package ui;
 import java.util.Arrays;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import model.*;
 import exception.ResponseException;
 //import websocket.*;
 
 public class MenuClient {
+    public Gson gson;
     private String authToken = null;
     private final ServerFacade server;
     private final String serverUrl;
@@ -50,13 +52,18 @@ public class MenuClient {
             var username = params[0];
             var password = params[1];
             UserData user = new UserData(username, password, null);
-            authToken = server.authenticate(user);
+
+            // Make the authentication request
+            String jsonResponse = server.authenticate(user);
+
+            // Parse the JSON response to extract the authentication token
+            JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
+            authToken = jsonObject.get("authToken").getAsString();
+
             if (authToken != null){
                 state = State.SIGNEDIN;
+                return "You signed in.";
             }
-            //ws = new WebSocketFacade(serverUrl, notificationHandler);
-            //ws.enterPetShop(visitorName);
-            return "You signed in.";
         }
         throw new ResponseException(400, "Expected: <username> <password>");
     }
