@@ -54,19 +54,19 @@ public class MenuClient {
             UserData user = new UserData(username, password, null);
 
             // Make the authentication request
-            String jsonResponse = server.authenticate(user);
+            AuthData authData = server.authenticate(user);
 
-            // Parse the JSON response to extract the authentication token
-            JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
-            authToken = jsonObject.get("authToken").getAsString();
+            // Extract the authentication token
+            String authToken = authData.getAuthToken();
 
-            if (authToken != null){
+            if (authToken != null) {
                 state = State.SIGNEDIN;
                 return "You signed in.";
             }
         }
         throw new ResponseException(400, "Expected: <username> <password>");
     }
+
 
     public String createGame(String... params) throws ResponseException {
         assertSignedIn();

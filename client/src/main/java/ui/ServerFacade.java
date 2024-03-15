@@ -38,10 +38,11 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, null, headers, null);
     }
 
-    public String authenticate(UserData userData) throws ResponseException {
+    public AuthData authenticate(UserData userData) throws ResponseException {
         var path = "/session";
-        return this.makeRequest("POST", path, userData, null, String.class);
+        return this.makeRequest("POST", path, userData, null, AuthData.class);
     }
+
 
     public void deauthenticate(String authToken) throws ResponseException {
         var path = "/session";
