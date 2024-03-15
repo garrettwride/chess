@@ -3,7 +3,7 @@ package ui;
 import java.util.Arrays;
 
 import com.google.gson.Gson;
-import model.GameData;
+import model.*;
 import exception.ResponseException;
 import websocket.*;
 //import server.ServerFacade;
@@ -30,6 +30,8 @@ public class MenuClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "help" -> help();
+                case "login" -> login(params);
+                case "register" -> register(params);
                 case "logout" -> logout();
                 case "create" -> createGame(params);
                 case "list" -> listGames();
@@ -44,7 +46,7 @@ public class MenuClient {
     }
 
 
-    public String signIn(String... params) throws ResponseException {
+    public String login(String... params) throws ResponseException {
         if (params.length >= 1) {
             state = State.SIGNEDIN;
             visitorName = String.join("-", params);
@@ -55,19 +57,19 @@ public class MenuClient {
         throw new ResponseException(400, "Expected: <yourname>");
     }
 
-    public String rescuePet(String... params) throws ResponseException {
+    public String createGame(String... params) throws ResponseException {
         assertSignedIn();
         if (params.length >= 2) {
             var name = params[0];
             var type = PetType.valueOf(params[1].toUpperCase());
-            var pet = new GameData(0, name, type);
+            var pet = new GameInfo(0, name, type);
             //pet = server.addPet(pet);
             return String.format("You rescued %s. Assigned ID: %d", pet.name(), pet.id());
         }
         throw new ResponseException(400, "Expected: <name> <CAT|DOG|FROG>");
     }
 
-    public String listPets() throws ResponseException {
+    public String listGames() throws ResponseException {
         assertSignedIn();
         var pets = server.listPets();
         var result = new StringBuilder();
@@ -78,12 +80,12 @@ public class MenuClient {
         return result.toString();
     }
 
-    public String adoptPet(String... params) throws ResponseException {
+    public String joinGame(String... params) throws ResponseException {
         assertSignedIn();
         if (params.length == 1) {
             try {
                 var id = Integer.parseInt(params[0]);
-                var pet = getPet(id);
+                var pet = getGame(id);
                 if (pet != null) {
                     server.deletePet(id);
                     return String.format("%s says %s", pet.name(), pet.sound());
@@ -94,18 +96,7 @@ public class MenuClient {
         throw new ResponseException(400, "Expected: <pet id>");
     }
 
-    public String adoptAllPets() throws ResponseException {
-        assertSignedIn();
-        var buffer = new StringBuilder();
-        for (var pet : server.listPets()) {
-            buffer.append(String.format("%s says %s%n", pet.name(), pet.sound()));
-        }
-
-        server.deleteAllPets();
-        return buffer.toString();
-    }
-
-    public String signOut() throws ResponseException {
+    public String logout() throws ResponseException {
         assertSignedIn();
        // ws.leavePetShop(visitorName);
         //ws = null;
@@ -113,7 +104,7 @@ public class MenuClient {
         return String.format("%s left the shop", visitorName);
     }
 
-    private Pet getPet(int id) throws ResponseException {
+    private Pet getGame(int id) throws ResponseException {
         for (var pet : server.listPets()) {
             if (pet.id() == id) {
                 return pet;

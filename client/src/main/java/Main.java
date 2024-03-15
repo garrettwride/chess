@@ -7,6 +7,5 @@ public class Main {
         System.out.println("♕ 240 Chess Client: " + piece);
 
         Menu menu = new Menu("qwerty");
-        DrawBoard drawBoard = new DrawBoard();
     }
 }
