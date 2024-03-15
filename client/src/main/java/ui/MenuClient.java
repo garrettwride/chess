@@ -140,7 +140,7 @@ public class MenuClient {
             }
             return String.format("%s successfully registered", authData.getUsername());
         }
-        throw new ResponseException(400, "Expected: <name>");
+        throw new ResponseException(400, "<username> <password> <email>");
     }
 
     public String help() {
