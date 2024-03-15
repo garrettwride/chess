@@ -25,6 +25,18 @@ public class GameInfo {
         return gameName;
     }
 
+    public void setPlayerColor(String playerColor) {
+        this.playerColor = playerColor;
+    }
+
+    public void setGameID(Integer gameID) {
+        this.gameID = gameID;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
     // Constructor to handle null values
     public GameInfo() {
         this.playerColor = null;
