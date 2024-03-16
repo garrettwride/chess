@@ -2,10 +2,7 @@ package ui;
 
 import java.util.Arrays;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import model.*;
 import exception.ResponseException;
 //import websocket.*;
@@ -98,8 +95,8 @@ public class MenuClient {
 
             // Extract game properties and append to the result string
             String gameId = game.get("gameID").getAsString();
-            String whiteUsername = game.get("whiteUsername").getAsString();
-            String blackUsername = game.get("blackUsername").getAsString();
+            String whiteUsername = (game.get("whiteUsername") != null) ? game.get("whiteUsername").getAsString() : "";
+            String blackUsername = (game.get("blackUsername") != null) ? game.get("blackUsername").getAsString() : "";
             String gameName = game.get("gameName").getAsString();
 
             result.append("Game ID: ").append(gameId)
@@ -145,23 +142,27 @@ public class MenuClient {
         String auth = authToken;
         JsonArray gamesArray = server.listGames(auth);
 
-        // Iterate over the JSON array to find the game with the specified ID
-        for (int i = 0; i < gamesArray.size(); i++) {
-            JsonObject gameObject = gamesArray.get(i).getAsJsonObject();
-            int gameId = gameObject.get("gameID").getAsInt();
+        // Process the JSON array
+        for (JsonElement element : gamesArray) {
+            JsonObject gameObject = element.getAsJsonObject();
 
-            // Check if the current game's ID matches the specified ID
-            if (gameId == id) {
-                // Extract other game properties and create a GameData object
-                String whiteUsername = gameObject.get("whiteUsername").getAsString();
-                String blackUsername = gameObject.get("blackUsername").getAsString();
-                String gameName = gameObject.get("gameName").getAsString();
+            // Check if the game ID property exists and is not null
+            JsonElement gameIDElement = gameObject.get("gameID");
+            if (gameIDElement != null && !gameIDElement.isJsonNull()) {
+                int gameID = gameIDElement.getAsInt();
+                if (gameID == id) {
+                    // Extract other game properties and create a GameData object
+                    String whiteUsername = gameObject.get("whiteUsername").getAsString();
+                    String blackUsername = gameObject.get("blackUsername").getAsString();
+                    String gameName = gameObject.get("gameName").getAsString();
 
-                return new GameData(gameId, whiteUsername, blackUsername, gameName, null);
+                    return new GameData(gameID, whiteUsername, blackUsername, gameName, null);
+                }
+            } else {
+                return null;
             }
         }
 
-        // Return null if no game with the specified ID is found
         return null;
     }
 
