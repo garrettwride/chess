@@ -3,6 +3,7 @@ package ui;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
+import server.SuccessResponse;
 
 import java.io.*;
 import java.net.*;
@@ -48,7 +49,7 @@ public class ServerFacade {
         var path = "/session";
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", authToken);
-        this.makeRequest("DELETE", path, null, headers, Void.class);
+        this.makeRequest("DELETE", path, null, headers, SuccessResponse.class);
     }
 
     public void deleteAllGames(String auth) throws ResponseException {

@@ -57,7 +57,8 @@ public class MenuClient {
             AuthData authData = server.authenticate(user);
 
             // Extract the authentication token
-            String authToken = authData.getAuthToken();
+            String auth = authData.getAuthToken();
+            authToken = auth;
 
             if (authToken != null) {
                 state = State.SIGNEDIN;
