@@ -46,6 +46,7 @@ public class Menu {
             }
         }
         System.out.println();
+        System.exit(0);
     }
 
 //    public void notify(Notification notification) {

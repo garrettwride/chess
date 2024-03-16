@@ -16,6 +16,7 @@ public class ServerFacade {
     //login, logot, create user, create game, list games, join games, observe games
 
     private final String serverUrl;
+    public Gson gson = new Gson();
 
     public ServerFacade(String url) {
         serverUrl = url;
@@ -61,16 +62,16 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, null, headers, null);
     }
 
-    public void joinGame(int gameID, String playerColor, String authToken) throws ResponseException {
+    public void joinGame(GameInfo gameInfo, String authToken) throws ResponseException {
         var path = "/game";
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", authToken);
 
-        Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("playerColor", playerColor);
-        requestBody.put("gameID", String.valueOf(gameID));
+        // Convert the GameInfo object to JSON
+        String requestBody = gson.toJson(gameInfo);
 
-        this.makeRequest("PUT", path, requestBody, headers, null);
+        // Make the request to join the game
+        makeRequest("PUT", path, requestBody, headers, String.class);
     }
     public JsonArray listGames(String auth) throws ResponseException {
         var path = "/game";
