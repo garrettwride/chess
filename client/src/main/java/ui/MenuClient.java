@@ -3,7 +3,9 @@ package ui;
 import java.util.Arrays;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import model.*;
 import exception.ResponseException;
 //import websocket.*;
@@ -85,12 +87,28 @@ public class MenuClient {
     public String listGames() throws ResponseException {
         assertSignedIn();
         String auth = authToken;
-        var games = server.listGames(auth);
-        var result = new StringBuilder();
-        var gson = new Gson();
-        for (var game : games) {
-            result.append(gson.toJson(game)).append('\n');
+
+        // Retrieve the JSON array of games from the server
+        JsonArray gamesArray = server.listGames(auth);
+
+        // Parse the JSON array to extract individual game objects
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < gamesArray.size(); i++) {
+            JsonObject game = gamesArray.get(i).getAsJsonObject();
+
+            // Extract game properties and append to the result string
+            String gameId = game.get("gameID").getAsString();
+            String whiteUsername = game.get("whiteUsername").getAsString();
+            String blackUsername = game.get("blackUsername").getAsString();
+            String gameName = game.get("gameName").getAsString();
+
+            result.append("Game ID: ").append(gameId)
+                    .append(", White Player: ").append(whiteUsername)
+                    .append(", Black Player: ").append(blackUsername)
+                    .append(", Game Name: ").append(gameName)
+                    .append('\n');
         }
+
         return result.toString();
     }
 
@@ -125,11 +143,25 @@ public class MenuClient {
 
     private GameData getGame(int id) throws ResponseException {
         String auth = authToken;
-        for (var game : server.listGames(auth)) {
-            if (game.getGameID() == id) {
-                return game;
+        JsonArray gamesArray = server.listGames(auth);
+
+        // Iterate over the JSON array to find the game with the specified ID
+        for (int i = 0; i < gamesArray.size(); i++) {
+            JsonObject gameObject = gamesArray.get(i).getAsJsonObject();
+            int gameId = gameObject.get("gameID").getAsInt();
+
+            // Check if the current game's ID matches the specified ID
+            if (gameId == id) {
+                // Extract other game properties and create a GameData object
+                String whiteUsername = gameObject.get("whiteUsername").getAsString();
+                String blackUsername = gameObject.get("blackUsername").getAsString();
+                String gameName = gameObject.get("gameName").getAsString();
+
+                return new GameData(gameId, whiteUsername, blackUsername, gameName, null);
             }
         }
+
+        // Return null if no game with the specified ID is found
         return null;
     }
 

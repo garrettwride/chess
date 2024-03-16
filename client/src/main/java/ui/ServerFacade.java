@@ -1,6 +1,9 @@
 package ui;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import exception.ResponseException;
 import model.*;
 import server.SuccessResponse;
@@ -72,13 +75,20 @@ public class ServerFacade {
 
         this.makeRequest("PUT", path, requestBody, headers, null);
     }
-    public GameData[] listGames(String auth) throws ResponseException {
+    public JsonArray listGames(String auth) throws ResponseException {
         var path = "/game";
         Map<String, String> headers = new HashMap<>();
         if (auth != null) {
             headers.put("Authorization", auth);
         }
-        return this.makeRequest("GET", path, null, headers, GameData[].class);
+
+        // Make the request to get the JSON array
+        String jsonResponse = this.makeRequest("GET", path, null, headers, String.class);
+
+        // Parse the JSON response into a JsonArray
+        JsonArray gamesArray = JsonParser.parseString(jsonResponse).getAsJsonArray();
+
+        return gamesArray;
     }
 
     public AuthData register(UserData userData) throws ResponseException {
