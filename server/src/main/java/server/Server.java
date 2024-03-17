@@ -169,10 +169,8 @@ public class Server {
             String authToken = request.headers("authorization");
 
             // Parse the JSON request body into GameInfo object
-            GameInfo gameInfo = gson.fromJson(request.body(), GameInfo.class);
+            String gameName = gson.fromJson(request.body(), String.class);
 
-            // Extract the game name from the GameInfo object
-            String gameName = gameInfo.getGameName();
             // Call the createGame method and get the game ID
             int gameID = joinGameService.createGame(gameName, authToken);
 

@@ -22,13 +22,13 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public GameInfo addGame(GameInfo game, String auth) throws ResponseException {
+    public String addGame(String name, String auth) throws ResponseException {
         var path = "/game";
         Map<String, String> headers = new HashMap<>();
         if (auth != null) {
             headers.put("Authorization", auth);
         }
-        return this.makeRequest("POST", path, game, headers, GameInfo.class);
+        return this.makeRequest("POST", path, name, headers, String.class);
     }
 
     public void deleteGame(int id, String auth) throws ResponseException {

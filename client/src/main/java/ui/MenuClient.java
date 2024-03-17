@@ -73,10 +73,8 @@ public class MenuClient {
         if (params.length == 1) {
             var name = params[0];
             String auth = authToken;
-            GameInfo game = new GameInfo();
-            game.setGameName(name);
-            game = server.addGame(game, auth);
-            return String.format("Successfully created game. Assigned ID: %d", game.getGameID());
+            String ID = server.addGame(name, auth);
+            return String.format("Successfully created game. Assigned ID: %s", ID);
         }
         throw new ResponseException(400, "Expected: <name>");
     }
@@ -115,11 +113,12 @@ public class MenuClient {
             try {
                 var id = Integer.parseInt(params[0]);
                 String auth = authToken;
-                var playerColor = (params[1]);
+                var playerColor = (params[1]).toUpperCase();
                 GameInfo gameInfo = new GameInfo();
                 gameInfo.setPlayerColor(playerColor);
                 gameInfo.setGameID(id);
                 server.joinGame(gameInfo, auth);
+                new DrawBoard();
                 return "Successfully joined game";
                 }
             catch (NumberFormatException ignored) {

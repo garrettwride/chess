@@ -3,45 +3,28 @@ package model;
 import com.google.gson.annotations.SerializedName;
 
 public class GameInfo {
-    @SerializedName("playerColor")
-    private String playerColor;
+    @SerializedName("teamColor")
+    private String teamColor;
 
     @SerializedName("gameID")
-    private Integer gameID; // Use Integer instead of int to allow null values
+    private Integer gameID;
 
-    @SerializedName("gameName")
-    private String gameName;
-
-    // Getters and setters for playerColor, gameID, and gameName
+    // Getters and setters for teamColor and gameID
     public String getPlayerColor() {
-        return playerColor;
+        return teamColor;
     }
 
     public Integer getGameID() {
         return gameID;
     }
 
-    public String getGameName() {
-        return gameName;
-    }
-
-    public void setPlayerColor(String playerColor) {
-        this.playerColor = playerColor;
+    public void setPlayerColor(String teamColor) {
+        this.teamColor = teamColor;
     }
 
     public void setGameID(Integer gameID) {
         this.gameID = gameID;
     }
-
-    public void setGameName(String gameName) {
-        this.gameName = gameName;
-    }
-
-    // Constructor to handle null values
-    public GameInfo() {
-        this.playerColor = null;
-        this.gameID = null;
-        this.gameName = null;
-    }
 }
+
 
