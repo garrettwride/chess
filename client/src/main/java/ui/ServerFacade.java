@@ -4,6 +4,8 @@ import com.google.gson.*;
 import exception.ResponseException;
 import model.*;
 import server.SuccessResponse;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.*;
 import java.net.*;
@@ -28,8 +30,14 @@ public class ServerFacade {
         if (auth != null) {
             headers.put("Authorization", auth);
         }
-        return this.makeRequest("POST", path, name, headers, String.class);
+        JsonObject jsonResponse = this.makeRequest("POST", path, name, headers, JsonObject.class);
+
+        // Extract the gameID from the JSON object
+        String gameID = jsonResponse.get("gameID").getAsString();
+
+        return gameID;
     }
+
 
     public void deleteGame(int id, String auth) throws ResponseException {
         var path = String.format("/game/%s", id);
