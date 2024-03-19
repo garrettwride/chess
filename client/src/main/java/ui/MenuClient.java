@@ -36,7 +36,7 @@ public class MenuClient {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
-                //case "observe" -> joinObserver(params);
+                case "observe" -> joinObserver(params);
                 case "quit" -> "quit";
                 default -> "Invalid command. Type 'help' for available commands.";
             };
@@ -127,6 +127,24 @@ public class MenuClient {
         throw new ResponseException(400, "<ID> <WHITE|BLACK|<empty>>");
     }
 
+    public String joinObserver(String... params) throws ResponseException {
+        assertSignedIn();
+        if (params.length == 1) {
+            try {
+                var id = Integer.parseInt(params[0]);
+                String auth = authToken;
+                GameInfo gameInfo = new GameInfo();
+                gameInfo.setGameID(id);
+                server.joinGame(gameInfo, auth);
+                new DrawBoard();
+                return "Successfully joined as observer";
+            }
+            catch (NumberFormatException ignored) {
+            }
+        }
+        throw new ResponseException(400, "<ID>");
+    }
+
     public String logout() throws ResponseException {
         assertSignedIn();
        // ws.leavePetShop(visitorName);
@@ -137,34 +155,6 @@ public class MenuClient {
         authToken = null;
         return "You signed out";
     }
-
-//    private GameData getGame(int id) throws ResponseException {
-//        String auth = authToken;
-//        JsonArray gamesArray = server.listGames(auth);
-//
-//        // Process the JSON array
-//        for (JsonElement element : gamesArray) {
-//            JsonObject gameObject = element.getAsJsonObject();
-//
-//            // Check if the game ID property exists and is not null
-//            JsonElement gameIDElement = gameObject.get("gameID");
-//            if (gameIDElement != null && !gameIDElement.isJsonNull()) {
-//                int gameID = gameIDElement.getAsInt();
-//                if (gameID == id) {
-//                    // Extract other game properties and create a GameData object
-//                    String whiteUsername = gameObject.get("whiteUsername").getAsString();
-//                    String blackUsername = gameObject.get("blackUsername").getAsString();
-//                    String gameName = gameObject.get("gameName").getAsString();
-//
-//                    return new GameData(gameID, whiteUsername, blackUsername, gameName, null);
-//                }
-//            } else {
-//                return null;
-//            }
-//        }
-//
-//        return null;
-//    }
 
     public String register(String... params) throws ResponseException {
         if (params.length == 3) {
