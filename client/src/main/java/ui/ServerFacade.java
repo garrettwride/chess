@@ -32,7 +32,6 @@ public class ServerFacade {
         }
         JsonObject jsonResponse = this.makeRequest("POST", path, name, headers, JsonObject.class);
 
-        // Extract the gameID from the JSON object
         String gameID = jsonResponse.get("gameID").getAsString();
 
         return gameID;
@@ -79,7 +78,8 @@ public class ServerFacade {
         String requestBody = gson.toJson(gameInfo);
 
         // Make the request to join the game
-        makeRequest("PUT", path, requestBody, headers, String.class);
+
+
     }
     public JsonArray listGames(String auth) throws ResponseException {
         var path = "/game";

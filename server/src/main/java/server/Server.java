@@ -199,8 +199,12 @@ public class Server {
             if (authToken == null) {
                 throw new AuthenticationException("Error: Unauthorized");
             }
-            // Extract necessary information from the request
-            GameInfo gameInfo = gson.fromJson(request.body(), GameInfo.class);
+
+            String requestBody = request.body();
+            requestBody = requestBody.substring(1, requestBody.length() - 1);
+            requestBody = requestBody.replace("\\\"", "\"");
+
+            GameInfo gameInfo = gson.fromJson(requestBody, GameInfo.class);
 
             String playerColor = gameInfo.getPlayerColor();
             int gameID = gameInfo.getGameID();
