@@ -77,8 +77,6 @@ public class ServerFacade {
         // Convert the GameInfo object to JSON
         String requestBody = gson.toJson(gameInfo);
 
-        // Make the request to join the game
-
 
     }
     public JsonArray listGames(String auth) throws ResponseException {

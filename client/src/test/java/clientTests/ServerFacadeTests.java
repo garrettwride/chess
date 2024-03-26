@@ -1,5 +1,9 @@
 package clientTests;
 
+import com.google.gson.JsonArray;
+import model.AuthData;
+import model.GameInfo;
+import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
@@ -27,21 +31,22 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testAddGame_Positive() {
-        // Positive test for adding a game
+    public void testAddGame_Positive() throws ResponseException {
+        String username = "newUser";
+        String password = "newPassword";
+        String email = "newUser@example.com";
+        UserData userData = new UserData(username, password, email);
         String gameName = "TestGame";
-        String authToken = "validAuthToken";
+        String authToken = facade.register(userData).getAuthToken();
 
         assertDoesNotThrow(() -> {
             String response = facade.addGame(gameName, authToken);
             assertNotNull(response);
-            // Add additional assertions if needed
         });
     }
 
     @Test
     public void testAddGame_Negative_InvalidAuthToken() {
-        // Negative test for adding a game with an invalid auth token
         String gameName = "TestGame";
         String invalidAuthToken = "invalidAuthToken";
 
@@ -50,6 +55,181 @@ public class ServerFacadeTests {
         });
     }
 
-    // Write similar positive and negative tests for other methods like authenticate, deauthenticate, joinGame, listGames, and register
+    @Test
+    public void testAuthenticate_Positive() throws ResponseException {
+        String username = "testUser";
+        String password = "testPassword";
+        String email = "test@email";
+
+        UserData userData = new UserData(username, password, email);
+        facade.register(userData);
+
+        try {
+            AuthData authData = facade.authenticate(userData);
+            assertNotNull(authData.getAuthToken());
+            // Add more assertions if needed
+        } catch (ResponseException e) {
+            // If an exception occurs, fail the test
+            fail("Exception occurred: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testAuthenticate_Negative_InvalidCredentials() {
+        String username = "testUser";
+        String password = "testPassword";
+
+        UserData userData = new UserData(username, password, null);
+
+        try {
+            facade.authenticate(userData);
+            fail("Expected ResponseException to be thrown");
+        } catch (ResponseException e) {
+            assertEquals(401, e.StatusCode());
+        }
+    }
+
+    @Test
+    public void testDeauthenticate_Positive() throws ResponseException {
+        String username = "testUser";
+        String password = "testPassword";
+        String email = "test@email";
+
+        UserData userData = new UserData(username, password, email);
+        facade.register(userData);
+        String authToken = facade.authenticate(userData).getAuthToken();
+
+        try {
+            facade.deauthenticate(authToken);
+            // No assertion needed as we expect the method to execute without exceptions
+        } catch (ResponseException e) {
+            // If an exception occurs, fail the test
+            fail("Exception occurred: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testDeauthenticate_Negative_InvalidAuthToken() {
+        // Negative test for deauthenticating with an invalid auth token
+        String authToken = "invalidAuthToken";
+
+        try {
+            // Attempt to deauthenticate with an invalid auth token
+            facade.deauthenticate(authToken);
+            // If no exception is thrown, fail the test
+            fail("Expected ResponseException to be thrown");
+        } catch (ResponseException e) {
+            // Assert that the exception message or status code is as expected
+            assertEquals(401, e.StatusCode());
+            // Add more assertions if needed
+        }
+    }
+
+    @Test
+    public void testRegister_Positive() {
+        String username = "newUser";
+        String password = "newPassword";
+        String email = "newUser@example.com";
+        UserData userData = new UserData(username, password, email);
+
+        try {
+            AuthData authData = facade.register(userData);
+            assertNotNull(authData);
+        } catch (ResponseException e) {
+            fail("Exception occurred: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRegister_Negative_DuplicateUsername() {
+        String username = "existingUser";
+        String password = "password";
+        String email = "existingUser@example.com";
+        UserData userData = new UserData(username, password, email);
+
+        try {
+            facade.register(userData);
+            facade.register(userData);
+            fail("Expected ResponseException to be thrown");
+        } catch (ResponseException e) {
+            assertEquals(400, e.StatusCode());
+        }
+    }
+
+    @Test
+    public void testJoinGame_Positive() throws ResponseException {
+        String username = "newUser";
+        String password = "newPassword";
+        String email = "newUser@example.com";
+        UserData userData = new UserData(username, password, email);
+        String gameName = "TestGame";
+        String authToken = facade.register(userData).getAuthToken();
+        Integer gameID = Integer.parseInt(facade.addGame(gameName, authToken));
+        GameInfo gameInfo = new GameInfo();
+        gameInfo.setPlayerColor("BLACK");
+        gameInfo.setGameID(gameID);
+
+        try {
+            facade.joinGame(gameInfo, authToken);
+            // Assert success here
+        } catch (ResponseException e) {
+            fail("Exception occurred: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testJoinGame_Negative_InvalidGameID() throws ResponseException {
+        String username = "newUser";
+        String password = "newPassword";
+        String email = "newUser@example.com";
+        UserData userData = new UserData(username, password, email);
+        String authToken = facade.register(userData).getAuthToken();
+        GameInfo gameInfo = new GameInfo();
+        gameInfo.setPlayerColor("BLACK");
+        gameInfo.setGameID(-1); // Invalid game ID
+
+        try {
+            facade.joinGame(gameInfo, authToken);
+            fail("Expected ResponseException to be thrown");
+        } catch (ResponseException e) {
+            assertEquals(400, e.StatusCode());
+        }
+    }
+
+    @Test
+    public void testListGames_Positive() throws ResponseException {
+        String username = "newUser";
+        String password = "newPassword";
+        String email = "newUser@example.com";
+        UserData userData = new UserData(username, password, email);
+        String gameName = "TestGame";
+        String authToken = facade.register(userData).getAuthToken();
+        facade.addGame(gameName, authToken);
+        try {
+            JsonArray games = facade.listGames(authToken);
+            // Assert success here
+        } catch (ResponseException e) {
+            fail("Exception occurred: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testListGames_Negative_Unauthorized() throws ResponseException {
+        String username = "newUser";
+        String password = "newPassword";
+        String email = "newUser@example.com";
+        UserData userData = new UserData(username, password, email);
+        String gameName = "TestGame";
+        String authToken = facade.register(userData).getAuthToken();
+        facade.addGame(gameName, authToken);
+
+        try {
+            facade.listGames(null); // No authentication token provided
+            fail("Expected ResponseException to be thrown");
+        } catch (ResponseException e) {
+            assertEquals(401, e.StatusCode());
+        }
+    }
+
 }
 
