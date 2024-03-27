@@ -169,8 +169,10 @@ public class Server {
             String authToken = request.headers("authorization");
 
             // Parse the JSON request body into GameInfo object
-            String gameName = gson.fromJson(request.body(), String.class);
+            GameData gameData = gson.fromJson(request.body(), GameData.class);
 
+            // Extract the game name from the GameInfo object
+            String gameName = gameData.getGameName();
             // Call the createGame method and get the game ID
             int gameID = joinGameService.createGame(gameName, authToken);
 
@@ -199,12 +201,8 @@ public class Server {
             if (authToken == null) {
                 throw new AuthenticationException("Error: Unauthorized");
             }
-
-            String requestBody = request.body();
-            requestBody = requestBody.substring(1, requestBody.length() - 1);
-            requestBody = requestBody.replace("\\\"", "\"");
-
-            GameInfo gameInfo = gson.fromJson(requestBody, GameInfo.class);
+            // Extract necessary information from the request
+            GameInfo gameInfo = gson.fromJson(request.body(), GameInfo.class);
 
             String playerColor = gameInfo.getPlayerColor();
             int gameID = gameInfo.getGameID();

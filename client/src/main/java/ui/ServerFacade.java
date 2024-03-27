@@ -30,7 +30,11 @@ public class ServerFacade {
         if (auth != null) {
             headers.put("Authorization", auth);
         }
-        JsonObject jsonResponse = this.makeRequest("POST", path, name, headers, JsonObject.class);
+
+        GameInfo gameInfo = new GameInfo();
+        gameInfo.setGameName(name);
+
+        JsonObject jsonResponse = this.makeRequest("POST", path, gameInfo, headers, JsonObject.class);
 
         String gameID = jsonResponse.get("gameID").getAsString();
 
@@ -60,13 +64,10 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, null, headers, SuccessResponse.class);
     }
 
-    public void deleteAllGames(String auth) throws ResponseException {
-        var path = "/game";
-        Map<String, String> headers = new HashMap<>();
-        if (auth != null) {
-            headers.put("Authorization", auth);
-        }
-        this.makeRequest("DELETE", path, null, headers, null);
+    public void clear() throws ResponseException {
+        var path = "/db";
+
+        this.makeRequest("DELETE", path, null, null, null);
     }
 
     public void joinGame(GameInfo gameInfo, String authToken) throws ResponseException {
@@ -74,9 +75,10 @@ public class ServerFacade {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", authToken);
 
-        // Convert the GameInfo object to JSON
-        String requestBody = gson.toJson(gameInfo);
 
+
+
+        this.makeRequest("PUT", path, gameInfo, headers, JsonObject.class);
 
     }
     public JsonArray listGames(String auth) throws ResponseException {
