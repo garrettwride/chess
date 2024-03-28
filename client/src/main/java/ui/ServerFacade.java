@@ -2,9 +2,10 @@ package ui;
 
 import com.google.gson.*;
 import exception.ResponseException;
+import messages.SuccessResponse;
 import model.*;
-import server.SuccessResponse;
 import com.google.gson.JsonObject;
+
 import com.google.gson.JsonParser;
 
 import java.io.*;
@@ -57,11 +58,12 @@ public class ServerFacade {
     }
 
 
-    public void deauthenticate(String authToken) throws ResponseException {
+    public SuccessResponse deauthenticate(String authToken) throws ResponseException {
         var path = "/session";
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", authToken);
-        this.makeRequest("DELETE", path, null, headers, SuccessResponse.class);
+        SuccessResponse response = this.makeRequest("DELETE", path, null, headers, SuccessResponse.class);
+        return response;
     }
 
     public void clear() throws ResponseException {
@@ -70,16 +72,13 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, null, null, null);
     }
 
-    public void joinGame(GameInfo gameInfo, String authToken) throws ResponseException {
+    public SuccessResponse joinGame(GameInfo gameInfo, String authToken) throws ResponseException {
         var path = "/game";
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", authToken);
 
-
-
-
-        this.makeRequest("PUT", path, gameInfo, headers, JsonObject.class);
-
+        SuccessResponse response = this.makeRequest("PUT", path, gameInfo, headers, SuccessResponse.class);
+        return response;
     }
     public JsonArray listGames(String auth) throws ResponseException {
         var path = "/game";

@@ -3,6 +3,7 @@ package ui;
 import java.util.Arrays;
 
 import com.google.gson.*;
+import messages.SuccessResponse;
 import model.*;
 import exception.ResponseException;
 //import websocket.*;
@@ -44,29 +45,6 @@ public class MenuClient {
             return ex.getMessage();
         }
     }
-
-
-    public String login(String... params) throws ResponseException {
-        if (params.length == 2) {
-            var username = params[0];
-            var password = params[1];
-            UserData user = new UserData(username, password, null);
-
-            // Make the authentication request
-            AuthData authData = server.authenticate(user);
-
-            // Extract the authentication token
-            String auth = authData.getAuthToken();
-            authToken = auth;
-
-            if (authToken != null) {
-                state = State.SIGNEDIN;
-                return "You signed in.";
-            }
-        }
-        throw new ResponseException(400, "Expected: <username> <password>");
-    }
-
 
     public String createGame(String... params) throws ResponseException {
         assertSignedIn();
@@ -117,9 +95,9 @@ public class MenuClient {
                 GameInfo gameInfo = new GameInfo();
                 gameInfo.setPlayerColor(playerColor);
                 gameInfo.setGameID(id);
-                server.joinGame(gameInfo, auth);
+                SuccessResponse response = server.joinGame(gameInfo, auth);
                 new DrawBoard();
-                return "Successfully joined game";
+                return response.getMessage();
                 }
             catch (NumberFormatException ignored) {
             }
@@ -147,13 +125,40 @@ public class MenuClient {
 
     public String logout() throws ResponseException {
         assertSignedIn();
-       // ws.leavePetShop(visitorName);
-        //ws = null;
+        // ws.leavePetShop(visitorName);
+        // ws = null;
         String auth = authToken;
-        server.deauthenticate(auth);
-        state = State.SIGNEDOUT;
-        authToken = null;
-        return "You signed out";
+        try {
+            SuccessResponse response = server.deauthenticate(auth);
+            state = State.SIGNEDOUT;
+            authToken = null;
+            return response.getMessage();
+        } catch (ResponseException e) {
+
+            throw e;
+        }
+    }
+
+
+    public String login(String... params) throws ResponseException {
+        if (params.length == 2) {
+            var username = params[0];
+            var password = params[1];
+            UserData user = new UserData(username, password, null);
+
+            // Make the authentication request
+            AuthData authData = server.authenticate(user);
+
+            // Extract the authentication token
+            String auth = authData.getAuthToken();
+            authToken = auth;
+
+            if (authToken != null) {
+                state = State.SIGNEDIN;
+                return "You signed in.";
+            }
+        }
+        throw new ResponseException(400, "Expected: <username> <password>");
     }
 
     public String register(String... params) throws ResponseException {
@@ -167,9 +172,9 @@ public class MenuClient {
             String auth = authData.getAuthToken();
             authToken = auth;
             if (authToken != null) {
-                assertSignedIn();
+                state = State.SIGNEDIN;
+                return String.format("%s successfully registered", authData.getUsername());
             }
-            return String.format("%s successfully registered", authData.getUsername());
         }
         throw new ResponseException(400, "<username> <password> <email>");
     }

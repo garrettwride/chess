@@ -1,4 +1,4 @@
-package server;
+package messages;
 public class SuccessResponse {
     private final String message;
 

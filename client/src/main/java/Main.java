@@ -1,13 +1,9 @@
 import chess.*;
 import ui.*;
-import server.Server;
 
 
 public class Main {
     public static void main(String[] args) {
-        // Start the server
-        Server server = new Server();
-        int port = server.run(8080);
 
         // Continue with client initialization
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
