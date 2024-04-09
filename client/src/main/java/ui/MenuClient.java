@@ -16,6 +16,7 @@ public class MenuClient {
 ////    private final NotificationHandler;
 //    //private WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
+    private GameState gameState = GameState.NOT_JOINED;
 //
     public MenuClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -97,6 +98,7 @@ public class MenuClient {
                 gameInfo.setGameID(id);
                 SuccessResponse response = server.joinGame(gameInfo, auth);
                 new DrawBoard();
+                gameState = GameState.PLAYER;
                 return response.getMessage();
                 }
             catch (NumberFormatException ignored) {
@@ -115,6 +117,7 @@ public class MenuClient {
                 gameInfo.setGameID(id);
                 server.joinGame(gameInfo, auth);
                 new DrawBoard();
+                gameState = GameState.OBSERVER;
                 return "Successfully joined as observer";
             }
             catch (NumberFormatException ignored) {
@@ -180,11 +183,28 @@ public class MenuClient {
     }
 
     public String help() {
-        if (state == State.SIGNEDOUT) {
+        if (gameState == gameState.PLAYER) {
+            return """
+                    - redraw
+                    - leave
+                    - resign
+                    - highlight
+                    - move
+                    - help
+                    - quit
+                    """;
+        } else if (gameState == GameState.OBSERVER) {
+            return """
+                    - redraw
+                    - leave
+                    - help
+                    - quit
+                    """;
+        } else if (state == State.SIGNEDOUT) {
             return """
                     - register <username> <password> <email>
                     - login <username> <password>
-                     - help
+                    - help
                     - quit
                     """;
         }
