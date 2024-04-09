@@ -49,10 +49,10 @@ public class Menu {
         System.exit(0);
     }
 
-//    public void notify(Notification notification) {
-//        System.out.println(RED + notification.message());
-//        printPrompt();
-//    }
+    public void notify(Notification notification) {
+        System.out.println(RED + notification.message());
+        printPrompt();
+    }
 
     private void printPrompt() {
         System.out.print("\n" + RESET + ">>> " + GREEN);

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import exception.ResponseException;
 import webSocketMessages.Action;
 import webSocketMessages.Notification;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -30,8 +31,8 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class);
-                    notificationHandler.notify(notification);
+                    UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
+                    notificationHandler.notify(command);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import dataAccess.*;
 import messages.SuccessResponse;
 import model.*;
+import server.websocket.WebSocketHandler;
 import service.*;
 import spark.*;
 
@@ -43,6 +44,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Define endpoints
+        Spark.webSocket("/connect", WebSocketHandler.class);
         Spark.post("/user", this::handleRegistration);
         Spark.delete("/db", this::handleClear);
         Spark.post("/session", this::handleLogin);
