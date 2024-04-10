@@ -2,6 +2,10 @@ package ui;
 
 import java.util.Arrays;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.*;
 import messages.SuccessResponse;
 import model.*;
@@ -39,6 +43,9 @@ public class MenuClient {
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
                 case "observe" -> joinObserver(params);
+                case "leave" -> leaveGame(params);
+                case "resign" -> resignGame(params);
+                case "move" -> makeMove(params);
                 case "quit" -> "quit";
                 default -> "Invalid command. Type 'help' for available commands.";
             };
@@ -97,6 +104,12 @@ public class MenuClient {
                 gameInfo.setPlayerColor(playerColor);
                 gameInfo.setGameID(id);
                 SuccessResponse response = server.joinGame(gameInfo, auth);
+                if (playerColor.equals("BLACK")) {
+                    ws.joinPlayer(id, ChessGame.TeamColor.BLACK);
+                } else {
+                    ws.joinPlayer(id, ChessGame.TeamColor.WHITE);
+                }
+
                 new DrawBoard();
                 gameState = GameState.PLAYER;
                 return response.getMessage();
@@ -116,6 +129,7 @@ public class MenuClient {
                 GameInfo gameInfo = new GameInfo();
                 gameInfo.setGameID(id);
                 server.joinGame(gameInfo, auth);
+                ws.joinObserver(id);
                 new DrawBoard();
                 gameState = GameState.OBSERVER;
                 return "Successfully joined as observer";
@@ -181,6 +195,46 @@ public class MenuClient {
         throw new ResponseException(400, "<username> <password> <email>");
     }
 
+    public String leaveGame(String... params) throws ResponseException {
+        assertSignedIn();
+        if (params.length == 1) {
+            var gameID = Integer.parseInt(params[0]);
+            ws.leave(gameID);
+            gameState = GameState.NOT_JOINED;
+            return "You left the game.";
+        }
+        throw new ResponseException(400, "Expected: <ID>");
+    }
+
+    public String resignGame(String... params) throws ResponseException {
+        assertSignedIn();
+        if (params.length == 1) {
+            var gameID = Integer.parseInt(params[0]);
+            ws.resign(gameID);
+            gameState = GameState.NOT_JOINED;
+            return "You left the game.";
+        }
+        throw new ResponseException(400, "Expected: <ID>");
+    }
+
+    public String makeMove(String... params) throws ResponseException {
+        assertSignedIn();
+        if (params.length == 4 || params.length == 3) {
+            var gameID = Integer.parseInt(params[0]);
+            ChessMove move;
+            if (params.length == 4) {
+                move = new ChessMove(parseCoordinate(params[1]), parseCoordinate(params[2]), parsePieceType(params[3]));
+
+            } else {
+                move = new ChessMove(parseCoordinate(params[1]), parseCoordinate(params[2]), null);
+            }
+
+            ws.makeMove(gameID, move);
+            return "You left the game.";
+        }
+        throw new ResponseException(400, "Expected: <ID> <starting position> <end position> <promotion piece>");
+    }
+
     public String help() {
         if (gameState == gameState.PLAYER) {
             return """
@@ -221,6 +275,43 @@ public class MenuClient {
     private void assertSignedIn() throws ResponseException {
         if (state == State.SIGNEDOUT) {
             throw new ResponseException(400, "You must sign in");
+        }
+    }
+
+    public ChessPosition parseCoordinate(String coordinate) throws IllegalArgumentException {
+        if (coordinate.length() != 2) {
+            throw new IllegalArgumentException("Invalid coordinate string: " + coordinate);
+        }
+
+        int col = coordinate.charAt(0) - 'a';
+
+        int row = Character.getNumericValue(coordinate.charAt(1)) - 1;
+
+        if (row < 0 || row > 7 || col < 0 || col > 7) {
+            throw new IllegalArgumentException("Invalid coordinate string: " + coordinate);
+        }
+
+        return new ChessPosition(row, col);
+    }
+
+    public ChessPiece.PieceType parsePieceType(String pieceString) throws IllegalArgumentException {
+        pieceString = pieceString.toUpperCase();
+
+        switch (pieceString) {
+            case "KING":
+                return ChessPiece.PieceType.KING;
+            case "QUEEN":
+                return ChessPiece.PieceType.QUEEN;
+            case "BISHOP":
+                return ChessPiece.PieceType.BISHOP;
+            case "KNIGHT":
+                return ChessPiece.PieceType.KNIGHT;
+            case "ROOK":
+                return ChessPiece.PieceType.ROOK;
+            case "PAWN":
+                return ChessPiece.PieceType.PAWN;
+            default:
+                throw new IllegalArgumentException("Invalid piece type: " + pieceString);
         }
     }
 }
