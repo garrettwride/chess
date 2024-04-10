@@ -7,10 +7,7 @@ import exception.ResponseException;
 import webSocketMessages.*;
 import webSocketMessages.*;
 import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.userCommands.JoinObserverCommand;
-import webSocketMessages.userCommands.JoinPlayerCommand;
-import webSocketMessages.userCommands.MakeMoveCommand;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -72,6 +69,26 @@ public class WebSocketFacade extends Endpoint {
     public void makeMove(int gameID, ChessMove move, String authToken) throws ResponseException {
         try {
             var command = new MakeMoveCommand(gameID, move, authToken);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            this.session.close();
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void leave(int gameID, String authToken) throws ResponseException {
+        try {
+            var command = new LeaveCommand(gameID, authToken);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            this.session.close();
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void resign(int gameID, String authToken) throws ResponseException {
+        try {
+            var command = new ResignCommand(gameID, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
             this.session.close();
         } catch (IOException ex) {
