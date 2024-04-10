@@ -1,5 +1,9 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessPiece;
+import chess.ChessPosition;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
@@ -8,8 +12,10 @@ public class DrawBoard {
 
     private static final int BOARD_SIZE = 10;
     private static final int LINE_WIDTH_IN_CHARS = 1;
+    private ChessBoard chessBoard;
 
-    public DrawBoard() {
+    public DrawBoard(ChessBoard chessBoard) {
+        this.chessBoard = chessBoard;
 
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
@@ -20,11 +26,13 @@ public class DrawBoard {
 
     }
 
-    public static void main(String[] args){
-            new DrawBoard();
+    public static void main(String[] args) {
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        new DrawBoard(board);
     }
 
-    private static void drawChessBoards(PrintStream out) {
+    private void drawChessBoards(PrintStream out) {
         //print from white perspective
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
@@ -47,71 +55,18 @@ public class DrawBoard {
         }
     }
 
-    private static void drawSquare(PrintStream out, int row, int col) {
+    private void drawSquare(PrintStream out, int row, int col) {
         if ((row + col) % 2 == 0) {
             setWhite(out);
         } else {
             setBlack(out);
         }
 
-        if ((col == 0 && row != 0 && row != 9) || (col == 9 && row != 0 && row != 9)){
-                setGrey(out);
-                setBlackText(out);
-            out.print(" " + row + " ");
-        } else if (row == 0) {
-            // Grey border
-            makeColumnBorder(out, col);
-        } else if (row == 1) {
-            // Place white pieces in row 0
-            setBlueText(out);
-            if (col == 1) {
-                out.print(EscapeSequences.BLACK_ROOK);
-            } else if (col == 2) {
-                out.print(EscapeSequences.BLACK_KNIGHT);
-            } else if (col == 3) {
-                out.print(EscapeSequences.BLACK_BISHOP);
-            } else if (col == 4) {
-                out.print(EscapeSequences.BLACK_QUEEN);
-            } else if (col == 5) {
-                out.print(EscapeSequences.BLACK_KING);
-            } else if (col == 6) {
-                out.print(EscapeSequences.BLACK_BISHOP);
-            } else if (col == 7) {
-                out.print(EscapeSequences.BLACK_KNIGHT);
-            } else if (col == 8) {
-                out.print(EscapeSequences.BLACK_ROOK);
-            }
-        } else if (row == 2) {
-            // Place white pawns in row 1
-            setBlueText(out);
-            out.print(EscapeSequences.BLACK_PAWN);
-        } else if (row == 7) {
-            // Place black pawns in row 6
-            setRedText(out);
-            out.print(EscapeSequences.WHITE_PAWN);
-        } else if (row == 8) {
-            // Place black pieces in row 7
-            setRedText(out);
-            if (col == 1) {
-                out.print(EscapeSequences.WHITE_ROOK);
-            } else if (col == 2) {
-                out.print(EscapeSequences.WHITE_KNIGHT);
-            } else if (col == 3) {
-                out.print(EscapeSequences.WHITE_BISHOP);
-            } else if (col == 4) {
-                out.print(EscapeSequences.WHITE_QUEEN);
-            } else if (col == 5) {
-                out.print(EscapeSequences.WHITE_KING);
-            } else if (col == 6) {
-                out.print(EscapeSequences.WHITE_BISHOP);
-            } else if (col == 7) {
-                out.print(EscapeSequences.WHITE_KNIGHT);
-            } else if (col == 8) {
-                out.print(EscapeSequences.WHITE_ROOK);
-            }
-        } else if (row == 9) {
-            // Grey border
-            makeColumnBorder(out, col);
+        ChessPosition position = new ChessPosition(row + 1, col + 1);
+        ChessPiece piece = chessBoard.getPiece(position);
+
+        if (piece != null) {
+            out.print(piece.getSymbol());
         } else {
             out.print(EscapeSequences.EMPTY);
         }

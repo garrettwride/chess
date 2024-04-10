@@ -46,6 +46,25 @@ public class ChessPiece implements Cloneable {
         return type;
     }
 
+    public char getSymbol() {
+        switch (type) {
+            case KING:
+                return (pieceColor == ChessGame.TeamColor.WHITE) ? 'k' : 'K';
+            case QUEEN:
+                return (pieceColor == ChessGame.TeamColor.WHITE) ? 'q' : 'Q';
+            case BISHOP:
+                return (pieceColor == ChessGame.TeamColor.WHITE) ? 'b' : 'B';
+            case KNIGHT:
+                return (pieceColor == ChessGame.TeamColor.WHITE) ? 'n' : 'N';
+            case ROOK:
+                return (pieceColor == ChessGame.TeamColor.WHITE) ? 'r' : 'R';
+            case PAWN:
+                return (pieceColor == ChessGame.TeamColor.WHITE) ? 'p' : 'P';
+            default:
+                return '?';
+        }
+    }
+
     private int checkPosition(ChessBoard board, int row, int col) {
 
         if (row > 0 && row < 9 && col > 0 && col < 9) {
