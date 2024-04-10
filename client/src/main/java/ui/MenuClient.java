@@ -235,6 +235,51 @@ public class MenuClient {
         throw new ResponseException(400, "Expected: <ID> <starting position> <end position> <promotion piece>");
     }
 
+    public String redraw() {
+        if (gameState != GameState.PLAYER) {
+            return "You can only redraw the board while in a game.";
+        }
+
+        new DrawBoard().redraw();
+
+        return "Chess board redrawn.";
+    }
+
+    public String highlightLegalMoves(String... params) throws ResponseException {
+        if (gameState != GameState.PLAYER) {
+            return "You can only highlight legal moves while in a game.";
+        }
+
+        if (params.length != 1) {
+            throw new ResponseException(400, "Expected: <position>");
+        }
+
+        String positionString = params[0];
+        ChessPosition position = parseCoordinate(positionString);
+
+        ChessGame game = server.getGameState(authToken);
+        if (game == null) {
+            throw new ResponseException(500, "Failed to retrieve game state.");
+        }
+
+        ChessPiece piece = game.getBoard().getPiece(position);
+        if (piece == null || piece.getColor() != game.getCurrentTurn()) {
+            return "You can only highlight legal moves for your own pieces.";
+        }
+
+        Set<ChessPosition> legalMoves = game.getLegalMoves(position);
+
+        highlightSquares(position, legalMoves);
+
+        return "Legal moves highlighted.";
+    }
+
+    private void highlightSquares(ChessPosition position, Set<ChessPosition> legalMoves) {
+        // Implement local highlighting logic here
+        // For example, you can redraw the board with highlighted squares
+        // Or you can store the highlighted squares and redraw only those squares
+    }
+
     public String help() {
         if (gameState == gameState.PLAYER) {
             return """
