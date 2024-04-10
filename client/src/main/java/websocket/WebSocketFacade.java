@@ -2,8 +2,9 @@ package websocket;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
-import webSocketMessages.Action;
-import webSocketMessages.Notification;
+import webSocketMessages.*;
+import webSocketMessages.*;
+import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
@@ -31,8 +32,8 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
-                    notificationHandler.notify(command);
+                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+                    notificationHandler.notify(serverMessage);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

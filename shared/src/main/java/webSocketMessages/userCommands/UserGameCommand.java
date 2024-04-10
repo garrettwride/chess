@@ -1,7 +1,5 @@
 package webSocketMessages.userCommands;
 
-import chess.ChessMove;
-
 import java.util.Objects;
 
 /**
@@ -52,24 +50,4 @@ public class UserGameCommand {
     }
 }
 
-// Subclass for JOIN_PLAYER command
-public static class JoinPlayerCommand extends UserGameCommand {
-    private final int gameID;
-    private final ChessGame.TeamColor playerColor;
-
-    public JoinPlayerCommand(int gameID, ChessGame.TeamColor playerColor, String authToken) {
-        super(authToken);
-        this.commandType = CommandType.JOIN_PLAYER;
-        this.gameID = gameID;
-        this.playerColor = playerColor;
-    }
-
-    public int getGameID() {
-        return gameID;
-    }
-
-    public ChessGame.TeamColor getPlayerColor() {
-        return playerColor;
-    }
-}
 

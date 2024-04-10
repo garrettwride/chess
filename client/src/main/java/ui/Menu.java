@@ -2,6 +2,8 @@ package ui;
 
 //import webSocketMessages.Notification;
 
+import webSocketMessages.serverMessages.NotificationMessage;
+
 import static ui.EscapeSequences.*;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +41,7 @@ public class Menu {
 
             try {
                 result = client.eval(line);
+
                 System.out.print(BLUE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -49,8 +52,8 @@ public class Menu {
         System.exit(0);
     }
 
-    public void notify(Notification notification) {
-        System.out.println(RED + notification.message());
+    public void notify(NotificationMessage notification) {
+        System.out.println(RED + notification.getMessage());
         printPrompt();
     }
 
