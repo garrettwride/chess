@@ -17,7 +17,7 @@ public class MenuClient {
     private WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
     private GameState gameState = GameState.NOT_JOINED;
-//
+
     public MenuClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
@@ -128,8 +128,7 @@ public class MenuClient {
 
     public String logout() throws ResponseException {
         assertSignedIn();
-        // ws.leavePetShop(visitorName);
-        // ws = null;
+        ws = null;
         String auth = authToken;
         try {
             SuccessResponse response = server.deauthenticate(auth);
@@ -153,11 +152,11 @@ public class MenuClient {
             AuthData authData = server.authenticate(user);
 
             // Extract the authentication token
-            String auth = authData.getAuthToken();
-            authToken = auth;
+            authToken = authData.getAuthToken();
 
             if (authToken != null) {
                 state = State.SIGNEDIN;
+                ws = new WebSocketFacade(serverUrl, notificationHandler, authToken);
                 return "You signed in.";
             }
         }
