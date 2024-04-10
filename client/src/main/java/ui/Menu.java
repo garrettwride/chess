@@ -1,8 +1,8 @@
 package ui;
 
-//import webSocketMessages.Notification;
 
-import webSocketMessages.serverMessages.NotificationMessage;
+import webSocketMessages.serverMessages.*;
+import websocket.NotificationHandler;
 
 import static ui.EscapeSequences.*;
 import java.io.PrintStream;
@@ -11,12 +11,12 @@ import java.util.Scanner;
 
 
 
-public class Menu {
+public class Menu implements NotificationHandler {
 
     private static MenuClient client;
     public Menu(String serverUrl) {
 
-        client = new MenuClient(serverUrl);
+        client = new MenuClient(serverUrl, this);
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.ERASE_SCREEN);
         displayMenu(out);
@@ -52,14 +52,15 @@ public class Menu {
         System.exit(0);
     }
 
-    public void notify(NotificationMessage notification) {
-        System.out.println(RED + notification.getMessage());
-        printPrompt();
-    }
-
     private void printPrompt() {
         System.out.print("\n" + RESET + ">>> " + GREEN);
     }
 
 
+    @Override
+    public void notify(ServerMessage serverMessage) {
+        ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
+        //System.out.println(RED + serverMessage.getMessage());
+        //printPrompt();
+    }
 }

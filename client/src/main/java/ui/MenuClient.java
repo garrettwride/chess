@@ -6,22 +6,22 @@ import com.google.gson.*;
 import messages.SuccessResponse;
 import model.*;
 import exception.ResponseException;
-//import websocket.*;
+import websocket.*;
 
 public class MenuClient {
     public Gson gson;
     private String authToken = null;
     private final ServerFacade server;
     private final String serverUrl;
-////    private final NotificationHandler;
-//    //private WebSocketFacade ws;
+    private NotificationHandler notificationHandler;
+    private WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
     private GameState gameState = GameState.NOT_JOINED;
 //
-    public MenuClient(String serverUrl) {
+    public MenuClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
-        //this.notificationHandler = notificationHandler;
+        this.notificationHandler = notificationHandler;
     }
 
 
