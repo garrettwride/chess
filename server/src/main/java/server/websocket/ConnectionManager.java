@@ -23,7 +23,7 @@ public class ConnectionManager {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.visitorName.equals(excludeAuthToken)) {
+                if (!c.authToken.equals(excludeAuthToken)) {
                     c.send(serverMessage.toString());
                 }
             } else {
@@ -32,7 +32,7 @@ public class ConnectionManager {
         }
         // Clean up any connections that were left open.
         for (var c : removeList) {
-            connections.remove(c.visitorName);
+            connections.remove(c.authToken);
         }
     }
     public void sendToClient(String authToken, ServerMessage serverMessage) throws IOException {

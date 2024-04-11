@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class JoinGameService {
     private static GameDataAccess gameDataAccess = null;
-    private final AuthDataAccess authDataAccess;
+    private static AuthDataAccess authDataAccess;
 
     public JoinGameService(GameDataAccess gameDataAccess, AuthDataAccess authDataAccess) {
     this.gameDataAccess = gameDataAccess;
@@ -111,7 +111,7 @@ public class JoinGameService {
         }
     }
 
-    public void removeFromGame(String authToken, int gameID) throws AuthenticationException, DataAccessException, SQLException {
+    public static void removeFromGame(String authToken, int gameID) throws AuthenticationException, DataAccessException, SQLException {
         GameData game = gameDataAccess.getGame(gameID);
 
         String username = authDataAccess.getUsername(authToken);
@@ -126,8 +126,6 @@ public class JoinGameService {
                     } else {
                         gameDataAccess.updateGame(gameID, null, "BLACK");
                     }
-                } else {
-                    throw new IllegalStateException("Error: Player not in the game");
                 }
             } else {
                 throw new IllegalArgumentException("Error: Game not found");

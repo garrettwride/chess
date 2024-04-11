@@ -8,6 +8,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.ErrorResponse;
+import service.AuthenticationException;
 import service.JoinGameService;
 import webSocketMessages.serverMessages.*;
 import webSocketMessages.userCommands.*;
@@ -65,6 +66,7 @@ public class WebSocketHandler {
             throw new RuntimeException(e);
         }
 
+        connections.add(authToken, session);
         var message = String.format("%s joined as an observer", username);
         var notification = new NotificationMessage(message);
         try {
@@ -81,16 +83,42 @@ public class WebSocketHandler {
         String authToken = command.getAuthString();
     }
 
-    private void leave(LeaveCommand command, Session session) {
+    private void leave(LeaveCommand command, Session session) throws DataAccessException {
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
+        try {
+            JoinGameService.removeFromGame(authToken, gameID);
+        } catch (AuthenticationException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-
+        connections.remove(authToken);
+        String username = LoginService.getUsername(authToken);
+        var message = String.format("%s left game", username);
+        var notification = new NotificationMessage(message);
+        try {
+            connections.broadcast(authToken, notification);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void resign(ResignCommand command, Session session) {
+    private void resign(ResignCommand command, Session session) throws DataAccessException {
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
 
+        connections.remove(authToken);
+        String username = LoginService.getUsername(authToken);
+        var message = String.format("%s resigned from game", username);
+        var notification = new NotificationMessage(message);
+        try {
+            connections.broadcast(authToken, notification);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
