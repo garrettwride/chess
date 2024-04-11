@@ -1,6 +1,7 @@
 package ui;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import chess.*;
 import com.google.gson.*;
@@ -257,28 +258,40 @@ public class MenuClient {
         String positionString = params[0];
         ChessPosition position = parseCoordinate(positionString);
 
-        ChessGame game = server.getGameState(authToken);
         if (game == null) {
             throw new ResponseException(500, "Failed to retrieve game state.");
         }
 
         ChessPiece piece = game.getBoard().getPiece(position);
-        if (piece == null || piece.getColor() != game.getCurrentTurn()) {
+        if (piece == null || piece.getTeamColor() != game.getTeamTurn()) {
             return "You can only highlight legal moves for your own pieces.";
         }
 
-        Set<ChessPosition> legalMoves = game.getLegalMoves(position);
+        Collection<ChessMove> legalMoves = game.validMoves(position);
 
         highlightSquares(position, legalMoves);
 
         return "Legal moves highlighted.";
     }
 
-    private void highlightSquares(ChessPosition position, Set<ChessPosition> legalMoves) {
-        // Implement local highlighting logic here
-        // For example, you can redraw the board with highlighted squares
-        // Or you can store the highlighted squares and redraw only those squares
+    private void highlightSquares(ChessPosition position, Collection<ChessMove> legalMoves) {
+        // Assuming you have a DrawBoard instance called 'board'
+        DrawBoard board = new DrawBoard();
+
+        // Iterate through legal moves and highlight the corresponding squares in green
+        for (ChessMove move : legalMoves) {
+            int targetSquare = move.getTargetSquare(); // Assuming move.getTargetSquare() returns the square index
+            int row = targetSquare / 8; // Calculate row
+            int col = targetSquare % 8; // Calculate column
+
+            // Assuming you have a method to set the background color to green
+            board.setSquareBackgroundColor(row, col, EscapeCodes.SET_BG_COLOR_GREEN);
+        }
+
+        // Redraw the entire board
+        board.draw();
     }
+
 
     public String help() {
         if (gameState == gameState.PLAYER) {

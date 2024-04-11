@@ -6,26 +6,44 @@ import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
-public class DrawBoard {
+    public class DrawBoard {
 
-    private static final int BOARD_SIZE = 10;
-    private ChessBoard chessBoard;
+        private static final int BOARD_SIZE = 10;
+        private ChessBoard chessBoard;
 
-    public DrawBoard(ChessBoard chessBoard) {
-        this.chessBoard = chessBoard;
+        public DrawBoard(ChessBoard chessBoard, Collection<ChessPosition> legalMoves) {
+            this.chessBoard = chessBoard;
 
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        out.print(EscapeSequences.ERASE_SCREEN);
-        drawChessBoards(out);
-        out.print(EscapeSequences.SET_BG_COLOR_BLACK);
-        out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
-    }
+            var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+            out.print(EscapeSequences.ERASE_SCREEN);
+            if (legalMoves != null) {
+                setGreenBackgroundForLegalMoves(out, legalMoves);
+            } else {
+                drawChessBoards(out);
+            }
+            out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+            out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        }
 
-    public static void main(String[] args) {
+        private void setGreenBackgroundForLegalMoves(PrintStream out, Collection<ChessPosition> legalMoves) {
+            for (ChessPosition position : legalMoves) {
+                int row = position.getRow() - 1;
+                int col = position.getColumn() - 1;
+                setGreen(out);
+                drawSquare(out, row, col);
+            }
+        }
+
+        private static void setGreen(PrintStream out) {
+            out.print(EscapeSequences.SET_BG_COLOR_GREEN);
+        }
+
+    public void main(String[] args) {
         ChessBoard board = new ChessBoard();
         board.resetBoard();
-        new DrawBoard(board);
+        new DrawBoard(board, null);
     }
 
     private void drawChessBoards(PrintStream out) {
@@ -61,7 +79,7 @@ public class DrawBoard {
         ChessPiece piece = chessBoard.getPiece(position);
 
         if (piece != null) {
-            out.print(piece.getSymbol());
+            out.print(" " + piece.getSymbol() + " ");
         } else {
             if (row == 0 || row == BOARD_SIZE - 1) {
                 makeColumnBorder(out, col);
@@ -102,5 +120,3 @@ public class DrawBoard {
         out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
     }
 }
-
-
