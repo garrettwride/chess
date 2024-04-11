@@ -17,6 +17,7 @@ import service.LoginService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Timer;
 
 
@@ -77,10 +78,40 @@ public class WebSocketHandler {
 
     }
 
-    private void makeMove(MakeMoveCommand command, Session session) {
+    private void makeMove(MakeMoveCommand command, Session session) throws SQLException, DataAccessException {
         int gameID = command.getGameID();
         ChessMove move = command.getMove();
         String authToken = command.getAuthString();
+        ChessGame game = JoinGameService.getGame(gameID).getGame();
+
+        try {
+            game.makeMove(move);
+        } catch (InvalidMoveException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        LoadGameMessage updatedGameMessage = new LoadGameMessage(game);
+        try {
+            connections.broadcastAll(authToken, updatedGameMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String username = LoginService.getUsername(authToken);
+        String moveDescription = getMoveDescription(move, game);
+        var notification = new NotificationMessage(username + " made a move: " + moveDescription);
+        try {
+            connections.broadcast(authToken, notification);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        GameData gameData = JoinGameService.getGame(gameID);
+        ChessGame.TeamColor currentUserColor = (username.equals(gameData.getWhiteUsername())) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+        ChessGame.TeamColor opponentColor = (currentUserColor == ChessGame.TeamColor.WHITE) ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+        String opponentUsername = (currentUserColor == ChessGame.TeamColor.WHITE) ? gameData.getBlackUsername() : gameData.getWhiteUsername();
+        checkStatus(opponentColor, game, opponentUsername, authToken);
     }
 
     private void leave(LeaveCommand command, Session session) throws DataAccessException {
@@ -119,6 +150,50 @@ public class WebSocketHandler {
             connections.broadcast(authToken, notification);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private String getMoveDescription(ChessMove move, ChessGame game) {
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+
+        Character pieceSymbol = game.getBoard().getPiece(start).getSymbol();
+        String startSquare = positionToAlgebraicNotation(start);
+        String endSquare = positionToAlgebraicNotation(end);
+        return String.format("%s from %s to %s", pieceSymbol, startSquare, endSquare);
+    }
+
+    private String positionToAlgebraicNotation(ChessPosition position) {
+        char file = (char) ('a' + position.getColumn() - 1);
+        int rank = position.getRow();
+        return String.format("%c%d", file, rank);
+    }
+    public void checkStatus(ChessGame.TeamColor teamColor, ChessGame game, String username, String authToken) {
+        boolean isInCheck = game.isInCheck(teamColor);
+        boolean isInCheckmate = game.isInCheckmate(teamColor);
+        boolean isInStalemate = game.isInStalemate(teamColor);
+
+        if (isInCheckmate) {
+            var notification = new NotificationMessage(username + " is in checkmate!");
+            try {
+                connections.broadcastAll(authToken, notification);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (isInStalemate) {
+            var notification = new NotificationMessage("Players are in stalemate!");
+            try {
+                connections.broadcastAll(authToken, notification);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (isInCheck) {
+            var notification = new NotificationMessage(username + " is in check!");
+            try {
+                connections.broadcastAll(authToken, notification);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

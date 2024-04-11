@@ -1,5 +1,6 @@
 package ui;
 
+import java.sql.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,7 +21,9 @@ public class MenuClient {
     private WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
     private GameState gameState = GameState.NOT_JOINED;
+    public Resignation resignation = Resignation.UNKNOWN;
     private ChessGame game;
+    private String temporaryID;
 
     public MenuClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
@@ -48,6 +51,8 @@ public class MenuClient {
                 case "move" -> makeMove(params);
                 case "redraw" -> redraw(params);
                 case "highlight" -> highlightLegalMoves(params);
+                case "y" -> acceptResign();
+                case "n" -> declineResign();
                 case "quit" -> "quit";
                 default -> "Invalid command. Type 'help' for available commands.";
             };
@@ -210,13 +215,35 @@ public class MenuClient {
 
     public String resignGame(String... params) throws ResponseException {
         assertSignedIn();
+        var gameID = Integer.parseInt(params[0]);
         if (params.length == 1) {
-            var gameID = Integer.parseInt(params[0]);
-            ws.resign(gameID);
-            gameState = GameState.NOT_JOINED;
-            return "You left the game.";
+            if (resignation == Resignation.UNKNOWN) {
+                temporaryID = String.valueOf(gameID);
+                return "Are you sure you want to resign? (y/n)";
+            } else if (resignation == Resignation.ACCEPT_RESIGNATION) {
+                ws.resign(gameID);
+                gameState = GameState.NOT_JOINED;
+                resignation = Resignation.UNKNOWN;
+                return "You left the game.";
+            } else {
+                resignation = Resignation.UNKNOWN;
+                return "Resignation canceled.";
+            }
         }
         throw new ResponseException(400, "Expected: <ID>");
+    }
+
+
+    public String acceptResign() throws ResponseException {
+        resignation = Resignation.ACCEPT_RESIGNATION;
+        String[] params = { temporaryID };
+        return resignGame(params);
+    }
+
+    public String declineResign() throws ResponseException {
+        resignation = Resignation.DECLINE_RESIGNATION;
+        String[] params = { temporaryID };
+        return resignGame(params);
     }
 
     public String makeMove(String... params) throws ResponseException {
@@ -232,7 +259,7 @@ public class MenuClient {
             }
 
             ws.makeMove(gameID, move);
-            return "You left the game.";
+            return "You made a move";
         }
         throw new ResponseException(400, "Expected: <ID> <starting position> <end position> <promotion piece>");
     }

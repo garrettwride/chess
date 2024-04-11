@@ -36,6 +36,7 @@ public class Menu implements NotificationHandler {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
+
             printPrompt();
             String line = scanner.nextLine();
 

@@ -42,4 +42,9 @@ public class ConnectionManager {
         }
     }
 
+    public void broadcastAll(String excludeAuthToken, ServerMessage serverMessage) throws IOException {
+        sendToClient(excludeAuthToken, serverMessage);
+        broadcast(excludeAuthToken, serverMessage);
+    }
+
 }
