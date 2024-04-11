@@ -1,6 +1,5 @@
 package webSocketMessages.serverMessages;
 
-// Subclass for NOTIFICATION message
 public class NotificationMessage extends ServerMessage {
     private final String message;
 

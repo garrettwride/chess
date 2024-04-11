@@ -5,17 +5,16 @@ import dataAccess.AuthDataAccess;
 import dataAccess.DataAccessException;
 import dataAccess.GameDataAccess;
 import model.GameData;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 
 public class JoinGameService {
-    private final GameDataAccess gameDataAccess;
+    private static GameDataAccess gameDataAccess = null;
     private final AuthDataAccess authDataAccess;
 
     public JoinGameService(GameDataAccess gameDataAccess, AuthDataAccess authDataAccess) {
-        this.gameDataAccess = gameDataAccess;
+    this.gameDataAccess = gameDataAccess;
         this.authDataAccess = authDataAccess;
     }
 
@@ -91,7 +90,7 @@ public class JoinGameService {
             throw new AuthenticationException("Error: Unauthorized");
         }
         // Retrieve the game by gameID
-        GameData game = gameDataAccess.getGame(gameID);
+        GameData game = getGame(gameID);
         if (game == null){
             throw new IllegalArgumentException("Error: Game not found");
 
@@ -110,6 +109,34 @@ public class JoinGameService {
 
             return gameDataAccess.getAllGames();
         }
+    }
+
+    public void removeFromGame(String authToken, int gameID) throws AuthenticationException, DataAccessException, SQLException {
+        GameData game = gameDataAccess.getGame(gameID);
+
+        String username = authDataAccess.getUsername(authToken);
+
+        if (username == null) {
+            throw new AuthenticationException("Error: Unauthorized");
+        } else {
+            if (game != null) {
+                if (username.equals(game.getWhiteUsername()) || username.equals(game.getBlackUsername())) {
+                    if (username.equals(game.getWhiteUsername())) {
+                        gameDataAccess.updateGame(gameID, null, "WHITE");
+                    } else {
+                        gameDataAccess.updateGame(gameID, null, "BLACK");
+                    }
+                } else {
+                    throw new IllegalStateException("Error: Player not in the game");
+                }
+            } else {
+                throw new IllegalArgumentException("Error: Game not found");
+            }
+        }
+    }
+
+    public static GameData getGame(int gameID) throws SQLException {
+        return gameDataAccess.getGame(gameID);
     }
 
     // Method to generate a unique game ID (you can implement this logic)

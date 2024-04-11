@@ -2,7 +2,6 @@ package webSocketMessages.userCommands;
 
 import chess.ChessMove;
 
-// Subclass for MAKE_MOVE command
 public class MakeMoveCommand extends UserGameCommand {
     private final int gameID;
     private final ChessMove move;

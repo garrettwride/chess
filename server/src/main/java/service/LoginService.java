@@ -11,7 +11,7 @@ import java.util.Base64;
 import java.util.Objects;
 
 public class LoginService {
-    private final AuthDataAccess authDataAccess;
+    private static AuthDataAccess authDataAccess;
     private final UserDataAccess userDataAccess;
 
     public LoginService(AuthDataAccess authDataAccess, UserDataAccess userDataAccess) {
@@ -28,6 +28,10 @@ public class LoginService {
             return authDataAccess.addAuthToken(username);
         }
 
+    }
+
+    public static String getUsername(String authToken) throws DataAccessException {
+        return authDataAccess.getUsername(authToken);
     }
 
     public void deauthenticate(String authToken) throws AuthenticationException, DataAccessException {
