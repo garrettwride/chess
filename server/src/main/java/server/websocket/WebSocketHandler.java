@@ -173,7 +173,14 @@ public class WebSocketHandler {
         boolean isInCheckmate = game.isInCheckmate(teamColor);
         boolean isInStalemate = game.isInStalemate(teamColor);
 
-        if (isInCheckmate) {
+        if (game.findKing(teamColor, game.getBoard()) == null) {
+            var notification = new NotificationMessage(username + "lost");
+            try {
+                connections.broadcastAll(authToken, notification);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (isInCheckmate) {
             var notification = new NotificationMessage(username + " is in checkmate!");
             try {
                 connections.broadcastAll(authToken, notification);

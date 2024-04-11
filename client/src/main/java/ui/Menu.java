@@ -75,7 +75,13 @@ public class Menu implements NotificationHandler {
                 break;
             case LOAD_GAME:
                 LoadGameMessage loadGameMessage = (LoadGameMessage) serverMessage;
-                client.loadGame(loadGameMessage.getGame());
+                if (loadGameMessage.getGame() == null) {
+                    System.out.println("Game over"); // Print "gameover" if the game is null
+                    client.gameState = GameState.NOT_JOINED; // Set the game state
+                    System.out.print(client.help()); // Call the menuClient help() method
+                } else {
+                    client.loadGame(loadGameMessage.getGame());
+                }
                 break;
             default:
                 System.out.println("Unknown message type: " + type);
@@ -84,5 +90,4 @@ public class Menu implements NotificationHandler {
 
         printPrompt();
     }
-
 }

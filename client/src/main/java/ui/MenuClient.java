@@ -20,7 +20,7 @@ public class MenuClient {
     private NotificationHandler notificationHandler;
     private WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
-    private GameState gameState = GameState.NOT_JOINED;
+    public GameState gameState = GameState.NOT_JOINED;
     public Resignation resignation = Resignation.UNKNOWN;
     private ChessGame game;
     private String temporaryID;
