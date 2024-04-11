@@ -2,6 +2,7 @@ package ui;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
 import chess.*;
 import com.google.gson.*;
@@ -268,28 +269,16 @@ public class MenuClient {
         }
 
         Collection<ChessMove> legalMoves = game.validMoves(position);
+        Collection<ChessPosition> endPositions = new HashSet<>();
 
-        highlightSquares(position, legalMoves);
-
-        return "Legal moves highlighted.";
-    }
-
-    private void highlightSquares(ChessPosition position, Collection<ChessMove> legalMoves) {
-        // Assuming you have a DrawBoard instance called 'board'
-        DrawBoard board = new DrawBoard();
-
-        // Iterate through legal moves and highlight the corresponding squares in green
         for (ChessMove move : legalMoves) {
-            int targetSquare = move.getTargetSquare(); // Assuming move.getTargetSquare() returns the square index
-            int row = targetSquare / 8; // Calculate row
-            int col = targetSquare % 8; // Calculate column
-
-            // Assuming you have a method to set the background color to green
-            board.setSquareBackgroundColor(row, col, EscapeCodes.SET_BG_COLOR_GREEN);
+            ChessPosition endPosition = move.getEndPosition();
+            endPositions.add(endPosition);
         }
 
-        // Redraw the entire board
-        board.draw();
+        new DrawBoard(game.getBoard(), endPositions);
+
+        return "Legal moves highlighted.";
     }
 
 
