@@ -2,10 +2,7 @@ package ui;
 
 import java.util.Arrays;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.*;
 import messages.SuccessResponse;
 import model.*;
@@ -21,6 +18,7 @@ public class MenuClient {
     private WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
     private GameState gameState = GameState.NOT_JOINED;
+    private ChessGame game;
 
     public MenuClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
@@ -46,6 +44,8 @@ public class MenuClient {
                 case "leave" -> leaveGame(params);
                 case "resign" -> resignGame(params);
                 case "move" -> makeMove(params);
+                case "redraw" -> redraw(params);
+                case "highlight" -> highlightLegalMoves(params);
                 case "quit" -> "quit";
                 default -> "Invalid command. Type 'help' for available commands.";
             };
@@ -110,7 +110,7 @@ public class MenuClient {
                     ws.joinPlayer(id, ChessGame.TeamColor.WHITE);
                 }
 
-                new DrawBoard();
+                new DrawBoard(game.getBoard());
                 gameState = GameState.PLAYER;
                 return response.getMessage();
                 }
@@ -130,7 +130,7 @@ public class MenuClient {
                 gameInfo.setGameID(id);
                 server.joinGame(gameInfo, auth);
                 ws.joinObserver(id);
-                new DrawBoard();
+                new DrawBoard(game.getBoard());
                 gameState = GameState.OBSERVER;
                 return "Successfully joined as observer";
             }
@@ -235,12 +235,12 @@ public class MenuClient {
         throw new ResponseException(400, "Expected: <ID> <starting position> <end position> <promotion piece>");
     }
 
-    public String redraw() {
+    public String redraw(String... params) {
         if (gameState != GameState.PLAYER) {
             return "You can only redraw the board while in a game.";
         }
 
-        new DrawBoard().redraw();
+        new DrawBoard(game.getBoard());
 
         return "Chess board redrawn.";
     }
@@ -315,6 +315,10 @@ public class MenuClient {
                 - help
                 - quit
                 """;
+    }
+
+    public void loadGame(ChessGame game){
+        this.game = game;
     }
 
     private void assertSignedIn() throws ResponseException {

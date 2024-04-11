@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class Menu implements NotificationHandler {
 
-    private static MenuClient client;
+    private MenuClient client;
     public Menu(String serverUrl) {
 
         client = new MenuClient(serverUrl, this);
@@ -60,7 +60,28 @@ public class Menu implements NotificationHandler {
     @Override
     public void notify(ServerMessage serverMessage) {
         ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
-        //System.out.println(RED + serverMessage.getMessage());
-        //printPrompt();
+
+        switch (type) {
+            case ERROR:
+                ErrorMessage errorMessage = (ErrorMessage) serverMessage;
+                String errorText = errorMessage.getErrorMessage();
+                System.out.println("Error: " + errorText);
+                break;
+            case NOTIFICATION:
+                NotificationMessage notificationMessage = (NotificationMessage) serverMessage;
+                String notificationText = notificationMessage.getMessage();
+                System.out.println(notificationText);
+                break;
+            case LOAD_GAME:
+                LoadGameMessage loadGameMessage = (LoadGameMessage) serverMessage;
+                client.loadGame(loadGameMessage.getGame());
+                break;
+            default:
+                System.out.println("Unknown message type: " + type);
+                break;
+        }
+
+        printPrompt();
     }
+
 }
