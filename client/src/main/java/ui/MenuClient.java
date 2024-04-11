@@ -54,11 +54,16 @@ public class MenuClient {
                 case "y" -> acceptResign();
                 case "n" -> declineResign();
                 case "quit" -> "quit";
+                case "clear" -> clear();
                 default -> "Invalid command. Type 'help' for available commands.";
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
+    }
+
+    public String clear() throws ResponseException {
+        server.clear();
     }
 
     public String createGame(String... params) throws ResponseException {
