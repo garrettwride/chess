@@ -112,7 +112,7 @@ public class MenuClient {
                     ws.joinPlayer(id, ChessGame.TeamColor.WHITE);
                 }
 
-                new DrawBoard(game.getBoard());
+                new DrawBoard(game.getBoard(), null);
                 gameState = GameState.PLAYER;
                 return response.getMessage();
                 }
@@ -132,7 +132,7 @@ public class MenuClient {
                 gameInfo.setGameID(id);
                 server.joinGame(gameInfo, auth);
                 ws.joinObserver(id);
-                new DrawBoard(game.getBoard());
+                new DrawBoard(game.getBoard(), null);
                 gameState = GameState.OBSERVER;
                 return "Successfully joined as observer";
             }
@@ -242,7 +242,7 @@ public class MenuClient {
             return "You can only redraw the board while in a game.";
         }
 
-        new DrawBoard(game.getBoard());
+        new DrawBoard(game.getBoard(), null);
 
         return "Chess board redrawn.";
     }
