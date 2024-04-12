@@ -123,7 +123,6 @@ public class MenuClient {
                     ws.joinPlayer(id, ChessGame.TeamColor.WHITE);
                 }
 
-                new DrawBoard(game.getBoard(), null);
                 gameState = GameState.PLAYER;
                 return response.getMessage();
                 }
@@ -378,6 +377,7 @@ public class MenuClient {
 
     public void loadGame(ChessGame game){
         this.game = game;
+        new DrawBoard(game.getBoard(), null);
     }
 
     private void assertSignedIn() throws ResponseException {

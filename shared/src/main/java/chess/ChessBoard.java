@@ -52,8 +52,8 @@ public class ChessBoard implements Cloneable {
                 ChessPiece.PieceType.ROOK,
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.BISHOP,
-                ChessPiece.PieceType.QUEEN,
                 ChessPiece.PieceType.KING,
+                ChessPiece.PieceType.QUEEN,
                 ChessPiece.PieceType.BISHOP,
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.ROOK
@@ -62,8 +62,8 @@ public class ChessBoard implements Cloneable {
                 ChessPiece.PieceType.ROOK,
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.BISHOP,
-                ChessPiece.PieceType.QUEEN,
                 ChessPiece.PieceType.KING,
+                ChessPiece.PieceType.QUEEN,
                 ChessPiece.PieceType.BISHOP,
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.ROOK

@@ -30,7 +30,10 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws IOException, DataAccessException, SQLException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
-            case JOIN_PLAYER -> joinPlayer((JoinPlayerCommand) command, session);
+            case JOIN_PLAYER -> {
+                JoinPlayerCommand join = new Gson().fromJson(message, JoinPlayerCommand.class);
+                joinPlayer(join, session);
+            }
             case JOIN_OBSERVER -> joinObserver((JoinObserverCommand) command, session);
             case MAKE_MOVE -> makeMove((MakeMoveCommand) command, session);
             case LEAVE -> leave((LeaveCommand) command, session);
@@ -39,6 +42,7 @@ public class WebSocketHandler {
     }
 
     private void joinPlayer(JoinPlayerCommand command, Session session) throws IOException, DataAccessException, SQLException {
+        session.getRemote().sendString("Working");
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
         ChessGame.TeamColor playerColor = command.getPlayerColor();

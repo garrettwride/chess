@@ -81,7 +81,7 @@ import java.util.Collection;
             } else if (col == 0 || col == BOARD_SIZE - 1) {
                 makeRowBorder(out, row);
             } else {
-                ChessPosition position = new ChessPosition(row + 1, col + 1);
+                ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = chessBoard.getPiece(position);
                 if (piece != null) {
                     if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
