@@ -1,6 +1,7 @@
 package ui;
 
 
+import com.google.gson.Gson;
 import webSocketMessages.serverMessages.*;
 import websocket.NotificationHandler;
 
@@ -59,23 +60,23 @@ public class Menu implements NotificationHandler {
 
 
     @Override
-    public void notify(ServerMessage serverMessage) {
-        System.out.println("getting to menu");
+    public void notify(String message) {
+        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
         ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
 
         switch (type) {
             case ERROR:
-                ErrorMessage errorMessage = (ErrorMessage) serverMessage;
+                ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
                 String errorText = errorMessage.getErrorMessage();
                 System.out.println("Error: " + errorText);
                 break;
             case NOTIFICATION:
-                NotificationMessage notificationMessage = (NotificationMessage) serverMessage;
+                NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);;
                 String notificationText = notificationMessage.getMessage();
                 System.out.println(notificationText);
                 break;
             case LOAD_GAME:
-                LoadGameMessage loadGameMessage = (LoadGameMessage) serverMessage;
+                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
                 if (loadGameMessage.getGame() == null) {
                     System.out.println("Game over");
                     client.gameState = GameState.GAME_OVER;
