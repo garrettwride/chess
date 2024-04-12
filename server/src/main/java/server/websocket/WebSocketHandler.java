@@ -34,10 +34,22 @@ public class WebSocketHandler {
                 JoinPlayerCommand join = new Gson().fromJson(message, JoinPlayerCommand.class);
                 joinPlayer(join, session);
             }
-            case JOIN_OBSERVER -> joinObserver((JoinObserverCommand) command, session);
-            case MAKE_MOVE -> makeMove((MakeMoveCommand) command, session);
-            case LEAVE -> leave((LeaveCommand) command, session);
-            case RESIGN -> resign((ResignCommand) command, session);
+            case JOIN_OBSERVER -> {
+                JoinObserverCommand joinObserver = new Gson().fromJson(message, JoinObserverCommand.class);
+                joinObserver(joinObserver, session);
+            }
+            case MAKE_MOVE -> {
+                MakeMoveCommand makeMove = new Gson().fromJson(message, MakeMoveCommand.class);
+                makeMove(makeMove, session);
+            }
+            case LEAVE -> {
+                LeaveCommand leave = new Gson().fromJson(message, LeaveCommand.class);
+                leave(leave, session);
+            }
+            case RESIGN -> {
+                ResignCommand resign = new Gson().fromJson(message, ResignCommand.class);
+                resign(resign, session);
+            }
         }
     }
 
