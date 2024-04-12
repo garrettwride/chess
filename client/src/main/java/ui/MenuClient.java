@@ -210,6 +210,8 @@ public class MenuClient {
 
     public String leaveGame(String... params) throws ResponseException {
         assertSignedIn();
+        assertPlayerOrObserver();
+        assertNotGameOver();
         if (params.length == 1) {
             var gameID = Integer.parseInt(params[0]);
             ws.leave(gameID);
@@ -221,6 +223,8 @@ public class MenuClient {
 
     public String resignGame(String... params) throws ResponseException {
         assertSignedIn();
+        assertPlayer();
+        assertNotGameOver();
         var gameID = Integer.parseInt(params[0]);
         if (params.length == 1) {
             if (resignation == Resignation.UNKNOWN) {
@@ -240,12 +244,18 @@ public class MenuClient {
 
 
     public String acceptResign() throws ResponseException {
+        assertSignedIn();
+        assertPlayer();
+        assertNotGameOver();
         resignation = Resignation.ACCEPT_RESIGNATION;
         String[] params = { temporaryID };
         return resignGame(params);
     }
 
     public String declineResign() throws ResponseException {
+        assertSignedIn();
+        assertPlayer();
+        assertNotGameOver();
         resignation = Resignation.DECLINE_RESIGNATION;
         String[] params = { temporaryID };
         return resignGame(params);
@@ -253,6 +263,8 @@ public class MenuClient {
 
     public String makeMove(String... params) throws ResponseException {
         assertSignedIn();
+        assertPlayer();
+        assertNotGameOver();
         if (params.length == 4 || params.length == 3) {
             var gameID = Integer.parseInt(params[0]);
             ChessMove move;
@@ -269,7 +281,10 @@ public class MenuClient {
         throw new ResponseException(400, "Expected: <ID> <starting position> <end position> <promotion piece>");
     }
 
-    public String redraw(String... params) {
+    public String redraw(String... params) throws ResponseException {
+        assertSignedIn();
+        assertPlayerOrObserver();
+        assertNotGameOver();
         if (gameState != GameState.PLAYER) {
             return "You can only redraw the board while in a game.";
         }
@@ -280,6 +295,10 @@ public class MenuClient {
     }
 
     public String highlightLegalMoves(String... params) throws ResponseException {
+        assertSignedIn();
+        assertPlayerOrObserver();
+        assertNotGameOver();
+
         if (gameState != GameState.PLAYER) {
             return "You can only highlight legal moves while in a game.";
         }
@@ -364,6 +383,23 @@ public class MenuClient {
     private void assertSignedIn() throws ResponseException {
         if (state == State.SIGNEDOUT) {
             throw new ResponseException(400, "You must sign in");
+        }
+    }
+    private void assertPlayer() throws ResponseException {
+        if (gameState != GameState.PLAYER) {
+            throw new ResponseException(400, "You must be a player");
+        }
+    }
+
+    private void assertPlayerOrObserver() throws ResponseException {
+        if (gameState != GameState.PLAYER && gameState != GameState.OBSERVER) {
+            throw new ResponseException(400, "You must be a player or an observer");
+        }
+    }
+
+    private void assertNotGameOver() throws ResponseException {
+        if (gameState == GameState.GAME_OVER) {
+            throw new ResponseException(400, "The game is over");
         }
     }
 
