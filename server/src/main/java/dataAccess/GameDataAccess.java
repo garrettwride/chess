@@ -64,6 +64,16 @@ public class GameDataAccess {
         return games;
     }
 
+    public void endGame(int gameID) throws SQLException, DataAccessException {
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "UPDATE " + TABLE_NAME + " SET game = ? WHERE id = ?")) {
+            preparedStatement.setNull(1, java.sql.Types.NULL);
+            preparedStatement.setInt(2, gameID);
+            preparedStatement.executeUpdate();
+        }
+    }
+
     public void updateGame(int gameID, String username, String teamColor) throws SQLException, DataAccessException {
         String columnName;
         if (teamColor.equalsIgnoreCase("WHITE")) {

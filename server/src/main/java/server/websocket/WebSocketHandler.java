@@ -111,7 +111,7 @@ public class WebSocketHandler {
         ChessGame.TeamColor currentUserColor = (username.equals(gameData.getWhiteUsername())) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
         ChessGame.TeamColor opponentColor = (currentUserColor == ChessGame.TeamColor.WHITE) ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
         String opponentUsername = (currentUserColor == ChessGame.TeamColor.WHITE) ? gameData.getBlackUsername() : gameData.getWhiteUsername();
-        checkStatus(opponentColor, game, opponentUsername, authToken);
+        checkStatus(opponentColor, game, opponentUsername, authToken, gameID);
     }
 
     private void leave(LeaveCommand command, Session session) throws DataAccessException {
@@ -138,11 +138,17 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign(ResignCommand command, Session session) throws DataAccessException {
+    private void resign(ResignCommand command, Session session) throws DataAccessException, SQLException {
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
+        ChessGame game = JoinGameService.getGame(gameID).getGame();
 
-        connections.remove(authToken);
+        try {
+            endGame(gameID, authToken);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         String username = LoginService.getUsername(authToken);
         var message = String.format("%s resigned from game", username);
         var notification = new NotificationMessage(message);
@@ -168,7 +174,7 @@ public class WebSocketHandler {
         int rank = position.getRow();
         return String.format("%c%d", file, rank);
     }
-    public void checkStatus(ChessGame.TeamColor teamColor, ChessGame game, String username, String authToken) {
+    public void checkStatus(ChessGame.TeamColor teamColor, ChessGame game, String username, String authToken, int gameID) {
         boolean isInCheck = game.isInCheck(teamColor);
         boolean isInCheckmate = game.isInCheckmate(teamColor);
         boolean isInStalemate = game.isInStalemate(teamColor);
@@ -180,11 +186,23 @@ public class WebSocketHandler {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+            try {
+                endGame(gameID, authToken);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         } else if (isInCheckmate) {
             var notification = new NotificationMessage(username + " is in checkmate!");
             try {
                 connections.broadcastAll(authToken, notification);
             } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                endGame(gameID, authToken);
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         } else if (isInStalemate) {
@@ -194,6 +212,12 @@ public class WebSocketHandler {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+            try {
+                endGame(gameID, authToken);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         } else if (isInCheck) {
             var notification = new NotificationMessage(username + " is in check!");
             try {
@@ -201,6 +225,17 @@ public class WebSocketHandler {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    public void endGame(int gameID, String authToken) throws SQLException {
+        JoinGameService.endGame(gameID);
+        ChessGame endedGame = JoinGameService.getGame(gameID).getGame();
+        LoadGameMessage updatedGameMessage = new LoadGameMessage(endedGame);
+        try {
+            connections.broadcastAll(authToken, updatedGameMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

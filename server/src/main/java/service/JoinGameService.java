@@ -133,6 +133,14 @@ public class JoinGameService {
         }
     }
 
+    public static void endGame(int gameID) {
+        try {
+            gameDataAccess.endGame(gameID);
+        } catch (SQLException | DataAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static GameData getGame(int gameID) throws SQLException {
         return gameDataAccess.getGame(gameID);
     }

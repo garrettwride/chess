@@ -64,6 +64,7 @@ public class MenuClient {
 
     public String clear() throws ResponseException {
         server.clear();
+        return "Successfully cleared";
     }
 
     public String createGame(String... params) throws ResponseException {
@@ -227,7 +228,6 @@ public class MenuClient {
                 return "Are you sure you want to resign? (y/n)";
             } else if (resignation == Resignation.ACCEPT_RESIGNATION) {
                 ws.resign(gameID);
-                gameState = GameState.NOT_JOINED;
                 resignation = Resignation.UNKNOWN;
                 return "You left the game.";
             } else {
@@ -328,6 +328,12 @@ public class MenuClient {
         } else if (gameState == GameState.OBSERVER) {
             return """
                     - redraw
+                    - leave
+                    - help
+                    - quit
+                    """;
+        } else if (gameState == GameState.GAME_OVER) {
+            return """
                     - leave
                     - help
                     - quit

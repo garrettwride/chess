@@ -76,9 +76,9 @@ public class Menu implements NotificationHandler {
             case LOAD_GAME:
                 LoadGameMessage loadGameMessage = (LoadGameMessage) serverMessage;
                 if (loadGameMessage.getGame() == null) {
-                    System.out.println("Game over"); // Print "gameover" if the game is null
-                    client.gameState = GameState.NOT_JOINED; // Set the game state
-                    System.out.print(client.help()); // Call the menuClient help() method
+                    System.out.println("Game over");
+                    client.gameState = GameState.GAME_OVER;
+                    System.out.print(client.help());
                 } else {
                     client.loadGame(loadGameMessage.getGame());
                 }
