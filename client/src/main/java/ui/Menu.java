@@ -60,6 +60,7 @@ public class Menu implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage serverMessage) {
+        System.out.println("getting to menu");
         ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
 
         switch (type) {

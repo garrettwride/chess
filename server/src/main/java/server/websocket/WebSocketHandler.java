@@ -54,7 +54,6 @@ public class WebSocketHandler {
     }
 
     private void joinPlayer(JoinPlayerCommand command, Session session) throws IOException, DataAccessException, SQLException {
-        session.getRemote().sendString("Working");
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
         ChessGame.TeamColor playerColor = command.getPlayerColor();
