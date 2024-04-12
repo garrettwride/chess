@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
@@ -27,6 +28,12 @@ import java.util.Collection;
             out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
         }
 
+        public static void main(String[] args) {
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            new DrawBoard(board, null);
+        }
+
         private void setGreenBackgroundForLegalMoves(PrintStream out, Collection<ChessPosition> legalMoves) {
             for (ChessPosition position : legalMoves) {
                 int row = position.getRow() - 1;
@@ -39,12 +46,6 @@ import java.util.Collection;
         private static void setGreen(PrintStream out) {
             out.print(EscapeSequences.SET_BG_COLOR_GREEN);
         }
-
-    public void main(String[] args) {
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        new DrawBoard(board, null);
-    }
 
     private void drawChessBoards(PrintStream out) {
         // Print from white perspective
@@ -68,43 +69,57 @@ import java.util.Collection;
         }
     }
 
-    private void drawSquare(PrintStream out, int row, int col) {
-        if ((row + col) % 2 == 0) {
-            setWhite(out);
-        } else {
-            setBlack(out);
-        }
+        private void drawSquare(PrintStream out, int row, int col) {
+            if ((row + col) % 2 == 0) {
+                setWhite(out);
+            } else {
+                setBlack(out);
+            }
 
-        ChessPosition position = new ChessPosition(row + 1, col + 1);
-        ChessPiece piece = chessBoard.getPiece(position);
-
-        if (piece != null) {
-            out.print(" " + piece.getSymbol() + " ");
-        } else {
             if (row == 0 || row == BOARD_SIZE - 1) {
                 makeColumnBorder(out, col);
             } else if (col == 0 || col == BOARD_SIZE - 1) {
                 makeRowBorder(out, row);
             } else {
-                out.print(EscapeSequences.EMPTY);
+                ChessPosition position = new ChessPosition(row + 1, col + 1);
+                ChessPiece piece = chessBoard.getPiece(position);
+                if (piece != null) {
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                        setBlueText(out);
+                    } else {
+                        setRedText(out);
+                    }
+                    out.print(" " + piece.getSymbol() + " ");
+                    resetTextColor(out);
+                } else {
+                    out.print(EscapeSequences.EMPTY);
+                }
             }
         }
-    }
 
-    private static void makeColumnBorder(PrintStream out, int col) {
-        setGrey(out);
-        setBlackText(out);
-        out.print(" " + (col + 1) + " ");
-    }
+        private static void makeRowBorder(PrintStream out, int col) {
+            setGrey(out);
+            if (col == 0 || col == BOARD_SIZE - 1) {
+                out.print(EscapeSequences.EMPTY);
+            } else {
+                setBlackText(out);
+                out.print(" " + (col) + " ");
+            }
+        }
 
-    private static void makeRowBorder(PrintStream out, int row) {
-        setGrey(out);
-        setBlackText(out);
-        char label = (char) ('a' + (BOARD_SIZE - 1 - row));
-        out.print(" " + label + " ");
-    }
+        private static void makeColumnBorder(PrintStream out, int row) {
+            setGrey(out);
+            if (row == 0 || row == BOARD_SIZE - 1) {
+                out.print(EscapeSequences.EMPTY);
+            } else {
+                setBlackText(out);
+                char label = (char) ('a' - 2 + (BOARD_SIZE - row));
+                out.print(" " + label + " ");
+            }
+        }
 
-    private static void setWhite(PrintStream out) {
+
+        private static void setWhite(PrintStream out) {
         out.print(EscapeSequences.SET_BG_COLOR_WHITE);
     }
 
@@ -119,4 +134,15 @@ import java.util.Collection;
     private static void setBlackText(PrintStream out) {
         out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
     }
+        private static void setBlueText(PrintStream out) {
+            out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+        }
+
+        private static void setRedText(PrintStream out) {
+            out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+        }
+
+        private static void resetTextColor(PrintStream out) {
+            out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        }
 }
