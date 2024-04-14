@@ -3,6 +3,9 @@ package model;
 import chess.ChessGame;
 import com.google.gson.Gson;
 
+import java.util.Collection;
+import java.util.Objects;
+
 public class GameData {
     private int gameID;
     private String whiteUsername;
@@ -52,5 +55,13 @@ public class GameData {
 
     public String toString() {
         return new Gson().toJson(this);
+    }
+
+    public boolean containsPlayer(String username) {
+        if (Objects.equals(username, blackUsername) || Objects.equals(username, whiteUsername)){
+            return true;
+        } else {
+            return false;
+        }
     }
 }

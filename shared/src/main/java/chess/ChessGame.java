@@ -57,12 +57,25 @@ public class ChessGame {
                 '}';
     }
 
+    public boolean isGameOver() {
+        return isInCheckmate(TeamColor.WHITE) || isInCheckmate(TeamColor.BLACK) || isInStalemate(TeamColor.WHITE) || isInStalemate(TeamColor.BLACK);
+    }
+
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
     public enum TeamColor {
         WHITE,
         BLACK
+    }
+
+    public boolean isCorrectTurn(ChessMove move) {
+        if (this.gameBoard.getPiece(move.getStartPosition()).getTeamColor() == getTeamTurn()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private Collection<ChessMove> allMoves(TeamColor teamColor, ChessBoard board) {

@@ -4,7 +4,7 @@ import chess.ChessGame;
 import dataAccess.AuthDataAccess;
 import dataAccess.DataAccessException;
 import dataAccess.GameDataAccess;
-import model.GameData;
+import model.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
@@ -14,7 +14,7 @@ public class JoinGameService {
     private static AuthDataAccess authDataAccess;
 
     public JoinGameService(GameDataAccess gameDataAccess, AuthDataAccess authDataAccess) {
-    this.gameDataAccess = gameDataAccess;
+        this.gameDataAccess = gameDataAccess;
         this.authDataAccess = authDataAccess;
     }
 
@@ -30,6 +30,7 @@ public class JoinGameService {
 
             //Create new chess game
             ChessGame chessGame = new ChessGame();
+            chessGame.getBoard().resetBoard();
 
             // Create a new game object
             GameData game = new GameData(gameID, null, null, gameName, chessGame);
@@ -152,6 +153,28 @@ public class JoinGameService {
             int randomNumber = random.nextInt(1000) + 1;
             return randomNumber;
 
+    }
+
+    public static boolean isValidAuthToken(String authToken) throws SQLException, DataAccessException {
+        return authDataAccess.getUsername(authToken) != null;
+    }
+
+    // Method to check if the game exists
+    public static boolean gameExists(int gameID) throws SQLException {
+        return gameDataAccess.getGame(gameID) != null;
+    }
+
+    // Method to check if the user is an observer
+    public static boolean isObserver(String authToken, int gameID) throws SQLException, DataAccessException {
+        GameData game = gameDataAccess.getGame(gameID);
+        String username = authDataAccess.getUsername(authToken);
+        return !game.containsPlayer(username);
+    }
+
+    // Method to check if the game is over
+    public static boolean isGameOver(int gameID) throws SQLException {
+        GameData game = gameDataAccess.getGame(gameID);
+        return game.getGame().isGameOver();
     }
 }
 

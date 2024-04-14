@@ -109,7 +109,6 @@ public class WebSocketTests {
         assertErrorMessage(messages.get(white.user));
     }
 
-
     @Test
     @Order(3)
     @DisplayName("Join Player Empty Team")
