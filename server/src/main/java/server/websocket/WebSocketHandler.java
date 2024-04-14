@@ -103,7 +103,7 @@ public class WebSocketHandler {
         connections.sendToClient(authToken, new LoadGameMessage(game));
         var message = String.format("%s joined as a player", username);
         var notification = new NotificationMessage(message);
-        connections.broadcast(authToken, notification);
+        connections.broadcast(session, authToken, notification);
     }
 
     private void joinObserver(JoinObserverCommand command, Session session) throws DataAccessException, SQLException, IOException {
@@ -132,7 +132,7 @@ public class WebSocketHandler {
         connections.add(authToken, session);
         var message = String.format("%s joined as an observer", username);
         var notification = new NotificationMessage(message);
-        connections.broadcast(authToken, notification);
+        connections.broadcast(session, authToken, notification);
     }
 
     private void makeMove(MakeMoveCommand command, Session session) throws SQLException, DataAccessException, IOException {
@@ -185,14 +185,14 @@ public class WebSocketHandler {
 
         var notification = new NotificationMessage(username + " made a move: " + moveDescription);
         try {
-            connections.broadcast(authToken, notification);
+            connections.broadcast(session, authToken, notification);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         LoadGameMessage updatedGameMessage = new LoadGameMessage(game);
         try {
-            connections.broadcastAll(authToken, updatedGameMessage);
+            connections.broadcastAll(session, authToken, updatedGameMessage);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -201,7 +201,7 @@ public class WebSocketHandler {
         ChessGame.TeamColor currentUserColor = (username.equals(gameData.getWhiteUsername())) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
         ChessGame.TeamColor opponentColor = (currentUserColor == ChessGame.TeamColor.WHITE) ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
         String opponentUsername = (currentUserColor == ChessGame.TeamColor.WHITE) ? gameData.getBlackUsername() : gameData.getWhiteUsername();
-        checkStatus(opponentColor, game, opponentUsername, authToken, gameID);
+        checkStatus(session, opponentColor, game, opponentUsername, authToken, gameID);
     }
 
     private void resign(ResignCommand command, Session session) throws DataAccessException, SQLException, IOException {
@@ -224,7 +224,7 @@ public class WebSocketHandler {
         String username = LoginService.getUsername(authToken);
         var message = String.format("%s resigned from game. Game over.", username);
         var notification = new NotificationMessage(message);
-        connections.broadcastAll(authToken, notification);
+        connections.broadcastAll(session, authToken, notification);
     }
 
 
@@ -259,7 +259,7 @@ public class WebSocketHandler {
         var message = String.format("%s left game", username);
         var notification = new NotificationMessage(message);
         try {
-            connections.broadcast(authToken, notification);
+            connections.broadcast(session, authToken, notification);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -280,7 +280,7 @@ public class WebSocketHandler {
         int rank = position.getRow();
         return String.format("%c%d", file, rank);
     }
-    public void checkStatus(ChessGame.TeamColor teamColor, ChessGame game, String username, String authToken, int gameID) {
+    public void checkStatus(Session session, ChessGame.TeamColor teamColor, ChessGame game, String username, String authToken, int gameID) {
         boolean isInCheck = game.isInCheck(teamColor);
         boolean isInCheckmate = game.isInCheckmate(teamColor);
         boolean isInStalemate = game.isInStalemate(teamColor);
@@ -288,7 +288,7 @@ public class WebSocketHandler {
         if (isInCheckmate) {
             var notification = new NotificationMessage(username + " is in checkmate! Game over.");
             try {
-                connections.broadcastAll(authToken, notification);
+                connections.broadcastAll(session, authToken, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -301,7 +301,7 @@ public class WebSocketHandler {
         } else if (isInStalemate) {
             var notification = new NotificationMessage("Players are in stalemate! Game over.");
             try {
-                connections.broadcastAll(authToken, notification);
+                connections.broadcastAll(session, authToken, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -314,7 +314,7 @@ public class WebSocketHandler {
         } else if (isInCheck) {
             var notification = new NotificationMessage(username + " is in check!");
             try {
-                connections.broadcastAll(authToken, notification);
+                connections.broadcastAll(session, authToken, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
