@@ -74,11 +74,15 @@ public class Menu implements NotificationHandler {
                 NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);;
                 String notificationText = notificationMessage.getMessage();
                 System.out.println(notificationText);
+                if (notificationText.contains("Game over.")){
+                    client.gameState = GameState.GAME_OVER;
+                    System.out.print(client.help());
+                }
                 break;
             case LOAD_GAME:
                 LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
                 if (loadGameMessage.getGame() == null) {
-                    System.out.println("Game over");
+                    System.out.println("Game over.");
                     client.gameState = GameState.GAME_OVER;
                     System.out.print(client.help());
                 } else {

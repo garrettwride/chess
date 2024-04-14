@@ -161,7 +161,7 @@ public class JoinGameService {
 
     // Method to check if the game exists
     public static boolean gameExists(int gameID) throws SQLException {
-        return gameDataAccess.getGame(gameID) != null;
+        return gameDataAccess.getGame(gameID).getGame() != null;
     }
 
     // Method to check if the user is an observer

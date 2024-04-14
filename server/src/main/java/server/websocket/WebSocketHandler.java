@@ -58,35 +58,49 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
         ChessGame.TeamColor playerColor = command.getPlayerColor();
+        GameData gameData = JoinGameService.getGame(gameID);
+        String username = LoginService.getUsername(authToken);
+
+        connections.add(authToken, session);
 
         // Test case: Join Player Bad GameID
         if (!JoinGameService.gameExists(gameID)) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
+            connections.remove(authToken);
             return;
         }
 
         // Test case: Join Player Bad AuthToken
         if (!JoinGameService.isValidAuthToken(authToken)) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Invalid authentication token."));
+            connections.remove(authToken);
             return;
         }
 
         // Test case: Join Player Wrong Team
-        if (playerColor != ChessGame.TeamColor.WHITE && playerColor != ChessGame.TeamColor.BLACK) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid team color."));
-            return;
-        }
+            String usernameTest;
+            if (playerColor == ChessGame.TeamColor.BLACK) {
+                usernameTest = gameData.getBlackUsername();
+            } else {
+                usernameTest = gameData.getWhiteUsername();
+            }
+
+            if (usernameTest != null) {
+                connections.sendToClient(authToken, new ErrorMessage("Error: Username already exists for this color."));
+                connections.remove(authToken);
+                return;
+            }
 
         // Test case: Join Player Empty Team
-        if (playerColor == null) {
+        if (!Objects.equals(usernameTest, username)) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Team color cannot be empty."));
+            connections.remove(authToken);
             return;
         }
 
         ChessGame game = JoinGameService.getGame(gameID).getGame();
         connections.add(authToken, session);
         connections.sendToClient(authToken, new LoadGameMessage(game));
-        String username = LoginService.getUsername(authToken);
         var message = String.format("%s joined as a player", username);
         var notification = new NotificationMessage(message);
         connections.broadcast(authToken, notification);
@@ -96,15 +110,19 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
 
+        connections.add(authToken, session);
+
         // Test case: Join Observer Bad GameID
         if (!JoinGameService.gameExists(gameID)) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
+            connections.remove(authToken);
             return;
         }
 
         // Test case: Join Observe Bad AuthToken
         if (!JoinGameService.isValidAuthToken(authToken)) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Invalid authentication token."));
+            connections.remove(authToken);
             return;
         }
 
@@ -179,21 +197,21 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
 
+        // Test case: invalidResignGameOver
+        if (!JoinGameService.gameExists(gameID)) {
+            connections.sendToClient(authToken, new ErrorMessage("Error: Game is over."));
+            return;
+        }
+
         // Test case: invalidResignObserver
         if (JoinGameService.isObserver(authToken, gameID)) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Observers cannot resign."));
             return;
         }
 
-        // Test case: invalidResignGameOver
-        if (JoinGameService.isGameOver(gameID)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Cannot resign after the game is over."));
-            return;
-        }
-
         endGame(gameID, authToken);
         String username = LoginService.getUsername(authToken);
-        var message = String.format("%s resigned from game", username);
+        var message = String.format("%s resigned from game. Game over.", username);
         var notification = new NotificationMessage(message);
         connections.broadcast(authToken, notification);
     }
@@ -270,7 +288,7 @@ public class WebSocketHandler {
                 throw new RuntimeException(e);
             }
         } else if (isInStalemate) {
-            var notification = new NotificationMessage("Players are in stalemate!");
+            var notification = new NotificationMessage("Players are in stalemate! Game over.");
             try {
                 connections.broadcastAll(authToken, notification);
             } catch (IOException e) {
@@ -294,12 +312,5 @@ public class WebSocketHandler {
 
     public void endGame(int gameID, String authToken) throws SQLException {
         JoinGameService.endGame(gameID);
-        ChessGame endedGame = JoinGameService.getGame(gameID).getGame();
-        LoadGameMessage updatedGameMessage = new LoadGameMessage(endedGame);
-        try {
-            connections.broadcastAll(authToken, updatedGameMessage);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
