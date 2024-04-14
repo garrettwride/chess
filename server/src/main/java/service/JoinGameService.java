@@ -164,6 +164,10 @@ public class JoinGameService {
         return gameDataAccess.getGame(gameID).getGame() != null;
     }
 
+    public static boolean validID(int gameID) throws SQLException {
+        return gameDataAccess.getGame(gameID) != null;
+    }
+
     // Method to check if the user is an observer
     public static boolean isObserver(String authToken, int gameID) throws SQLException, DataAccessException {
         GameData game = gameDataAccess.getGame(gameID);

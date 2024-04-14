@@ -27,14 +27,9 @@ public class ConnectionManager {
                 if (!c.authToken.equals(excludeAuthToken)) {
                     c.send(new Gson().toJson(serverMessage));
                 }
-            } else {
-                removeList.add(c);
             }
         }
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.authToken);
-        }
+
     }
     public void sendToClient(String authToken, ServerMessage serverMessage) throws IOException {
         var connection = connections.get(authToken);

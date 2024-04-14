@@ -64,7 +64,7 @@ public class WebSocketHandler {
         connections.add(authToken, session);
 
         // Test case: Join Player Bad GameID
-        if (!JoinGameService.gameExists(gameID)) {
+        if (!JoinGameService.validID(gameID)) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
             connections.remove(authToken);
             return;
@@ -85,14 +85,14 @@ public class WebSocketHandler {
                 usernameTest = gameData.getWhiteUsername();
             }
 
-            if (usernameTest != null) {
+            if (!Objects.equals(usernameTest, username)) {
                 connections.sendToClient(authToken, new ErrorMessage("Error: Username already exists for this color."));
                 connections.remove(authToken);
                 return;
             }
 
         // Test case: Join Player Empty Team
-        if (!Objects.equals(usernameTest, username)) {
+        if (usernameTest == null) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Team color cannot be empty."));
             connections.remove(authToken);
             return;
@@ -113,7 +113,7 @@ public class WebSocketHandler {
         connections.add(authToken, session);
 
         // Test case: Join Observer Bad GameID
-        if (!JoinGameService.gameExists(gameID)) {
+        if (!JoinGameService.validID(gameID)) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
             connections.remove(authToken);
             return;
@@ -139,6 +139,11 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         ChessMove move = command.getMove();
         String authToken = command.getAuthString();
+
+        if (!JoinGameService.gameExists(gameID)) {
+            connections.sendToClient(authToken, new ErrorMessage("Error: Game is over."));
+            return;
+        }
 
         // Test case: Make Invalid Move
         if (move == null) {
@@ -168,24 +173,30 @@ public class WebSocketHandler {
             return;
         }
 
+        String moveDescription;
         try {
+            moveDescription  = getMoveDescription(move, game);
             game.makeMove(move);
         } catch (InvalidMoveException e) {
+            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid move."));
             throw new RuntimeException(e);
         }
-        LoadGameMessage updatedGameMessage = new LoadGameMessage(game);
-        try {
-            connections.broadcastAll(authToken, updatedGameMessage);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        String moveDescription = getMoveDescription(move, game);
+
+
         var notification = new NotificationMessage(username + " made a move: " + moveDescription);
         try {
             connections.broadcast(authToken, notification);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        LoadGameMessage updatedGameMessage = new LoadGameMessage(game);
+        try {
+            connections.broadcastAll(authToken, updatedGameMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         GameData gameData = JoinGameService.getGame(gameID);
         ChessGame.TeamColor currentUserColor = (username.equals(gameData.getWhiteUsername())) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
         ChessGame.TeamColor opponentColor = (currentUserColor == ChessGame.TeamColor.WHITE) ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
@@ -213,7 +224,7 @@ public class WebSocketHandler {
         String username = LoginService.getUsername(authToken);
         var message = String.format("%s resigned from game. Game over.", username);
         var notification = new NotificationMessage(message);
-        connections.broadcast(authToken, notification);
+        connections.broadcastAll(authToken, notification);
     }
 
 
@@ -222,7 +233,7 @@ public class WebSocketHandler {
         String authToken = command.getAuthString();
 
         // Test case: Leave Bad GameID
-        if (!JoinGameService.gameExists(gameID)) {
+        if (!JoinGameService.validID(gameID)) {
             connections.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
             return;
         }
