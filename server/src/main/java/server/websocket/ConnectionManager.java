@@ -1,11 +1,5 @@
 package server.websocket;
 
-import com.google.gson.Gson;
-import org.eclipse.jetty.websocket.api.Session;
-import webSocketMessages.serverMessages.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
@@ -18,5 +12,9 @@ public class ConnectionManager {
 
     public Game getGame(int gameId) {
         return games.get(gameId);
+    }
+
+    public void removeGame(int gameId) {
+        games.remove(gameId);
     }
 }

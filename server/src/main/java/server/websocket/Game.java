@@ -16,8 +16,10 @@ public class Game {
     }
 
     public void add(String authToken, Session session) {
-        var connection = new Connection(authToken, session);
-        connections.put(authToken, connection);
+        if (!connections.containsKey(authToken)) {
+            var connection = new Connection(authToken, session);
+            connections.put(authToken, connection);
+        }
     }
 
     public void remove(String authToken) {

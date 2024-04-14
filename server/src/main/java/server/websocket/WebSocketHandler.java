@@ -25,7 +25,7 @@ import java.util.Timer;
 @WebSocket
 public class WebSocketHandler {
 
-    private final ConnectionManager connections = new ConnectionManager();
+    private final ConnectionManager connectionManager = new ConnectionManager();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException, DataAccessException, SQLException {
@@ -61,19 +61,26 @@ public class WebSocketHandler {
         GameData gameData = JoinGameService.getGame(gameID);
         String username = LoginService.getUsername(authToken);
 
-        connections.add(authToken, session);
+
+        Game gameConnection = connectionManager.getGame(gameID);
+        if (gameConnection == null) {
+            gameConnection = new Game(gameID);
+            connectionManager.createGame(gameID);
+        }
+        
+        gameConnection.add(authToken, session);
 
         // Test case: Join Player Bad GameID
         if (!JoinGameService.validID(gameID)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
-            connections.remove(authToken);
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
+            connectionManager.removeGame(gameID);
             return;
         }
 
         // Test case: Join Player Bad AuthToken
         if (!JoinGameService.isValidAuthToken(authToken)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid authentication token."));
-            connections.remove(authToken);
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Invalid authentication token."));
+            gameConnection.remove(authToken);
             return;
         }
 
@@ -86,53 +93,59 @@ public class WebSocketHandler {
             }
 
             if (!Objects.equals(usernameTest, username)) {
-                connections.sendToClient(authToken, new ErrorMessage("Error: Username already exists for this color."));
-                connections.remove(authToken);
+                gameConnection.sendToClient(authToken, new ErrorMessage("Error: Username already exists for this color."));
+                gameConnection.remove(authToken);
                 return;
             }
 
         // Test case: Join Player Empty Team
         if (usernameTest == null) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Team color cannot be empty."));
-            connections.remove(authToken);
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Team color cannot be empty."));
+            gameConnection.remove(authToken);
             return;
         }
 
         ChessGame game = JoinGameService.getGame(gameID).getGame();
-        connections.add(authToken, session);
-        connections.sendToClient(authToken, new LoadGameMessage(game));
+        gameConnection.add(authToken, session);
+        gameConnection.sendToClient(authToken, new LoadGameMessage(game));
         var message = String.format("%s joined as a player", username);
         var notification = new NotificationMessage(message);
-        connections.broadcast(session, authToken, notification);
+        gameConnection.broadcast(authToken, notification);
     }
 
     private void joinObserver(JoinObserverCommand command, Session session) throws DataAccessException, SQLException, IOException {
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
 
-        connections.add(authToken, session);
+        Game gameConnection = connectionManager.getGame(gameID);
+        if (gameConnection == null) {
+            gameConnection = new Game(gameID);
+            connectionManager.createGame(gameID);
+        }
+
+        gameConnection.add(authToken, session);
 
         // Test case: Join Observer Bad GameID
         if (!JoinGameService.validID(gameID)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
-            connections.remove(authToken);
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
+            connectionManager.removeGame(gameID);
             return;
         }
 
         // Test case: Join Observe Bad AuthToken
         if (!JoinGameService.isValidAuthToken(authToken)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid authentication token."));
-            connections.remove(authToken);
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Invalid authentication token."));
+            gameConnection.remove(authToken);
             return;
         }
 
         String username = LoginService.getUsername(authToken);
         ChessGame game = JoinGameService.getGame(gameID).getGame();
-        connections.sendToClient(authToken, new LoadGameMessage(game));
-        connections.add(authToken, session);
+        gameConnection.sendToClient(authToken, new LoadGameMessage(game));
+        gameConnection.add(authToken, session);
         var message = String.format("%s joined as an observer", username);
         var notification = new NotificationMessage(message);
-        connections.broadcast(session, authToken, notification);
+        gameConnection.broadcast(authToken, notification);
     }
 
     private void makeMove(MakeMoveCommand command, Session session) throws SQLException, DataAccessException, IOException {
@@ -140,14 +153,23 @@ public class WebSocketHandler {
         ChessMove move = command.getMove();
         String authToken = command.getAuthString();
 
+        Game gameConnection = connectionManager.getGame(gameID);
+        if (gameConnection == null) {
+            gameConnection = new Game(gameID);
+            connectionManager.createGame(gameID);
+        }
+
+        gameConnection.add(authToken, session);
+
         if (!JoinGameService.gameExists(gameID)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Game is over."));
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Game is over."));
+            connectionManager.removeGame(gameID);
             return;
         }
 
         // Test case: Make Invalid Move
         if (move == null) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid move."));
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Invalid move."));
             return;
         }
 
@@ -155,7 +177,7 @@ public class WebSocketHandler {
 
         // Test case: Make Move Wrong Turn
         if (!game.isCorrectTurn(move)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: It's not your turn."));
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: It's not your turn."));
             return;
         }
 
@@ -169,7 +191,7 @@ public class WebSocketHandler {
         }
         // Test case: Make Move for Opponent
         if (!Objects.equals(moveUsername, username)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: You cannot make a move for the opponent."));
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: You cannot make a move for the opponent."));
             return;
         }
 
@@ -178,21 +200,21 @@ public class WebSocketHandler {
             moveDescription  = getMoveDescription(move, game);
             game.makeMove(move);
         } catch (InvalidMoveException e) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid move."));
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Invalid move."));
             throw new RuntimeException(e);
         }
 
 
         var notification = new NotificationMessage(username + " made a move: " + moveDescription);
         try {
-            connections.broadcast(session, authToken, notification);
+            gameConnection.broadcast(authToken, notification);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         LoadGameMessage updatedGameMessage = new LoadGameMessage(game);
         try {
-            connections.broadcastAll(session, authToken, updatedGameMessage);
+            gameConnection.broadcastAll(authToken, updatedGameMessage);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -201,22 +223,30 @@ public class WebSocketHandler {
         ChessGame.TeamColor currentUserColor = (username.equals(gameData.getWhiteUsername())) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
         ChessGame.TeamColor opponentColor = (currentUserColor == ChessGame.TeamColor.WHITE) ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
         String opponentUsername = (currentUserColor == ChessGame.TeamColor.WHITE) ? gameData.getBlackUsername() : gameData.getWhiteUsername();
-        checkStatus(session, opponentColor, game, opponentUsername, authToken, gameID);
+        checkStatus(gameConnection, opponentColor, game, opponentUsername, authToken, gameID);
     }
 
     private void resign(ResignCommand command, Session session) throws DataAccessException, SQLException, IOException {
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
 
+        Game gameConnection = connectionManager.getGame(gameID);
+        if (gameConnection == null) {
+            gameConnection = new Game(gameID);
+            connectionManager.createGame(gameID);
+        }
+
+        gameConnection.add(authToken, session);
+
         // Test case: invalidResignGameOver
         if (!JoinGameService.gameExists(gameID)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Game is over."));
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Game is over."));
             return;
         }
 
         // Test case: invalidResignObserver
         if (JoinGameService.isObserver(authToken, gameID)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Observers cannot resign."));
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Observers cannot resign."));
             return;
         }
 
@@ -224,7 +254,7 @@ public class WebSocketHandler {
         String username = LoginService.getUsername(authToken);
         var message = String.format("%s resigned from game. Game over.", username);
         var notification = new NotificationMessage(message);
-        connections.broadcastAll(session, authToken, notification);
+        gameConnection.broadcastAll(authToken, notification);
     }
 
 
@@ -232,15 +262,25 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         String authToken = command.getAuthString();
 
+        Game gameConnection = connectionManager.getGame(gameID);
+        if (gameConnection == null) {
+            gameConnection = new Game(gameID);
+            connectionManager.createGame(gameID);
+        }
+
+        gameConnection.add(authToken, session);
+
         // Test case: Leave Bad GameID
         if (!JoinGameService.validID(gameID)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Invalid game ID."));
+            connectionManager.removeGame(gameID);
             return;
         }
 
         // Test case: Leave Bad AuthToken
         if (!JoinGameService.isValidAuthToken(authToken)) {
-            connections.sendToClient(authToken, new ErrorMessage("Error: Invalid authentication token."));
+            gameConnection.sendToClient(authToken, new ErrorMessage("Error: Invalid authentication token."));
+            gameConnection.remove(authToken);
             return;
         }
 
@@ -254,12 +294,12 @@ public class WebSocketHandler {
             throw new RuntimeException(e);
         }
 
-        connections.remove(authToken);
+        gameConnection.remove(authToken);
         String username = LoginService.getUsername(authToken);
         var message = String.format("%s left game", username);
         var notification = new NotificationMessage(message);
         try {
-            connections.broadcast(session, authToken, notification);
+            gameConnection.broadcast(authToken, notification);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -280,7 +320,7 @@ public class WebSocketHandler {
         int rank = position.getRow();
         return String.format("%c%d", file, rank);
     }
-    public void checkStatus(Session session, ChessGame.TeamColor teamColor, ChessGame game, String username, String authToken, int gameID) {
+    public void checkStatus(Game gameConnection, ChessGame.TeamColor teamColor, ChessGame game, String username, String authToken, int gameID) {
         boolean isInCheck = game.isInCheck(teamColor);
         boolean isInCheckmate = game.isInCheckmate(teamColor);
         boolean isInStalemate = game.isInStalemate(teamColor);
@@ -288,7 +328,7 @@ public class WebSocketHandler {
         if (isInCheckmate) {
             var notification = new NotificationMessage(username + " is in checkmate! Game over.");
             try {
-                connections.broadcastAll(session, authToken, notification);
+                gameConnection.broadcastAll(authToken, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -301,7 +341,7 @@ public class WebSocketHandler {
         } else if (isInStalemate) {
             var notification = new NotificationMessage("Players are in stalemate! Game over.");
             try {
-                connections.broadcastAll(session, authToken, notification);
+                gameConnection.broadcastAll(authToken, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -314,7 +354,7 @@ public class WebSocketHandler {
         } else if (isInCheck) {
             var notification = new NotificationMessage(username + " is in check!");
             try {
-                connections.broadcastAll(session, authToken, notification);
+                gameConnection.broadcastAll(authToken, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
