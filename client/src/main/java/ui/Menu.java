@@ -1,6 +1,7 @@
 package ui;
 
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import webSocketMessages.serverMessages.*;
 import websocket.NotificationHandler;
@@ -86,7 +87,8 @@ public class Menu implements NotificationHandler {
                     client.gameState = GameState.GAME_OVER;
                     System.out.print(client.help());
                 } else {
-                    client.loadGame(loadGameMessage.getGame());
+                    ChessGame game = loadGameMessage.getGame();
+                    client.loadGame(game);
                 }
                 break;
             default:

@@ -21,6 +21,7 @@ public class MenuClient {
     private WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
     public GameState gameState = GameState.NOT_JOINED;
+    public GameOver gameOver = GameOver.GAME_LIVE;
     public Resignation resignation = Resignation.UNKNOWN;
     private ChessGame game;
     private String temporaryID;
@@ -232,7 +233,7 @@ public class MenuClient {
             } else if (resignation == Resignation.ACCEPT_RESIGNATION) {
                 ws.resign(gameID);
                 resignation = Resignation.UNKNOWN;
-                gameState = GameState.GAME_OVER;
+                gameOver = GameOver.GAME_OVER;
                 return "You resigned.";
             } else {
                 resignation = Resignation.UNKNOWN;
@@ -334,13 +335,9 @@ public class MenuClient {
 
 
     public String help() {
-        if (gameState == gameState.PLAYER) {
+        if (gameOver== GameOver.GAME_OVER) {
             return """
-                    - redraw
                     - leave
-                    - resign
-                    - highlight
-                    - move
                     - help
                     - quit
                     """;
@@ -351,9 +348,13 @@ public class MenuClient {
                     - help
                     - quit
                     """;
-        } else if (gameState == GameState.GAME_OVER) {
+        } else if (gameState == gameState.PLAYER) {
             return """
+                    - redraw
                     - leave
+                    - resign
+                    - highlight
+                    - move
                     - help
                     - quit
                     """;
@@ -399,7 +400,7 @@ public class MenuClient {
     }
 
     private void assertNotGameOver() throws ResponseException {
-        if (gameState == GameState.GAME_OVER) {
+        if (gameOver == GameOver.GAME_OVER) {
             throw new ResponseException(400, "The game is over");
         }
     }
