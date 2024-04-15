@@ -64,8 +64,8 @@ public class WebSocketHandler {
 
         Game gameConnection = connectionManager.getGame(gameID);
         if (gameConnection == null) {
-            gameConnection = new Game(gameID);
             connectionManager.createGame(gameID);
+            gameConnection = connectionManager.getGame(gameID);
         }
         
         gameConnection.add(authToken, session);
@@ -106,7 +106,6 @@ public class WebSocketHandler {
         }
 
         ChessGame game = JoinGameService.getGame(gameID).getGame();
-        gameConnection.add(authToken, session);
         gameConnection.sendToClient(authToken, new LoadGameMessage(game));
         var message = String.format("%s joined as a player", username);
         var notification = new NotificationMessage(message);
@@ -119,8 +118,8 @@ public class WebSocketHandler {
 
         Game gameConnection = connectionManager.getGame(gameID);
         if (gameConnection == null) {
-            gameConnection = new Game(gameID);
             connectionManager.createGame(gameID);
+            gameConnection = connectionManager.getGame(gameID);
         }
 
         gameConnection.add(authToken, session);
@@ -155,15 +154,14 @@ public class WebSocketHandler {
 
         Game gameConnection = connectionManager.getGame(gameID);
         if (gameConnection == null) {
-            gameConnection = new Game(gameID);
             connectionManager.createGame(gameID);
+            gameConnection = connectionManager.getGame(gameID);
         }
 
         gameConnection.add(authToken, session);
 
         if (!JoinGameService.gameExists(gameID)) {
             gameConnection.sendToClient(authToken, new ErrorMessage("Error: Game is over."));
-            connectionManager.removeGame(gameID);
             return;
         }
 
@@ -232,8 +230,8 @@ public class WebSocketHandler {
 
         Game gameConnection = connectionManager.getGame(gameID);
         if (gameConnection == null) {
-            gameConnection = new Game(gameID);
             connectionManager.createGame(gameID);
+            gameConnection = connectionManager.getGame(gameID);
         }
 
         gameConnection.add(authToken, session);
@@ -264,8 +262,8 @@ public class WebSocketHandler {
 
         Game gameConnection = connectionManager.getGame(gameID);
         if (gameConnection == null) {
-            gameConnection = new Game(gameID);
             connectionManager.createGame(gameID);
+            gameConnection = connectionManager.getGame(gameID);
         }
 
         gameConnection.add(authToken, session);
