@@ -74,8 +74,8 @@ public class MenuClient {
         if (params.length == 1) {
             var name = params[0];
             String auth = authToken;
-            String ID = server.addGame(name, auth);
-            return String.format("Successfully created game. Assigned ID: %s", ID);
+            String id = server.addGame(name, auth);
+            return String.format("Successfully created game. Assigned ID: %s", id);
         }
         throw new ResponseException(400, "Expected: <name>");
     }

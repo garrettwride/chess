@@ -91,7 +91,7 @@ public class ServerFacadeTests {
             facade.authenticate(userData);
             fail("Expected ResponseException to be thrown");
         } catch (ResponseException e) {
-            assertEquals(500, e.StatusCode());
+            assertEquals(500, e.statusCode());
         }
     }
 
@@ -124,7 +124,7 @@ public class ServerFacadeTests {
             fail("Expected ResponseException to be thrown");
         } catch (ResponseException e) {
             // Assert that the exception message or status code is as expected
-            assertEquals(500, e.StatusCode());
+            assertEquals(500, e.statusCode());
             // Add more assertions if needed
         }
     }
@@ -156,7 +156,7 @@ public class ServerFacadeTests {
             facade.register(userData);
             fail("Expected ResponseException to be thrown");
         } catch (ResponseException e) {
-            assertEquals(500, e.StatusCode());
+            assertEquals(500, e.statusCode());
         }
     }
 
@@ -196,7 +196,7 @@ public class ServerFacadeTests {
             facade.joinGame(gameInfo, authToken);
             fail("Expected ResponseException to be thrown");
         } catch (ResponseException e) {
-            assertEquals(500, e.StatusCode());
+            assertEquals(500, e.statusCode());
         }
     }
 
@@ -231,7 +231,7 @@ public class ServerFacadeTests {
             facade.listGames(null); // No authentication token provided
             fail("Expected ResponseException to be thrown");
         } catch (ResponseException e) {
-            assertEquals(500, e.StatusCode());
+            assertEquals(500, e.statusCode());
         }
     }
 
