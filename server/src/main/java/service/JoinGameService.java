@@ -1,6 +1,8 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataAccess.AuthDataAccess;
 import dataAccess.DataAccessException;
 import dataAccess.GameDataAccess;
@@ -16,6 +18,13 @@ public class JoinGameService {
     public JoinGameService(GameDataAccess gameDataAccess, AuthDataAccess authDataAccess) {
         this.gameDataAccess = gameDataAccess;
         this.authDataAccess = authDataAccess;
+    }
+
+    public static void makeMove(GameData gameData, ChessMove move) throws InvalidMoveException, SQLException {
+        ChessGame game = gameData.getGame();
+        game.makeMove(move);
+        gameData.setGame(game);
+        gameDataAccess.updateGameMove(gameData);
     }
 
     // Method to create a new game

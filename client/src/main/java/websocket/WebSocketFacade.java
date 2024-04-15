@@ -17,16 +17,16 @@ public class WebSocketFacade extends Endpoint {
 
     Session session;
     NotificationHandler notificationHandler;
-
+    URI socketURI;
     String authToken;
     public WebSocketFacade(String url, NotificationHandler notificationHandler, String authToken) throws ResponseException {
         try {
             url = url.replace("http", "ws");
-            URI socketURI = new URI(url + "/connect");
+            this.socketURI = new URI(url + "/connect");
             this.notificationHandler = notificationHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            this.session = container.connectToServer(this, socketURI);
+            this.session = container.connectToServer(this, this.socketURI);
 
             this.authToken = authToken;
 
@@ -42,12 +42,25 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
+    private void ensureConnected() throws ResponseException {
+        if (session == null || !session.isOpen()) {
+            try {
+                WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+                this.session = container.connectToServer(this, socketURI);
+            } catch (DeploymentException | IOException ex) {
+                throw new ResponseException(500, ex.getMessage());
+            }
+        }
+    }
+
+
     //Endpoint requires this method, but you don't have to do anything
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
     public void joinPlayer(int gameID, ChessGame.TeamColor playerColor) throws ResponseException {
+        ensureConnected();
         try {
             var command = new JoinPlayerCommand(gameID, playerColor, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
@@ -57,6 +70,7 @@ public class WebSocketFacade extends Endpoint {
     }
 
     public void joinObserver(int gameID) throws ResponseException {
+        ensureConnected();
         try {
             var command = new JoinObserverCommand(gameID, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
@@ -66,16 +80,17 @@ public class WebSocketFacade extends Endpoint {
     }
 
     public void makeMove(int gameID, ChessMove move) throws ResponseException {
+        ensureConnected();
         try {
             var command = new MakeMoveCommand(gameID, move, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
-            this.session.close();
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
     }
 
     public void leave(int gameID) throws ResponseException {
+        ensureConnected();
         try {
             var command = new LeaveCommand(gameID, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
@@ -86,6 +101,7 @@ public class WebSocketFacade extends Endpoint {
     }
 
     public void resign(int gameID) throws ResponseException {
+        ensureConnected();
         try {
             var command = new ResignCommand(gameID, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
@@ -94,6 +110,4 @@ public class WebSocketFacade extends Endpoint {
             throw new ResponseException(500, ex.getMessage());
         }
     }
-
 }
-

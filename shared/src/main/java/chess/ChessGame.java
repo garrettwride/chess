@@ -15,9 +15,7 @@ public class ChessGame {
     private TeamColor teamTurn;
     private ChessBoard gameBoard = new ChessBoard();
 
-    public ChessGame() {
-        this.teamTurn = TeamColor.WHITE;
-    }
+    public ChessGame() {this.teamTurn = TeamColor.WHITE;}
 
     /**
      * @return Which team's turn it is
@@ -60,7 +58,6 @@ public class ChessGame {
     public boolean isGameOver() {
         return isInCheckmate(TeamColor.WHITE) || isInCheckmate(TeamColor.BLACK) || isInStalemate(TeamColor.WHITE) || isInStalemate(TeamColor.BLACK);
     }
-
 
     /**
      * Enum identifying the 2 possible teams in a chess game

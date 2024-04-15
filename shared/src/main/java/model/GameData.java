@@ -45,6 +45,10 @@ public class GameData {
         this.gameID = gameID;
     }
 
+    public void setGame(ChessGame game) {
+        this.game = game;
+    }
+
     public void setBlackUsername(String blackUsername) {
         this.blackUsername = blackUsername;
     }

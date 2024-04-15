@@ -108,4 +108,18 @@ public class GameDataAccess {
         ChessGame game = new Gson().fromJson(resultSet.getString("game"), ChessGame.class); // Deserialize JSON string to ChessGame
         return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
+
+    public void updateGameMove(GameData gameData) throws SQLException {
+        String gameJson = new Gson().toJson(gameData.getGame());
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "UPDATE " + TABLE_NAME + " SET game = ? WHERE id = ?")) {
+
+            preparedStatement.setString(1, gameJson);
+            preparedStatement.setInt(2, gameData.getGameID());
+            preparedStatement.executeUpdate();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

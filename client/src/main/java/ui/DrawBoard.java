@@ -19,6 +19,8 @@ import java.util.Collection;
 
             var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
             out.print(EscapeSequences.ERASE_SCREEN);
+            out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+            out.println();
             if (legalMoves != null) {
                 setGreenBackgroundForLegalMoves(out, legalMoves);
             } else {
@@ -35,11 +37,29 @@ import java.util.Collection;
         }
 
         private void setGreenBackgroundForLegalMoves(PrintStream out, Collection<ChessPosition> legalMoves) {
-            for (ChessPosition position : legalMoves) {
-                int row = position.getRow() - 1;
-                int col = position.getColumn() - 1;
-                setGreen(out);
-                drawSquare(out, row, col);
+            // Print from white perspective
+            for (int row = 0; row < BOARD_SIZE; row++) {
+                for (int col = 0; col < BOARD_SIZE; col++) {
+                    ChessPosition currentPosition = new ChessPosition(row + 1, col + 1);
+                    boolean isLegalMove = legalMoves.contains(currentPosition);
+                    drawSquare(out, row, col, isLegalMove);
+                }
+                    out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+                    out.println();
+
+            }
+
+
+
+            // Print from black perspective
+            for (int row = BOARD_SIZE - 1; row >= 0; row--) {
+                for (int col = 0; col < BOARD_SIZE; col++) {
+                    ChessPosition currentPosition = new ChessPosition(row + 1, col + 1);
+                    boolean isLegalMove = legalMoves.contains(currentPosition);
+                    drawSquare(out, row, col, isLegalMove);
+                }
+                out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+                out.println();
             }
         }
 
@@ -51,7 +71,7 @@ import java.util.Collection;
         // Print from white perspective
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
-                drawSquare(out, row, col);
+                drawSquare(out, row, col, false);
             }
             out.print(EscapeSequences.SET_BG_COLOR_BLACK);
             out.println();
@@ -62,19 +82,21 @@ import java.util.Collection;
         // Print from black perspective
         for (int row = BOARD_SIZE - 1; row >= 0; row--) {
             for (int col = 0; col < BOARD_SIZE; col++) {
-                drawSquare(out, row, col);
+                drawSquare(out, row, col, false);
             }
             out.print(EscapeSequences.SET_BG_COLOR_BLACK);
             out.println();
         }
     }
 
-        private void drawSquare(PrintStream out, int row, int col) {
-            if ((row + col) % 2 == 0) {
-                setWhite(out);
-            } else {
-                setBlack(out);
-            }
+        private void drawSquare(PrintStream out, int row, int col, boolean isLegalMove) {
+            if (!isLegalMove) {
+                if ((row + col) % 2 == 0) {
+                    setWhite(out);
+                } else {
+                    setBlack(out);
+                }
+            } else setGreen(out);
 
             if (row == 0 || row == BOARD_SIZE - 1) {
                 makeColumnBorder(out, col);

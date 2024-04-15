@@ -151,6 +151,7 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         ChessMove move = command.getMove();
         String authToken = command.getAuthString();
+        GameData gameData = JoinGameService.getGame(gameID);
 
         Game gameConnection = connectionManager.getGame(gameID);
         if (gameConnection == null) {
@@ -171,7 +172,7 @@ public class WebSocketHandler {
             return;
         }
 
-        ChessGame game = JoinGameService.getGame(gameID).getGame();
+        ChessGame game = gameData.getGame();
 
         // Test case: Make Move Wrong Turn
         if (!game.isCorrectTurn(move)) {
@@ -196,7 +197,7 @@ public class WebSocketHandler {
         String moveDescription;
         try {
             moveDescription  = getMoveDescription(move, game);
-            game.makeMove(move);
+            JoinGameService.makeMove(gameData, move);
         } catch (InvalidMoveException e) {
             gameConnection.sendToClient(authToken, new ErrorMessage("Error: Invalid move."));
             throw new RuntimeException(e);
@@ -210,18 +211,18 @@ public class WebSocketHandler {
             throw new RuntimeException(e);
         }
 
-        LoadGameMessage updatedGameMessage = new LoadGameMessage(game);
+        gameData = JoinGameService.getGame(gameID);
+        LoadGameMessage updatedGameMessage = new LoadGameMessage(gameData.getGame());
         try {
             gameConnection.broadcastAll(authToken, updatedGameMessage);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        GameData gameData = JoinGameService.getGame(gameID);
         ChessGame.TeamColor currentUserColor = (username.equals(gameData.getWhiteUsername())) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
         ChessGame.TeamColor opponentColor = (currentUserColor == ChessGame.TeamColor.WHITE) ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
         String opponentUsername = (currentUserColor == ChessGame.TeamColor.WHITE) ? gameData.getBlackUsername() : gameData.getWhiteUsername();
-        checkStatus(gameConnection, opponentColor, game, opponentUsername, authToken, gameID);
+        checkStatus(gameConnection, opponentColor, gameData.getGame(), opponentUsername, authToken, gameID);
     }
 
     private void resign(ResignCommand command, Session session) throws DataAccessException, SQLException, IOException {
@@ -248,7 +249,7 @@ public class WebSocketHandler {
             return;
         }
 
-        endGame(gameID, authToken);
+        endGame(gameID);
         String username = LoginService.getUsername(authToken);
         var message = String.format("%s resigned from game. Game over.", username);
         var notification = new NotificationMessage(message);
@@ -294,7 +295,7 @@ public class WebSocketHandler {
 
         gameConnection.remove(authToken);
         String username = LoginService.getUsername(authToken);
-        var message = String.format("%s left game", username);
+        var message = String.format("%s left the game", username);
         var notification = new NotificationMessage(message);
         try {
             gameConnection.broadcast(authToken, notification);
@@ -332,7 +333,7 @@ public class WebSocketHandler {
             }
 
             try {
-                endGame(gameID, authToken);
+                endGame(gameID);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -345,7 +346,7 @@ public class WebSocketHandler {
             }
 
             try {
-                endGame(gameID, authToken);
+                endGame(gameID);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -359,7 +360,7 @@ public class WebSocketHandler {
         }
     }
 
-    public void endGame(int gameID, String authToken) throws SQLException {
+    public void endGame(int gameID) throws SQLException {
         JoinGameService.endGame(gameID);
     }
 }

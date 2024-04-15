@@ -142,7 +142,6 @@ public class MenuClient {
                 gameInfo.setGameID(id);
                 server.joinGame(gameInfo, auth);
                 ws.joinObserver(id);
-                new DrawBoard(game.getBoard(), null);
                 gameState = GameState.OBSERVER;
                 return "Successfully joined as observer";
             }
@@ -377,7 +376,7 @@ public class MenuClient {
 
     public void loadGame(ChessGame game){
         this.game = game;
-        new DrawBoard(game.getBoard(), null);
+        new DrawBoard(this.game.getBoard(), null);
     }
 
     private void assertSignedIn() throws ResponseException {
