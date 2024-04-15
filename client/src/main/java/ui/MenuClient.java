@@ -315,11 +315,6 @@ public class MenuClient {
             throw new ResponseException(500, "Failed to retrieve game state.");
         }
 
-        ChessPiece piece = game.getBoard().getPiece(position);
-        if (piece == null || piece.getTeamColor() != game.getTeamTurn()) {
-            return "You can only highlight legal moves for your own pieces.";
-        }
-
         Collection<ChessMove> legalMoves = game.validMoves(position);
         Collection<ChessPosition> endPositions = new HashSet<>();
 
@@ -414,7 +409,7 @@ public class MenuClient {
 
         int row = Character.getNumericValue(coordinate.charAt(1));
 
-        if (row < 0 || row > 7 || col < 0 || col > 7) {
+        if (row < 0 || row > 8 || col < 0 || col > 8) {
             throw new IllegalArgumentException("Invalid coordinate string: " + coordinate);
         }
         return new ChessPosition(row, col);
