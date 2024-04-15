@@ -101,7 +101,6 @@ public class WebSocketFacade extends Endpoint {
     }
 
     public void resign(int gameID) throws ResponseException {
-        ensureConnected();
         try {
             var command = new ResignCommand(gameID, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));

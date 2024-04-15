@@ -42,16 +42,6 @@ public class ServerFacade {
         return gameID;
     }
 
-
-    public void deleteGame(int id, String auth) throws ResponseException {
-        var path = String.format("/game/%s", id);
-        Map<String, String> headers = new HashMap<>();
-        if (auth != null) {
-            headers.put("Authorization", auth);
-        }
-        this.makeRequest("DELETE", path, null, headers, null);
-    }
-
     public AuthData authenticate(UserData userData) throws ResponseException {
         var path = "/session";
         return this.makeRequest("POST", path, userData, null, AuthData.class);

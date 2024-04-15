@@ -49,13 +49,6 @@ public class GameData {
         this.game = game;
     }
 
-    public void setBlackUsername(String blackUsername) {
-        this.blackUsername = blackUsername;
-    }
-    public void setWhiteUsername(String whiteUsername) {
-        this.whiteUsername = whiteUsername;
-    }
-
 
     public String toString() {
         return new Gson().toJson(this);

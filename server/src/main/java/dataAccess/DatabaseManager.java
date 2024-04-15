@@ -121,16 +121,7 @@ public class DatabaseManager {
      * }
      * </code>
      */
-//    public static Connection getConnection() throws DataAccessException {
-//        try {
-//            var conn = DriverManager.getConnection(connectionUrl, user, password);
-//            conn.setCatalog(databaseName);
-//            createDatabase();
-//            return conn;
-//        } catch (SQLException e) {
-//            throw new DataAccessException(e.getMessage());
-//        }
-//    }
+
 
     public static Connection getConnection() throws DataAccessException {
         Connection conn = null;
