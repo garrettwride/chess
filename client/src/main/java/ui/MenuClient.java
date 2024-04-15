@@ -24,6 +24,7 @@ public class MenuClient {
     public Resignation resignation = Resignation.UNKNOWN;
     private ChessGame game;
     private String temporaryID;
+    private DrawBoard drawBoard = new DrawBoard(null);
 
     public MenuClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
@@ -231,7 +232,8 @@ public class MenuClient {
             } else if (resignation == Resignation.ACCEPT_RESIGNATION) {
                 ws.resign(gameID);
                 resignation = Resignation.UNKNOWN;
-                return "You left the game.";
+                gameState = GameState.GAME_OVER;
+                return "You resigned.";
             } else {
                 resignation = Resignation.UNKNOWN;
                 return "Resignation canceled.";
@@ -287,7 +289,7 @@ public class MenuClient {
             return "You can only redraw the board while in a game.";
         }
 
-        new DrawBoard(game.getBoard(), null);
+        drawBoard.draw(game.getBoard(), null);
 
         return "Chess board redrawn.";
     }
@@ -325,7 +327,7 @@ public class MenuClient {
             endPositions.add(endPosition);
         }
 
-        new DrawBoard(game.getBoard(), endPositions);
+        drawBoard.draw(game.getBoard(), endPositions);
 
         return "Legal moves highlighted.";
     }
@@ -376,7 +378,7 @@ public class MenuClient {
 
     public void loadGame(ChessGame game){
         this.game = game;
-        new DrawBoard(this.game.getBoard(), null);
+        drawBoard.draw(game.getBoard(), null);
     }
 
     private void assertSignedIn() throws ResponseException {
@@ -407,14 +409,13 @@ public class MenuClient {
             throw new IllegalArgumentException("Invalid coordinate string: " + coordinate);
         }
 
-        int col = coordinate.charAt(0) - 'a';
+        int col = coordinate.charAt(0) - 'a' + 1;
 
-        int row = Character.getNumericValue(coordinate.charAt(1)) - 1;
+        int row = Character.getNumericValue(coordinate.charAt(1));
 
         if (row < 0 || row > 7 || col < 0 || col > 7) {
             throw new IllegalArgumentException("Invalid coordinate string: " + coordinate);
         }
-
         return new ChessPosition(row, col);
     }
 

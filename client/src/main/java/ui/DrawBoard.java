@@ -1,22 +1,38 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.HashSet;
 
-    public class DrawBoard {
+public class DrawBoard {
 
         private static final int BOARD_SIZE = 10;
         private ChessBoard chessBoard;
 
-        public DrawBoard(ChessBoard chessBoard, Collection<ChessPosition> legalMoves) {
+        public DrawBoard(ChessBoard chessBoard) {
             this.chessBoard = chessBoard;
+        }
 
+        public static void main(String[] args) {
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            DrawBoard draw = new DrawBoard(board);
+            ChessGame game = new ChessGame();
+            Collection<ChessMove> legalMoves = game.validMoves(new ChessPosition(2,2));
+            Collection<ChessPosition> endPositions = new HashSet<>();
+
+            for (ChessMove move : legalMoves) {
+                ChessPosition endPosition = move.getEndPosition();
+                endPositions.add(endPosition);
+            }
+            draw.draw(board, endPositions);
+        }
+
+        public void draw(ChessBoard chessBoard, Collection<ChessPosition> legalMoves){
+            this.chessBoard = chessBoard;
             var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
             out.print(EscapeSequences.ERASE_SCREEN);
             out.print(EscapeSequences.SET_BG_COLOR_BLACK);
@@ -30,17 +46,11 @@ import java.util.Collection;
             out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
         }
 
-        public static void main(String[] args) {
-            ChessBoard board = new ChessBoard();
-            board.resetBoard();
-            new DrawBoard(board, null);
-        }
-
         private void setGreenBackgroundForLegalMoves(PrintStream out, Collection<ChessPosition> legalMoves) {
             // Print from white perspective
             for (int row = 0; row < BOARD_SIZE; row++) {
                 for (int col = 0; col < BOARD_SIZE; col++) {
-                    ChessPosition currentPosition = new ChessPosition(row + 1, col + 1);
+                    ChessPosition currentPosition = new ChessPosition(row , col);
                     boolean isLegalMove = legalMoves.contains(currentPosition);
                     drawSquare(out, row, col, isLegalMove);
                 }
@@ -49,12 +59,12 @@ import java.util.Collection;
 
             }
 
-
+            out.println();
 
             // Print from black perspective
             for (int row = BOARD_SIZE - 1; row >= 0; row--) {
                 for (int col = 0; col < BOARD_SIZE; col++) {
-                    ChessPosition currentPosition = new ChessPosition(row + 1, col + 1);
+                    ChessPosition currentPosition = new ChessPosition(row , col);
                     boolean isLegalMove = legalMoves.contains(currentPosition);
                     drawSquare(out, row, col, isLegalMove);
                 }
@@ -92,9 +102,9 @@ import java.util.Collection;
         private void drawSquare(PrintStream out, int row, int col, boolean isLegalMove) {
             if (!isLegalMove) {
                 if ((row + col) % 2 == 0) {
-                    setWhite(out);
-                } else {
                     setBlack(out);
+                } else {
+                    setWhite(out);
                 }
             } else setGreen(out);
 
@@ -135,7 +145,7 @@ import java.util.Collection;
                 out.print(EscapeSequences.EMPTY);
             } else {
                 setBlackText(out);
-                char label = (char) ('a' - 2 + (BOARD_SIZE - row));
+                char label = (char) ('a' + (row - 1));
                 out.print(" " + label + " ");
             }
         }

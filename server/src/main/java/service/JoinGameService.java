@@ -24,7 +24,6 @@ public class JoinGameService {
         ChessGame game = gameData.getGame();
         game.makeMove(move);
         gameData.setGame(game);
-        gameDataAccess.updateGameMove(gameData);
     }
 
     // Method to create a new game

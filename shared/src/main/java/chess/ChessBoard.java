@@ -12,7 +12,6 @@ public class ChessBoard implements Cloneable {
     private static final int SIZE = 8;
     public ChessPiece[][] squares = new ChessPiece[SIZE][SIZE];
     public ChessBoard() {
-        
     }
 
     /**
@@ -52,8 +51,8 @@ public class ChessBoard implements Cloneable {
                 ChessPiece.PieceType.ROOK,
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.BISHOP,
-                ChessPiece.PieceType.KING,
                 ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.KING,
                 ChessPiece.PieceType.BISHOP,
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.ROOK
@@ -62,8 +61,8 @@ public class ChessBoard implements Cloneable {
                 ChessPiece.PieceType.ROOK,
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.BISHOP,
-                ChessPiece.PieceType.KING,
                 ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.KING,
                 ChessPiece.PieceType.BISHOP,
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.ROOK
